@@ -369,14 +369,6 @@ headless: "new"
 const page = await browser.newPage();
 await page.setViewport({ width: 1280, height: 1800 });
 
-const fs = require("fs");
-const path = require("path");
-
-const css = fs.readFileSync(
-path.join(__dirname, "public", "style.css"),
-"utf8"
-);
-
 await page.setContent(`
 <html>
 <head>
