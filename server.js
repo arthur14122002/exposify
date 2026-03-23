@@ -369,19 +369,19 @@ headless: "new"
 const page = await browser.newPage();
 await page.setViewport({ width: 1280, height: 1800 });
 
-await page.setContent(`
+await page.setContent(
+`
 <html>
 <head>
-<style>
-${css}
-</style>
+<link rel="stylesheet" href="https://exposify-clean.onrender.com/style.css">
 </head>
 <body>
 ${html}
 </body>
 </html>
-`, { waitUntil: "networkidle0" });
-
+`,
+{ waitUntil: "networkidle0" }
+);
 
 await page.emulateMediaType("screen");
 
