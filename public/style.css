@@ -467,10 +467,10 @@ box-sizing: border-box;
 }
 
 .normalizedExpose h1 {
-font-size: 36px;
-font-weight: 800;
-line-height: 1.15;
-margin: 0 0 18px;
+font-size: 34px;
+font-weight: 900;
+line-height: 1.1;
+margin: 0 0 10px;
 text-align: center;
 }
 
