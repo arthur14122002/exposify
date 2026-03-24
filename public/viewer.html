@@ -187,6 +187,41 @@ return "";
 margin: 0;
 }
 
+html, body {
+margin: 0 !important;
+padding: 0 !important;
+background: white !important;
+}
+
+#viewerContent {
+margin: 0 !important;
+padding: 0 !important;
+width: 210mm !important;
+}
+
+.viewerPage {
+width: 210mm !important;
+height: 297mm !important;
+margin: 0 !important;
+page-break-after: always !important;
+break-after: page !important;
+overflow: hidden !important;
+box-sizing: border-box !important;
+}
+
+.viewerPage:last-child {
+page-break-after: auto !important;
+break-after: auto !important;
+}
+
+.viewerPageInner {
+width: 100% !important;
+height: 100% !important;
+margin: 0 !important;
+box-sizing: border-box !important;
+overflow: hidden !important;
+}
+
 h1 {
 font-weight: 900 !important;
 letter-spacing: -0.3px;
