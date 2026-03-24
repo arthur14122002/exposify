@@ -173,6 +173,16 @@ const html = `
 <title>Exposé PDF</title>
 
 <style>
+${[...document.styleSheets]
+.map(sheet => {
+try {
+return [...sheet.cssRules].map(rule => rule.cssText).join("");
+} catch {
+return "";
+}
+})
+.join("")}
+
 @page {
 margin: 0;
 }
@@ -201,12 +211,8 @@ overflow: hidden;
 .viewerPageInner {
 width: 100%;
 height: 100%;
-padding: 20px 48px 40px 48px;
+padding: 40px 48px;
 box-sizing: border-box;
-}
-
-.viewerPageInner > *:first-child {
-margin-top: 0 !important;
 }
 
 /* TEXT FIX */
@@ -218,7 +224,7 @@ line-height: 1.45;
 h1 {
 font-size: 34px;
 font-weight: 900;
-margin: 0 0 12px;
+margin: 0 0 16px;
 line-height: 1.2;
 }
 
