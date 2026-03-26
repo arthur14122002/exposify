@@ -731,10 +731,10 @@ line-height: 1.45;
 }
 
 .editorImageWrapper {
-position: absolute;
-cursor: move;
-z-index: 5;
-overflow: hidden;
+position: relative;
+width: 100%;
+margin: 20px 0;
+overflow: visible;
 background: transparent;
 }
 
@@ -743,8 +743,8 @@ background: transparent;
 .editorImageWrapper img.portrait,
 .editorImageWrapper img.logo {
 width: 100% !important;
-height: 100% !important;
-max-width: none !important;
+height: auto !important;
+max-width: 100% !important;
 max-height: none !important;
 min-width: 0 !important;
 min-height: 0 !important;
@@ -845,14 +845,15 @@ position: relative;
 overflow: hidden;
 }
 
-.viewerPageInner {
-position: relative;
-width: 100%;
+.viewerPage {
+width: 794px;
 min-height: 1123px;
-padding: 40px 48px;
-box-sizing: border-box;
+margin: 0 auto 28px auto;
+background: white;
+box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+border-radius: 10px;
+position: relative;
 overflow: visible;
-line-height: 1.45;
 }
 
 .viewerPageInner p,
@@ -883,16 +884,17 @@ line-height: 1.45;
 }
 
 .viewerPage .editorImageWrapper {
-position: absolute;
-z-index: 5;
-overflow: hidden;
+position: relative;
+width: 100%;
+margin: 20px 0;
+overflow: visible;
 background: transparent;
 }
 
 .viewerPage .editorImageWrapper img {
 width: 100% !important;
-height: 100% !important;
-max-width: none !important;
+height: auto !important;
+max-width: 100% !important;
 max-height: none !important;
 object-fit: contain !important;
 display: block !important;
