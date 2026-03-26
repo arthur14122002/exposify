@@ -147,9 +147,14 @@ overlay.classList.toggle("hidden", !show);
 overlay.style.display = show ? "flex" : "none";
 }
 
-async function createPdf() {
-const viewer = document.getElementById("viewerContent");
 
+async function createPdf() {
+if (!currentProject) {
+showNotice("Kein Projekt geladen.");
+return;
+}
+
+const viewer = document.getElementById("viewerContent");
 if (!viewer) {
 showNotice("Viewer nicht gefunden");
 return;
@@ -159,21 +164,14 @@ showPdfLoading(true);
 
 try {
 const { jsPDF } = window.jspdf;
+const pageNodes = [...viewer.querySelectorAll(".viewerPage")];
 
-const canvas = await html2canvas(viewer, {
-scale: 2,
-useCORS: true
-});
+if (!pageNodes.length) {
+showNotice("Keine Seiten gefunden.");
+return;
+}
 
-const imgData = canvas.toDataURL("image/jpeg", 1.0);
-
-const pdf = new jsPDF({
-orientation: "portrait",
-unit: "px",
-format: [794, 1123]
-});
-
-const pdf = new jspdf.jsPDF("p", "mm", "a4");
+const pdf = new jsPDF("p", "mm", "a4");
 const pdfWidth = pdf.internal.pageSize.getWidth();
 const pdfHeight = pdf.internal.pageSize.getHeight();
 
@@ -187,7 +185,6 @@ backgroundColor: "#ffffff"
 const imgData = canvas.toDataURL("image/png");
 const imgWidth = canvas.width;
 const imgHeight = canvas.height;
-
 const ratio = imgHeight / imgWidth;
 
 let renderWidth = pdfWidth;
@@ -201,7 +198,10 @@ renderWidth = renderHeight / ratio;
 const x = (pdfWidth - renderWidth) / 2;
 const y = 0;
 
-if (i > 0) pdf.addPage();
+if (i > 0) {
+pdf.addPage();
+}
+
 pdf.addImage(imgData, "PNG", x, y, renderWidth, renderHeight);
 }
 
