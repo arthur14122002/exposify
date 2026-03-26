@@ -144,7 +144,6 @@ overlay.classList.toggle("hidden", !show);
 overlay.style.display = show ? "flex" : "none";
 }
 
-
 async function createPdf() {
 if (!currentProject) {
 showNotice("Kein Projekt geladen.");
@@ -160,98 +159,182 @@ showNotice("Projektansicht nicht gefunden.");
 return;
 }
 
+const pageNodes = [...viewerContent.querySelectorAll(".viewerPage")];
+
+let pdfPagesHtml = "";
+
+if (pageNodes.length) {
+pdfPagesHtml = pageNodes.map((page) => {
+const inner = page.querySelector(".viewerPageInner");
+const content = inner ? inner.innerHTML : page.innerHTML;
+
+return `
+<div class="pdfPage">
+<div class="pdfPageInner normalizedExpose">
+${content}
+</div>
+</div>
+`;
+}).join("");
+} else {
+pdfPagesHtml = `
+<div class="pdfPage">
+<div class="pdfPageInner normalizedExpose">
+${viewerContent.innerHTML}
+</div>
+</div>
+`;
+}
+
 const html = `
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Exposé PDF</title>
-
 <style>
-${[...document.styleSheets]
-.map(sheet => {
-try {
-return [...sheet.cssRules].map(rule => rule.cssText).join("\n");
-} catch {
-return "";
-}
-})
-.join("\n")}
-
-/* Nur wenige gezielte PDF-Regeln */
-@page {
-size: A4;
-margin: 0;
+* {
+box-sizing: border-box;
 }
 
 html, body {
-margin: 0 !important;
-padding: 0 !important;
-background: white !important;
+margin: 0;
+padding: 0;
+font-family: Arial, sans-serif;
+color: #111827;
+background: white;
 }
 
-#viewerContent {
-width: 210mm !important;
-margin: 0 !important;
-padding: 0 !important;
-background: white !important;
+body {
+-webkit-print-color-adjust: exact;
+print-color-adjust: exact;
 }
 
-.viewerCard {
-margin: 0 !important;
-padding: 0 !important;
-background: white !important;
-border-radius: 0 !important;
-box-shadow: none !important;
+.pdfPage {
+width: 794px;
+height: 1123px;
+page-break-after: always;
+break-after: page;
+background: white;
+position: relative;
+overflow: hidden;
 }
 
-.viewerPage {
-width: 210mm !important;
-height: 297mm !important;
-min-height: 297mm !important;
-margin: 0 !important;
-page-break-after: always !important;
-break-after: page !important;
-overflow: hidden !important;
-box-sizing: border-box !important;
-background: white !important;
+.pdfPage:last-child {
+page-break-after: auto;
+break-after: auto;
 }
 
-.viewerPage:last-child {
-page-break-after: auto !important;
-break-after: auto !important;
+.pdfPageInner {
+position: relative;
+width: 100%;
+min-height: 1123px;
+padding: 40px 48px;
+box-sizing: border-box;
+overflow: visible;
+}
+.normalizedExpose {
+width: 100%;
+box-sizing: border-box;
 }
 
-.viewerPageInner {
-width: 100% !important;
-height: 100% !important;
-min-height: 297mm !important;
-margin: 0 !important;
-padding: 40px 48px !important;
-box-sizing: border-box !important;
-overflow: hidden !important;
-position: relative !important;
+.normalizedExpose h1 {
+font-size: 34px;
+font-weight: 800;
+margin: 0 0 10px;
 }
 
-/* nur Top-Abstand des ersten Elements killen */
-.viewerPageInner > *:first-child {
-margin-top: 0 !important;
+.normalizedExpose h2 {
+font-size: 24px;
+font-weight: 700;
+margin: 16px 0 8px;
 }
 
-/* Überschrift etwas kräftiger */
-.viewerPageInner h1 {
-font-weight: 800 !important;
-line-height: 1.15 !important;
+.normalizedExpose h3 {
+font-size: 18px;
+font-weight: 700;
+margin: 14px 0 6px;
 }
 
-.viewerPageInner h2 {
-margin-top: 28px !important;
+.normalizedExpose p {
+margin: 0 0 14px;
+line-height: 1.45;
 }
 
-.viewerPageInner h3 {
-margin-top: 19px !important;
+.normalizedExpose .editorPageInner,
+.normalizedExpose .viewerPageInner,
+.pdfPageInner {
+line-height: 1.45;
 }
 
-/* Wichtig: Bildwrapper NICHT zerstören */
+.pdfPageInner p,
+.pdfPageInner div {
+margin: 0 0 1px;
+line-height: 1.45;
+}
+
+.pdfPageInner h1 {
+margin: 0 0 10px;
+line-height: 1.2;
+}
+
+.pdfPageInner h2 {
+margin: 16px 0 8px;
+line-height: 1.25;
+}
+
+.pdfPageInner h3 {
+margin: 14px 0 6px;
+line-height: 1.3;
+}
+
+.pdfPageInner ul,
+.pdfPageInner ol {
+margin: 0 0 8px 22px;
+line-height: 1.45;
+}
+
+.heroImage {
+width: 100%;
+height: 320px;
+max-height: 320px;
+object-fit: contain;
+display: block;
+background: white;
+margin: 18px 0 24px;
+page-break-inside: avoid;
+break-inside: avoid;
+}
+
+.flowImageGrid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 16px;
+margin: 18px 0 24px;
+width: 100%;
+page-break-inside: auto;
+break-inside: auto;
+}
+
+.flowImageItem {
+page-break-inside: avoid;
+break-inside: avoid;
+}
+
+.flowImageItem img {
+width: 100%;
+height: 220px;
+object-fit: contain;
+display: block;
+background: white;
+}
+
+
+.editorResizeHandle,
+.editorSelected,
+.editorImagePlaceholder {
+display: none !important;
+}
+
 .editorImageWrapper {
 position: absolute !important;
 z-index: 5 !important;
@@ -266,20 +349,65 @@ max-width: none !important;
 max-height: none !important;
 object-fit: contain !important;
 display: block !important;
+background: white;
 }
 
-.maklerImage {
-transform: translateY(1mm);
+
+.textBlock {
+border: none;
+background: transparent;
+overflow: visible;
+padding: 0;
+min-height: 0;
+margin: 18px 0;
 }
 
-.maklerLogo {
-transform: translateY(1mm);
+.textBlockSelected {
+border: none;
+}
+
+.textBlockResizeHandle {
+display: none !important;
+}
+
+.textBlockInner {
+width: 100%;
+min-height: 0;
+overflow: visible;
+outline: none;
+line-height: 1.5;
+color: #111827;
+}
+
+.textBlockWidth25 {
+width: 25%;
+}
+
+.textBlockWidth50 {
+width: 50%;
+}
+
+.textBlockWidth75 {
+width: 75%;
+}
+
+.textBlockWidth100 {
+width: 100%;
+}
+
+@media print {
+.flowImageGrid {
+grid-template-columns: 1fr 1fr;
+}
+
+.flowImageItem img {
+height: 220px;
+}
 }
 </style>
-
 </head>
 <body>
-${viewerContent.outerHTML}
+${pdfPagesHtml}
 </body>
 </html>
 `;
@@ -316,8 +444,6 @@ showNotice("PDF konnte nicht erstellt werden.");
 showPdfLoading(false);
 }
 }
-
-
 
 function goNew() {
 window.location.href = "/";

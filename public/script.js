@@ -345,7 +345,8 @@ const fotoDataUrl = fotoFile ? await fileToDataUrl(fotoFile) : "";
 
 const allImageDataUrls = [...imageDataUrls];
 
-
+if (fotoDataUrl) allImageDataUrls.push(fotoDataUrl);
+if (logoDataUrl) allImageDataUrls.push(logoDataUrl);
 
 const pageThreeImages = allImageDataUrls.slice(0, 6);
 const pageFourImages = allImageDataUrls.slice(6, 12);
@@ -360,13 +361,6 @@ ${data.email ? `<p>${data.email}</p>` : ""}
 `
 : "";
 
-const maklerImagesHtml = `
-<div class="maklerSection">
-${fotoDataUrl ? `<img class="maklerImage" src="${fotoDataUrl}">` : ""}
-${logoDataUrl ? `<img class="maklerLogo" src="${logoDataUrl}">` : ""}
-</div>
-`;
-
 const textAndMaklerHtml = `
 <h3>Beschreibung</h3>
 <p>${ai.description || ""}</p>
@@ -378,7 +372,6 @@ const textAndMaklerHtml = `
 <p>${ai.location || ""}</p>
 
 ${maklerTextHtml}
-${maklerImagesHtml}
 `;
 
 const pages = [];
