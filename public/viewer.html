@@ -186,26 +186,8 @@ allowTaint: false
 
 
 const imgData = canvas.toDataURL("image/png");
-const imgWidth = canvas.width;
-const imgHeight = canvas.height;
-const ratio = imgHeight / imgWidth;
-
-let renderWidth = pdfWidth;
-let renderHeight = renderWidth * ratio;
-
-if (renderHeight > pdfHeight) {
-renderHeight = pdfHeight;
-renderWidth = renderHeight / ratio;
-}
-
-const x = (pdfWidth - renderWidth) / 2;
-const y = 0;
-
-if (i > 0) {
-pdf.addPage();
-}
-
-pdf.addImage(imgData, "PNG", x, y, renderWidth, renderHeight);
+if (i > 0) pdf.addPage();
+pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
 }
 
 pdf.save("expose.pdf");
