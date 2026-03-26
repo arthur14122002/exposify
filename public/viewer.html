@@ -65,6 +65,9 @@ Projekt wird geladen...
 </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script>
 let currentProject = null;
 
@@ -145,304 +148,38 @@ overlay.style.display = show ? "flex" : "none";
 }
 
 async function createPdf() {
-if (!currentProject) {
-showNotice("Kein Projekt geladen.");
+const viewer = document.getElementById("viewerContent");
+
+if (!viewer) {
+showNotice("Viewer nicht gefunden");
 return;
 }
 
 showPdfLoading(true);
 
 try {
-const viewerContent = document.getElementById("viewerContent");
-if (!viewerContent) {
-showNotice("Projektansicht nicht gefunden.");
-return;
-}
+const { jsPDF } = window.jspdf;
 
-const pageNodes = [...viewerContent.querySelectorAll(".viewerPage")];
-
-let pdfPagesHtml = "";
-
-if (pageNodes.length) {
-pdfPagesHtml = pageNodes.map((page) => {
-const inner = page.querySelector(".viewerPageInner");
-const content = inner ? inner.innerHTML : page.innerHTML;
-
-return `
-<div class="pdfPage">
-<div class="pdfPageInner normalizedExpose">
-${content}
-</div>
-</div>
-`;
-}).join("");
-} else {
-pdfPagesHtml = `
-<div class="pdfPage">
-<div class="pdfPageInner normalizedExpose">
-${viewerContent.innerHTML}
-</div>
-</div>
-`;
-}
-
-const html = `
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Exposé PDF</title>
-<style>
-* {
-box-sizing: border-box;
-}
-
-html, body {
-margin: 0;
-padding: 0;
-font-family: Inter, Arial, sans-serif;
-color: #111827;
-background: white;
-}
-
-body {
--webkit-print-color-adjust: exact;
-print-color-adjust: exact;
-}
-
-.pdfPage {
-width: 794px;
-height: 1123px;
-page-break-after: always;
-break-after: page;
-background: white;
-position: relative;
-overflow: hidden;
-}
-
-.pdfPage:last-child {
-page-break-after: auto;
-break-after: auto;
-}
-
-.pdfPageInner {
-position: relative;
-width: 100%;
-min-height: 1123px;
-padding: 40px 48px;
-box-sizing: border-box;
-overflow: visible;
-}
-.normalizedExpose {
-width: 100%;
-box-sizing: border-box;
-}
-
-.normalizedExpose h1 {
-font-size: 34px;
-font-weight: 900;
-line-height: 1.1;
-margin: 0 0 10px;
-text-align: center;
-}
-
-.normalizedExpose h2 {
-font-size: 24px;
-font-weight: 700;
-margin: 16px 0 8px;
-}
-
-.normalizedExpose h3 {
-font-size: 18px;
-font-weight: 700;
-margin: 18px 0 10px;
-line-height: 1.3;
-}
-
-.normalizedExpose p {
-margin: 0 0 16px;
-line-height: 1.55;
-}
-
-.normalizedExpose .editorPageInner,
-.normalizedExpose .viewerPageInner,
-.pdfPageInner {
-line-height: 1.45;
-}
-
-.pdfPageInner p,
-.pdfPageInner div {
-margin: 0 0 1px;
-line-height: 1.45;
-}
-
-.pdfPageInner h1 {
-margin: 0 0 10px;
-line-height: 1.2;
-}
-
-.pdfPageInner h2 {
-margin: 16px 0 8px;
-line-height: 1.25;
-}
-
-.pdfPageInner h3 {
-margin: 14px 0 6px;
-line-height: 1.3;
-}
-
-.pdfPageInner ul,
-.pdfPageInner ol {
-margin: 0 0 8px 22px;
-line-height: 1.45;
-}
-
-.heroImage {
-width: 100%;
-height: 320px;
-max-height: 320px;
-object-fit: contain;
-display: block;
-background: white;
-margin: 18px 0 24px;
-page-break-inside: avoid;
-break-inside: avoid;
-}
-
-.flowImageGrid {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 16px;
-margin: 18px 0 24px;
-width: 100%;
-page-break-inside: auto;
-break-inside: auto;
-}
-
-.flowImageItem {
-page-break-inside: avoid;
-break-inside: avoid;
-}
-
-.flowImageItem img {
-width: 100%;
-height: 220px;
-object-fit: contain;
-display: block;
-background: white;
-}
-
-
-.editorResizeHandle,
-.editorSelected,
-.editorImagePlaceholder {
-display: none !important;
-}
-
-.editorImageWrapper {
-position: absolute !important;
-z-index: 5 !important;
-overflow: hidden !important;
-background: transparent !important;
-}
-
-.editorImageWrapper img {
-width: 100% !important;
-height: 100% !important;
-max-width: none !important;
-max-height: none !important;
-object-fit: contain !important;
-display: block !important;
-background: white;
-}
-
-
-.textBlock {
-border: none;
-background: transparent;
-overflow: visible;
-padding: 0;
-min-height: 0;
-margin: 18px 0;
-}
-
-.textBlockSelected {
-border: none;
-}
-
-.textBlockResizeHandle {
-display: none !important;
-}
-
-.textBlockInner {
-width: 100%;
-min-height: 0;
-overflow: visible;
-outline: none;
-line-height: 1.5;
-color: #111827;
-}
-
-.textBlockWidth25 {
-width: 25%;
-}
-
-.textBlockWidth50 {
-width: 50%;
-}
-
-.textBlockWidth75 {
-width: 75%;
-}
-
-.textBlockWidth100 {
-width: 100%;
-}
-
-@media print {
-.flowImageGrid {
-grid-template-columns: 1fr 1fr;
-}
-
-.flowImageItem img {
-height: 220px;
-}
-}
-</style>
-</head>
-<body>
-${pdfPagesHtml}
-</body>
-</html>
-`;
-
-const res = await fetch("/pdf", {
-method: "POST",
-headers: {
-"Content-Type": "application/json"
-},
-body: JSON.stringify({ html })
+const canvas = await html2canvas(viewer, {
+scale: 2,
+useCORS: true
 });
 
-if (!res.ok) {
-const data = await res.json().catch(() => ({}));
-showNotice(data.message || "PDF konnte nicht erstellt werden.");
-return;
-}
+const imgData = canvas.toDataURL("image/jpeg", 1.0);
 
-const blob = await res.blob();
-const url = URL.createObjectURL(blob);
+const pdf = new jsPDF({
+orientation: "portrait",
+unit: "px",
+format: [794, 1123]
+});
 
-const a = document.createElement("a");
-a.href = url;
-a.download = "expose.pdf";
-document.body.appendChild(a);
-a.click();
-a.remove();
+pdf.addImage(imgData, "JPEG", 0, 0, 794, 1123);
 
-URL.revokeObjectURL(url);
-} catch (error) {
-console.error(error);
-showNotice("PDF konnte nicht erstellt werden.");
+pdf.save("expose.pdf");
+
+} catch (err) {
+console.error(err);
+showNotice("PDF Fehler");
 } finally {
 showPdfLoading(false);
 }
