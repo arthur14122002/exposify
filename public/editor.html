@@ -667,8 +667,19 @@ return;
 
 if (!pageInner) return;
 
-const startWidth = 220;
-const startHeight = 160;
+const naturalWidth = img.naturalWidth;
+const naturalHeight = img.naturalHeight;
+
+const maxWidth = 300;
+
+let startWidth = naturalWidth;
+let startHeight = naturalHeight;
+
+if (naturalWidth > maxWidth) {
+const ratio = maxWidth / naturalWidth;
+startWidth = maxWidth;
+startHeight = naturalHeight * ratio;
+}
 
 placeholder = document.createElement("div");
 placeholder.className = "editorImagePlaceholder";
