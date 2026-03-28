@@ -147,54 +147,55 @@ overlay.classList.toggle("hidden", !show);
 overlay.style.display = show ? "flex" : "none";
 }
 
-
 async function createPdf() {
 if (!currentProject) {
 showNotice("Kein Projekt geladen.");
 return;
 }
 
-const viewer = document.getElementById("viewerContent");
-if (!viewer) {
-showNotice("Viewer nicht gefunden");
-return;
-}
-
 showPdfLoading(true);
 
 try {
-const { jsPDF } = window.jspdf;
-const pageNodes = [...viewer.querySelectorAll(".viewerPage")];
+const viewerContent = document.getElementById("viewerContent");
+if (!viewerContent) {
+showNotice("Projektansicht nicht gefunden.");
+return;
+}
+
+const pageNodes = [...viewerContent.querySelectorAll(".viewerPage")];
 
 if (!pageNodes.length) {
 showNotice("Keine Seiten gefunden.");
 return;
 }
 
+const { jsPDF } = window.jspdf;
 const pdf = new jsPDF("p", "mm", "a4");
+
 const pdfWidth = pdf.internal.pageSize.getWidth();
 const pdfHeight = pdf.internal.pageSize.getHeight();
 
 for (let i = 0; i < pageNodes.length; i++) {
 const canvas = await html2canvas(pageNodes[i], {
-scale: 2.5,
+scale: 2,
 useCORS: true,
 backgroundColor: "#ffffff",
-logging: false,
-allowTaint: false
+logging: false
 });
 
-
 const imgData = canvas.toDataURL("image/png");
-if (i > 0) pdf.addPage();
+
+if (i > 0) {
+pdf.addPage();
+}
+
 pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
 }
 
 pdf.save("expose.pdf");
-
-} catch (err) {
-console.error(err);
-showNotice("PDF Fehler");
+} catch (error) {
+console.error(error);
+showNotice("PDF konnte nicht erstellt werden.");
 } finally {
 showPdfLoading(false);
 }
