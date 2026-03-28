@@ -176,11 +176,45 @@ const pdfWidth = pdf.internal.pageSize.getWidth();
 const pdfHeight = pdf.internal.pageSize.getHeight();
 
 for (let i = 0; i < pageNodes.length; i++) {
+
 const canvas = await html2canvas(pageNodes[i], {
 scale: 2,
 useCORS: true,
 backgroundColor: "#ffffff",
-logging: false
+logging: false,
+windowWidth: pageNodes[i].scrollWidth,
+windowHeight: pageNodes[i].scrollHeight,
+onclone: (clonedDoc) => {
+const clonedPages = clonedDoc.querySelectorAll(".viewerPage");
+
+clonedPages.forEach((page) => {
+const wrappers = page.querySelectorAll(".editorImageWrapper");
+
+wrappers.forEach((wrapper) => {
+const img = wrapper.querySelector("img");
+if (!img) return;
+
+wrapper.style.overflow = "hidden";
+wrapper.style.position = "absolute";
+
+img.style.position = "absolute";
+img.style.left = "0";
+img.style.top = "0";
+img.style.width = "100%";
+img.style.height = "100%";
+img.style.maxWidth = "none";
+img.style.maxHeight = "none";
+img.style.minWidth = "0";
+img.style.minHeight = "0";
+img.style.objectFit = "contain";
+img.style.objectPosition = "center center";
+img.style.transform = "none";
+img.style.margin = "0";
+img.style.padding = "0";
+img.style.display = "block";
+});
+});
+}
 });
 
 const imgData = canvas.toDataURL("image/png");
