@@ -892,15 +892,11 @@ background: transparent;
 .viewerPage .editorImageWrapper img {
 width: 100% !important;
 height: 100% !important;
-max-width: 100% !important;
-max-height: 100% !important;
 object-fit: contain !important;
 object-position: center center !important;
 display: block !important;
 border-radius: 0 !important;
 background: white;
-position: static !important;
-transform: none !important;
 }
 
 .viewerPage .editorImageWrapper {
