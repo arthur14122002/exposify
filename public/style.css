@@ -890,8 +890,8 @@ background: transparent;
 }
 
 .viewerPage .editorImageWrapper img {
-width: 100% !important;
-height: 100% !important;
+width: auto !important;
+height: auto !important;
 max-width: 100% !important;
 max-height: 100% !important;
 object-fit: contain !important;
@@ -899,6 +899,20 @@ object-position: center center !important;
 display: block !important;
 border-radius: 0 !important;
 background: white;
+position: absolute !important;
+top: 50% !important;
+left: 50% !important;
+transform: translate(-50%, -50%) !important;
+}
+
+.viewerPage .editorImageWrapper {
+position: absolute;
+z-index: 5;
+overflow: hidden;
+background: transparent;
+display: flex;
+align-items: center;
+justify-content: center;
 }
 
 .viewerPage .editorImageWrapper img.logo {
