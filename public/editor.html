@@ -272,7 +272,6 @@ if (!pageInner) return null;
 
 const items = [...pageInner.children].filter((el) => {
 if (el.classList.contains("editorImageWrapper")) return false;
-if (el.classList.contains("editorImagePlaceholder")) return false;
 if (el.tagName === "HR") return false;
 
 const text = (el.textContent || "").trim();
@@ -438,18 +437,13 @@ selectDivider(hr);
 function removeSelectedImage() {
 if (!selectedImage) return;
 
-const placeholder = selectedImage.previousElementSibling;
 selectedImage.remove();
-
-if (placeholder && placeholder.classList.contains("editorImagePlaceholder")) {
-placeholder.remove();
-}
 
 clearSelectedImage();
 updateImageButtons();
 }
 
-function bindImageWrapper(wrapper, img, pageInner, placeholder) {
+function bindImageWrapper(wrapper, img, pageInner) {
 if (wrapper.dataset.bound === "true") return;
 
 wrapper.dataset.bound = "true";
@@ -650,15 +644,13 @@ const imgs = [...container.querySelectorAll("img")];
 imgs.forEach((img) => {
 let wrapper = img.closest(".editorImageWrapper");
 let pageInner = img.closest(".editorPageInner");
-let placeholder = null;
 
 if (wrapper) {
 pageInner = wrapper.closest(".editorPageInner");
-placeholder = wrapper.previousElementSibling;
 
 if (!pageInner) return;
 
-bindImageWrapper(wrapper, img, pageInner, placeholder);
+bindImageWrapper(wrapper, img, pageInner);
 return;
 }
 
@@ -691,7 +683,7 @@ wrapper.style.top = `${startTop}px`;
 pageInner.appendChild(wrapper);
 wrapper.appendChild(img);
 
-bindImageWrapper(wrapper, img, pageInner, placeholder);
+bindImageWrapper(wrapper, img, pageInner);
 });
 }
 
@@ -930,7 +922,6 @@ return;
 const clone = editor.cloneNode(true);
 
 clone.querySelectorAll(".editorResizeHandle").forEach(e => e.remove());
-clone.querySelectorAll(".editorImagePlaceholder").forEach(e => e.remove());
 clone.querySelectorAll(".editorSelected").forEach(e => e.classList.remove("editorSelected"));
 
 clone.querySelectorAll(".editorPageInner").forEach((inner) => {
@@ -1387,7 +1378,6 @@ safety++;
 pageStillOverflowing = false;
 
 const items = [...inner.children].filter((el) => {
-if (el.classList.contains("editorImagePlaceholder")) return false;
 if (el.classList.contains("editorImageWrapper")) return false;
 return true;
 });
@@ -1430,7 +1420,6 @@ const inner = page.querySelector(".editorPageInner");
 if (!inner) continue;
 
 const meaningfulChildren = [...inner.children].filter((el) => {
-if (el.classList.contains("editorImagePlaceholder")) return false;
 
 if (el.classList.contains("editorImageWrapper")) return true;
 if (el.tagName === "HR") return true;
