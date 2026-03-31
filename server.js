@@ -8,7 +8,7 @@ process.env.SUPABASE_SERVICE_ROLE_KEY
 
 
 console.log("SUPABASE URL:", process.env.SUPABASE_URL);
-console.log("SUPABASE KEY da:", !!process.env.SUPABASE_ANON_KEY);
+console.log("SUPABASE KEY da:", !!process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 import express from "express";
 import fs from "fs";
@@ -28,15 +28,7 @@ path.join(__dirname, "public", "style.css"),
 );
 
 const app = express();
-const port = 3000;
-
-const dataDir = path.join(__dirname, "data");
-const exposesFile = path.join(dataDir, "exposes.json");
-const usersFile = path.join(dataDir, "users.json");
-
-if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
-if (!fs.existsSync(exposesFile)) fs.writeFileSync(exposesFile, "[]");
-if (!fs.existsSync(usersFile)) fs.writeFileSync(usersFile, "[]");
+const port = process.env.PORT || 3000;
 
 app.use(express.json({ limit: "30mb" }));
 app.use(express.static("public"));
@@ -52,14 +44,6 @@ saveUninitialized: false
 const openai = new OpenAI({
 apiKey: process.env.OPENAI_API_KEY
 });
-
-function readJSON(file) {
-return JSON.parse(fs.readFileSync(file, "utf-8"));
-}
-
-function writeJSON(file, data) {
-fs.writeFileSync(file, JSON.stringify(data, null, 2));
-}
 
 function requireAuth(req, res, next) {
 if (!req.session.user) {
@@ -123,65 +107,55 @@ location: `Die Immobilie befindet sich in ${ort} und profitiert von einer guten 
 
 app.post("/register", async (req, res) => {
 const { email, password } = req.body;
-const users = readJSON(usersFile);
 
 if (!email || !password) {
-return res.json({
-success: false,
-message: "Bitte E-Mail und Passwort eingeben."
-});
+return res.json({ success: false, message: "Bitte E-Mail und Passwort eingeben." });
 }
 
-if (users.find((u) => u.email === email)) {
-return res.json({
-success: false,
-message: "Dieses Konto existiert bereits."
-});
+const { data: existing } = await supabase
+.from("users")
+.select("*")
+.eq("email", email)
+.single();
+
+if (existing) {
+return res.json({ success: false, message: "Dieses Konto existiert bereits." });
 }
 
 const hash = await bcrypt.hash(password, 10);
 
-users.push({
-id: Date.now().toString(),
+const { error } = await supabase.from("users").insert([
+{
 email,
 password: hash
-});
+}
+]);
 
-writeJSON(usersFile, users);
+if (error) {
+console.error(error);
+return res.json({ success: false, message: "Fehler beim Speichern." });
+}
 
-res.json({
-success: true,
-message: "Account erstellt."
-});
+res.json({ success: true });
 });
 
 app.post("/login", async (req, res) => {
 const { email, password } = req.body;
 
-if (!email || !password) {
-return res.json({
-success: false,
-message: "Bitte E-Mail und Passwort eingeben."
-});
-}
+const { data: user, error } = await supabase
+.from("users")
+.select("*")
+.eq("email", email)
+.single();
 
-const users = readJSON(usersFile);
-const user = users.find((u) => u.email === email);
-
-if (!user) {
-return res.json({
-success: false,
-message: "Login fehlgeschlagen."
-});
+if (error || !user) {
+return res.json({ success: false, message: "Login fehlgeschlagen." });
 }
 
 const valid = await bcrypt.compare(password, user.password);
 
 if (!valid) {
-return res.json({
-success: false,
-message: "Login fehlgeschlagen."
-});
+return res.json({ success: false, message: "Login fehlgeschlagen." });
 }
 
 req.session.user = {
@@ -189,10 +163,10 @@ id: user.id,
 email: user.email
 };
 
-res.json({
-success: true
+res.json({ success: true });
 });
-});
+
+
 
 app.post("/logout", (req, res) => {
 req.session.destroy(() => {
@@ -324,44 +298,42 @@ message: "Projekt konnte nicht gespeichert werden."
 }
 });
 
+app.put("/projects/:id", requireAuth, async (req, res) => {
+try {
+const { data, error } = await supabase
+.from("exposes")
+.update({
+title: req.body.title,
+html: req.body.html,
+data: req.body.data,
+updated_at: new Date().toISOString()
+})
+.eq("id", req.params.id)
+.eq("user_id", req.session.user.id)
+.select()
+.single();
 
-const items = readJSON(exposesFile);
-
-
-
-app.put("/projects/:id", requireAuth, (req, res) => {
-const items = readJSON(exposesFile);
-
-const index = items.findIndex(
-(p) => p.id === req.params.id && p.userId === req.session.user.id
-);
-
-if (index === -1) {
+if (error || !data) {
 return res.status(404).json({ success: false, message: "Projekt nicht gefunden." });
 }
 
-items[index] = {
-...items[index],
-...req.body,
-updatedAt: new Date().toISOString()
-};
-
-writeJSON(exposesFile, items);
-
-res.json({
-success: true,
-project: items[index]
-});
+res.json({ success: true, project: data });
+} catch (err) {
+console.error(err);
+res.status(500).json({ success: false });
+}
 });
 
-app.delete("/projects/:id", requireAuth, (req, res) => {
-const items = readJSON(exposesFile);
+app.delete("/projects/:id", requireAuth, async (req, res) => {
+const { error } = await supabase
+.from("exposes")
+.delete()
+.eq("id", req.params.id)
+.eq("user_id", req.session.user.id);
 
-const filtered = items.filter(
-(p) => !(p.id === req.params.id && p.userId === req.session.user.id)
-);
-
-writeJSON(exposesFile, filtered);
+if (error) {
+return res.status(500).json({ success: false });
+}
 
 res.json({ success: true });
 });
