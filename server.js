@@ -106,20 +106,35 @@ location: `Die Immobilie befindet sich in ${ort} und profitiert von einer guten 
 }
 
 app.post("/register", async (req, res) => {
+try {
 const { email, password } = req.body;
 
 if (!email || !password) {
-return res.json({ success: false, message: "Bitte E-Mail und Passwort eingeben." });
+return res.json({
+success: false,
+message: "Bitte E-Mail und Passwort eingeben."
+});
 }
 
-const { data: existing } = await supabase
+const { data: existing, error: checkError } = await supabase
 .from("users")
 .select("*")
 .eq("email", email)
-    .maybeSingle();
+.maybeSingle();
+
+if (checkError) {
+console.error("Check error:", checkError);
+return res.json({
+success: false,
+message: "Fehler beim Speichern."
+});
+}
 
 if (existing) {
-return res.json({ success: false, message: "Dieses Konto existiert bereits." });
+return res.json({
+success: false,
+message: "Dieses Konto existiert bereits."
+});
 }
 
 const hash = await bcrypt.hash(password, 10);
@@ -132,11 +147,22 @@ password: hash
 ]);
 
 if (error) {
-console.error(error);
-return res.json({ success: false, message: "Fehler beim Speichern." });
+console.error("Insert error:", error);
+return res.json({
+success: false,
+message: "Fehler beim Speichern."
+});
 }
 
 res.json({ success: true });
+
+} catch (err) {
+console.error("Register crash:", err);
+res.json({
+success: false,
+message: "Fehler beim Speichern."
+});
+}
 });
 
 app.post("/login", async (req, res) => {
