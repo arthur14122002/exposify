@@ -120,23 +120,19 @@ currentProject = data;
 
 const rawHtml = data.html || "Kein Inhalt vorhanden.";
 
-let finalHtml = rawHtml;
-
-// Falls noch kein Editor-Layout vorhanden ist → erzwingen
-if (!rawHtml.includes("editorPage")) {
-finalHtml = `
-<div class="editorPage">
-<div class="editorPageInner">
+if (rawHtml.includes("editorPage")) {
+container.innerHTML = rawHtml
+.replaceAll("editorPageInner", "viewerPageInner")
+.replaceAll("editorPage", "viewerPage");
+} else {
+container.innerHTML = `
+<div class="viewerPage">
+<div class="viewerPageInner">
 ${rawHtml}
 </div>
 </div>
 `;
 }
-
-// Immer in Viewer umwandeln
-container.innerHTML = finalHtml
-.replaceAll("editorPageInner", "viewerPageInner")
-.replaceAll("editorPage", "viewerPage");
 
 normalizeProjectContent(container);
 } catch (error) {
