@@ -392,21 +392,42 @@ ${textAndMaklerHtml}
 `));
 }
 
-function buildFreeImages(images) {
-return images.map((src) => `
-<img class="editorImage" src="${src}" />
-`).join("");
+function buildInitialEditorImages(images) {
+if (!images.length) return "";
+
+return images.map((src, index) => {
+const width = 260;
+const height = 360;
+const left = 40 + (index * 30);
+const top = 40 + (index * 30);
+
+return `
+<div
+class="editorImageWrapper"
+contenteditable="false"
+style="width:${width}px; height:${height}px; left:${left}px; top:${top}px;"
+>
+<img
+src="${src}"
+alt="Objektbild"
+draggable="false"
+contenteditable="false"
+style="width:100%; height:100%; max-width:none; max-height:none; object-fit:fill; background:transparent; border-radius:0;"
+>
+</div>
+`;
+}).join("");
 }
 
 if (pageThreeImages.length) {
 pages.push(createEditorPage(`
-${buildFreeImages(pageThreeImages)}
+${buildInitialEditorImages(pageThreeImages)}
 `));
 }
 
 if (pageFourImages.length) {
 pages.push(createEditorPage(`
-${buildFreeImages(pageFourImages)}
+${buildInitialEditorImages(pageFourImages)}
 `));
 }
 
