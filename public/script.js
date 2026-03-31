@@ -392,15 +392,21 @@ ${textAndMaklerHtml}
 `));
 }
 
+function buildFreeImages(images) {
+return images.map((src) => `
+<img class="editorImage" src="${src}" />
+`).join("");
+}
+
 if (pageThreeImages.length) {
 pages.push(createEditorPage(`
-${buildFlowImageGrid(pageThreeImages)}
+${buildFreeImages(pageThreeImages)}
 `));
 }
 
 if (pageFourImages.length) {
 pages.push(createEditorPage(`
-${buildFlowImageGrid(pageFourImages)}
+${buildFreeImages(pageFourImages)}
 `));
 }
 
