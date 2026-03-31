@@ -412,7 +412,7 @@ src="${src}"
 alt="Objektbild"
 draggable="false"
 contenteditable="false"
-style="width:100%; height:100%; max-width:none; max-height:none; object-fit:fill; background:transparent; border-radius:0;"
+style="width:100%; height:100%; max-width:none; max-height:none; object-fit:contain; background:transparent; border-radius:0;"
 >
 </div>
 `;
