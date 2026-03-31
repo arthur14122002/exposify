@@ -116,7 +116,7 @@ const { data: existing } = await supabase
 .from("users")
 .select("*")
 .eq("email", email)
-.single();
+    .maybeSingle();
 
 if (existing) {
 return res.json({ success: false, message: "Dieses Konto existiert bereits." });
