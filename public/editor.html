@@ -461,7 +461,7 @@ img.style.width = "100%";
 img.style.height = "100%";
 img.style.maxWidth = "none";
 img.style.maxHeight = "none";
-img.style.objectFit = "fill";
+img.style.objectFit = "contain";
 img.style.background = img.alt === "Firmenlogo" ? "white" : "transparent";
 img.style.borderRadius = "0";
 
@@ -567,10 +567,6 @@ wrapper.style.height = `${newH}px`;
 wrapper.style.left = `${newLeft}px`;
 wrapper.style.top = `${newTop}px`;
 
-if (placeholder && placeholder.parentElement) {
-placeholder.style.width = `${newW}px`;
-placeholder.style.height = `${newH}px`;
-}
 };
 
 const onMouseUp = () => {
