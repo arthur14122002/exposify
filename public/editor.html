@@ -678,13 +678,6 @@ startWidth = maxWidth;
 startHeight = naturalHeight * ratio;
 }
 
-placeholder = document.createElement("div");
-placeholder.className = "editorImagePlaceholder";
-placeholder.style.width = `${startWidth}px`;
-placeholder.style.height = `${startHeight}px`;
-
-img.parentNode.insertBefore(placeholder, img);
-
 const startLeft = 40;
 const startTop = 40 + (pageInner.querySelectorAll(".editorImageWrapper").length * 20);
 
