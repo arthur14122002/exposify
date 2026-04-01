@@ -379,7 +379,12 @@ const pages = [];
 if (titleImageDataUrl) {
 pages.push(createEditorPage(`
 <h1>${ai.title || "Immobilien-Exposé"}</h1>
-<img class="heroImage" src="${titleImageDataUrl}" alt="Titelbild">
+
+<div class="editorImageWrapper"
+style="width:400px; height:250px; left:40px; top:40px;">
+<img src="${titleImageDataUrl}" alt="Titelbild"
+style="width:100%; height:100%; object-fit:contain;">
+</div>
 `));
 
 pages.push(createEditorPage(`
@@ -394,7 +399,13 @@ ${textAndMaklerHtml}
 
 if (pageThreeImages.length) {
 pages.push(createEditorPage(`
-${buildFlowImageGrid(pageThreeImages)}
+${pageThreeImages.map((src, i) => `
+<div class="editorImageWrapper"
+style="width:260px; height:360px; left:${40 + i*30}px; top:${40 + i*30}px;">
+<img src="${src}" alt="Objektbild"
+style="width:100%; height:100%; object-fit:contain;">
+</div>
+`).join("")}
 `));
 }
 
