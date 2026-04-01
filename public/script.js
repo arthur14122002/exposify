@@ -381,9 +381,9 @@ pages.push(createEditorPage(`
 <h1>${ai.title || "Immobilien-Exposé"}</h1>
 
 <div class="editorImageWrapper"
-style="width:400px; height:250px; left:40px; top:40px;">
+style="left:40px; top:40px;">
 <img src="${titleImageDataUrl}" alt="Titelbild"
-style="width:100%; height:100%; object-fit:contain;">
+style="display:block; width:auto; height:auto; max-width:none; max-height:none;">
 </div>
 `));
 
@@ -401,9 +401,9 @@ if (pageThreeImages.length) {
 pages.push(createEditorPage(`
 ${pageThreeImages.map((src, i) => `
 <div class="editorImageWrapper"
-style="width:260px; height:360px; left:${40 + i*30}px; top:${40 + i*30}px;">
+style="left:${40 + i*30}px; top:${40 + i*30}px;">
 <img src="${src}" alt="Objektbild"
-style="width:100%; height:100%; object-fit:contain;">
+style="display:block; width:auto; height:auto; max-width:none; max-height:none;">
 </div>
 `).join("")}
 `));
