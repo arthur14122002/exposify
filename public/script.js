@@ -129,15 +129,9 @@ ${innerHtml}
 function buildFlowImageGrid(images) {
 if (!images.length) return "";
 
-return `
-<div class="flowImageGrid">
-${images.map((src) => `
-<div class="flowImageItem">
+return images.map((src) => `
 <img src="${src}" alt="Objektbild">
-</div>
-`).join("")}
-</div>
-`;
+`).join("");
 }
 
 async function handleImageUpload(e) {
