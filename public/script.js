@@ -392,41 +392,15 @@ ${textAndMaklerHtml}
 `));
 }
 
-function buildInitialEditorImages(images) {
-if (!images.length) return "";
-
-return images.map((src, index) => {
-
-const left = 40 + (index * 30);
-const top = 40 + (index * 30);
-
-return `
-<div
-class="editorImageWrapper"
-contenteditable="false"
-style="left:${left}px; top:${top}px;"
->
-<img
-src="${src}"
-alt="Objektbild"
-draggable="false"
-contenteditable="false"
-style="display:block; width:auto; height:auto; max-width:none; max-height:none;"
->
-</div>
-`;
-}).join("");
-}
-
 if (pageThreeImages.length) {
 pages.push(createEditorPage(`
-${buildInitialEditorImages(pageThreeImages)}
+${buildFlowImageGrid(pageThreeImages)}
 `));
 }
 
 if (pageFourImages.length) {
 pages.push(createEditorPage(`
-${buildInitialEditorImages(pageFourImages)}
+${buildFlowImageGrid(pageFourImages)}
 `));
 }
 
