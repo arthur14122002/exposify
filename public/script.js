@@ -126,12 +126,54 @@ ${innerHtml}
 `;
 }
 
-function buildFlowImageGrid(images) {
+async function getImageSize(src, maxWidth = 300) {
+return new Promise((resolve) => {
+const img = new Image();
+
+img.onload = () => {
+let width = img.naturalWidth;
+let height = img.naturalHeight;
+
+if (width > maxWidth) {
+const ratio = maxWidth / width;
+width = Math.round(width * ratio);
+height = Math.round(height * ratio);
+}
+
+resolve({ width, height });
+};
+
+img.onerror = () => {
+resolve({ width: 260, height: 180 });
+};
+
+img.src = src;
+});
+}
+
+async function buildFlowImageGrid(images) {
 if (!images.length) return "";
 
-return images.map((src) => `
-<img src="${src}" alt="Objektbild">
-`).join("");
+const blocks = [];
+
+for (let i = 0; i < images.length; i++) {
+const src = images[i];
+const size = await getImageSize(src, 300);
+
+blocks.push(`
+<div class="editorImageWrapper" style="width:${size.width}px; height:${size.height}px; left:${40 + (i * 30)}px; top:${40 + (i * 30)}px;">
+<img
+src="${src}"
+alt="Objektbild"
+draggable="false"
+contenteditable="false"
+style="width:100%; height:100%; max-width:none; max-height:none; object-fit:contain; background:transparent; border-radius:0;"
+>
+</div>
+`);
+}
+
+return blocks.join("");
 }
 
 async function handleImageUpload(e) {
@@ -388,13 +430,13 @@ ${textAndMaklerHtml}
 
 if (pageThreeImages.length) {
 pages.push(createEditorPage(`
-${buildFlowImageGrid(pageThreeImages)}
+${await buildFlowImageGrid(pageThreeImages)}
 `));
 }
 
 if (pageFourImages.length) {
 pages.push(createEditorPage(`
-${buildFlowImageGrid(pageFourImages)}
+${await buildFlowImageGrid(pageFourImages)}
 `));
 }
 
