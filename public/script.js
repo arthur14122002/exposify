@@ -383,7 +383,7 @@ pages.push(createEditorPage(`
 <div class="editorImageWrapper"
 style="left:40px; top:40px;">
 <img src="${titleImageDataUrl}" alt="Titelbild"
-style="display:block; width:400px; height:auto>
+style="display:block; width:400px; height:auto; max-width:none; max-height:none;>
 </div>
 `));
 
@@ -403,7 +403,7 @@ ${pageThreeImages.map((src, i) => `
 <div class="editorImageWrapper"
 style="left:${40 + i*30}px; top:${40 + i*30}px;">
 <img src="${src}" alt="Objektbild"
-style="display:block; width:260px; height:auto">
+style="display:block; width:260px; height:auto; max-width:none; max-height:none;">
 </div>
 `).join("")}
 `));
