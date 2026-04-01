@@ -95,6 +95,46 @@ pages.forEach((page) => {
 page.classList.add("normalizedExpose");
 });
 
+const grids = [...container.querySelectorAll(".flowImageGrid")];
+
+grids.forEach((grid) => {
+const images = [...grid.querySelectorAll(".flowImageItem img, img")];
+if (!images.length) return;
+
+const replacement = document.createElement("div");
+replacement.style.position = "relative";
+replacement.style.width = "100%";
+replacement.style.minHeight = "900px";
+
+images.forEach((img, index) => {
+const wrapper = document.createElement("div");
+wrapper.className = "editorImageWrapper";
+wrapper.style.position = "absolute";
+wrapper.style.left = `${40 + (index * 30)}px`;
+wrapper.style.top = `${40 + (index * 30)}px`;
+wrapper.style.zIndex = String(index + 1);
+
+const clonedImg = document.createElement("img");
+clonedImg.src = img.src;
+clonedImg.alt = img.alt || "Objektbild";
+clonedImg.style.display = "block";
+clonedImg.style.width = "260px";
+clonedImg.style.height = "auto";
+clonedImg.style.maxWidth = "none";
+clonedImg.style.maxHeight = "none";
+
+wrapper.appendChild(clonedImg);
+
+requestAnimationFrame(() => {
+wrapper.style.width = `${clonedImg.offsetWidth}px`;
+wrapper.style.height = `${clonedImg.offsetHeight}px`;
+});
+
+replacement.appendChild(wrapper);
+});
+
+grid.replaceWith(replacement);
+});
 }
 
 async function loadProject() {
