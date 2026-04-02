@@ -186,6 +186,44 @@ message: "Login fehlgeschlagen."
 }
 });
 
+app.post("/resend-confirmation", async (req, res) => {
+try {
+const { email } = req.body;
+
+if (!email) {
+return res.json({
+success: false,
+message: "Bitte E-Mail eingeben."
+});
+}
+
+const { error } = await supabase.auth.resend({
+type: "signup",
+email
+});
+
+if (error) {
+console.error("Resend error:", error);
+return res.json({
+success: false,
+message: "E-Mail konnte nicht erneut gesendet werden."
+});
+}
+
+res.json({
+success: true,
+message: "Bestätigungs-E-Mail wurde erneut gesendet."
+});
+
+} catch (err) {
+console.error("Resend crash:", err);
+res.json({
+success: false,
+message: "Fehler beim Senden."
+});
+}
+});
+
 app.post("/logout", (req, res) => {
 req.session.destroy(() => {
 res.json({ success: true });

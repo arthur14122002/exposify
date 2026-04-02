@@ -26,7 +26,11 @@
 <div id="authNoticeModal" class="modalOverlay hidden">
 <div class="modalBox">
 <p id="authNoticeText">Hinweis</p>
+
+<div style="display:flex; gap:10px; justify-content:center;">
 <button type="button" id="authNoticeOk">OK</button>
+<button type="button" id="resendBtn" style="display:none;">Erneut senden</button>
+</div>
 </div>
 </div>
 
@@ -34,17 +38,61 @@
 const authNoticeModal = document.getElementById("authNoticeModal");
 const authNoticeText = document.getElementById("authNoticeText");
 const authNoticeOk = document.getElementById("authNoticeOk");
+const resendBtn = document.getElementById("resendBtn");
+
+if (resendBtn) {
+resendBtn.addEventListener("click", async () => {
+const email = document.getElementById("email").value.trim();
+
+if (!email) {
+showAuthNotice("Bitte geben Sie zuerst Ihre E-Mail-Adresse ein.");
+return;
+}
+
+try {
+const res = await fetch("/resend-confirmation", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ email })
+});
+
+const data = await res.json();
+
+if (data.success) {
+showAuthNotice(
+`Die Bestätigungs-E-Mail wurde erneut an ${email} gesendet.`,
+true
+);
+} else {
+showAuthNotice(data.message || "E-Mail konnte nicht erneut gesendet werden.", true);
+}
+} catch (error) {
+console.error(error);
+showAuthNotice("E-Mail konnte nicht erneut gesendet werden.", true);
+}
+});
+}
 
 if (authNoticeOk) {
 authNoticeOk.addEventListener("click", () => {
 authNoticeModal.classList.add("hidden");
+
+// 🔥 Nach Bestätigung direkt zum Login
+window.location.href = "/login.html";
 });
 }
 
-function showAuthNotice(message) {
+function showAuthNotice(message, showResend = false) {
 if (!authNoticeModal || !authNoticeText) return;
+
 authNoticeText.textContent = message;
 authNoticeModal.classList.remove("hidden");
+
+const resendBtn = document.getElementById("resendBtn");
+
+if (resendBtn) {
+resendBtn.style.display = showResend ? "block" : "none";
+}
 }
 
 async function register() {
@@ -61,9 +109,19 @@ body: JSON.stringify({ email, password })
 const data = await res.json();
 
 if (data.success) {
-window.location.href = "/login.html";
-} else {
-showAuthNotice(data.message || "Registrierung fehlgeschlagen.");
+showAuthNotice(
+`Eine Bestätigungs-E-Mail wurde an ${email} gesendet.\n\nBitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich einloggen.`,
+true
+);
+return;
+}else {
+let message = data.message || "Registrierung fehlgeschlagen.";
+
+if (message.includes("invalid")) {
+message = "Bitte geben Sie eine gültige E-Mail-Adresse ein.";
+}
+
+showAuthNotice(message);
 }
 } catch (error) {
 console.error(error);
