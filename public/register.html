@@ -121,6 +121,10 @@ if (message.includes("invalid")) {
 message = "Bitte geben Sie eine gültige E-Mail-Adresse ein.";
 }
 
+if (message.includes("rate limit")) {
+message = "Es wurden gerade zu viele E-Mails angefordert. Bitte warten Sie einen Moment und versuchen Sie es dann erneut.";
+}
+
 showAuthNotice(message);
 }
 } catch (error) {
