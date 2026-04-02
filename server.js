@@ -116,83 +116,75 @@ message: "Bitte E-Mail und Passwort eingeben."
 });
 }
 
-const { data: existing, error: checkError } = await supabase
-.from("users")
-.select("*")
-.eq("email", email)
-.maybeSingle();
-
-if (checkError) {
-console.error("Check error:", checkError);
-return res.json({
-success: false,
-message: "Fehler beim Speichern."
-});
-}
-
-if (existing) {
-return res.json({
-success: false,
-message: "Dieses Konto existiert bereits."
-});
-}
-
-const hash = await bcrypt.hash(password, 10);
-
-const { error } = await supabase.from("users").insert([
-{
+// 🔥 Supabase Auth Registrierung
+const { data, error } = await supabase.auth.signUp({
 email,
-password: hash
-}
-]);
+password
+});
 
 if (error) {
-console.error("Insert error:", error);
+console.error("Register error:", error);
 return res.json({
 success: false,
-message: "Fehler beim Speichern."
+message: error.message || "Registrierung fehlgeschlagen."
 });
 }
 
-res.json({ success: true });
+// 💥 KEIN Login direkt → erst Mail bestätigen
+res.json({
+success: true,
+message: "Bitte bestätigen Sie Ihre E-Mail-Adresse."
+});
 
 } catch (err) {
 console.error("Register crash:", err);
 res.json({
 success: false,
-message: "Fehler beim Speichern."
+message: "Fehler beim Registrieren."
 });
 }
 });
 
 app.post("/login", async (req, res) => {
+try {
 const { email, password } = req.body;
 
-const { data: user, error } = await supabase
-.from("users")
-.select("*")
-.eq("email", email)
-.single();
+const { data, error } = await supabase.auth.signInWithPassword({
+email,
+password
+});
 
-if (error || !user) {
-return res.json({ success: false, message: "Login fehlgeschlagen." });
+if (error || !data.user) {
+return res.json({
+success: false,
+message: "Login fehlgeschlagen."
+});
 }
 
-const valid = await bcrypt.compare(password, user.password);
-
-if (!valid) {
-return res.json({ success: false, message: "Login fehlgeschlagen." });
+// 🔥 CHECK: Email bestätigt?
+if (!data.user.email_confirmed_at) {
+return res.json({
+success: false,
+message: "Bitte bestätigen Sie zuerst Ihre E-Mail."
+});
 }
 
+// ✅ Session wie vorher
 req.session.user = {
-id: user.id,
-email: user.email
+id: data.user.id,
+email: data.user.email
 };
 
 res.json({ success: true });
+
+} catch (err) {
+console.error("Login crash:", err);
+res.json({
+success: false,
+message: "Login fehlgeschlagen."
 });
-
-
+}
+});
 
 app.post("/logout", (req, res) => {
 req.session.destroy(() => {
