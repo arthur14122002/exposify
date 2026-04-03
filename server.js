@@ -175,7 +175,7 @@ const verifyLink = `https://exposifyapp.com/verify?token=${token}`;
 
 try {
 const mailResult = await resend.emails.send({
-from: "Exposify <arthur@exposifyapp.com>",
+from: "Exposify <noreply@exposifyapp.com>",
 to: email,
 subject: "E-Mail bestätigen",
 html: `
