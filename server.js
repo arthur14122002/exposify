@@ -18,6 +18,8 @@ import session from "express-session";
 import { fileURLToPath } from "url";
 import OpenAI from "openai";
 import puppeteer from "puppeteer";
+import { Resend } from "resend";
+import crypto from "crypto";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,8 +44,10 @@ saveUninitialized: false
 );
 
 const openai = new OpenAI({
-apiKey: process.env.OPENAI_API_KEY
+    apiKey: process.env.OPENAI_API_KEY
 });
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 function requireAuth(req, res, next) {
 if (!req.session.user) {
@@ -105,6 +109,10 @@ location: `Die Immobilie befindet sich in ${ort} und profitiert von einer guten 
 };
 }
 
+function createVerificationToken() {
+return crypto.randomBytes(32).toString("hex");
+}
+
 app.post("/register", async (req, res) => {
 try {
 const { email, password } = req.body;
@@ -116,24 +124,69 @@ message: "Bitte E-Mail und Passwort eingeben."
 });
 }
 
-// 🔥 Supabase Auth Registrierung
-const { data, error } = await supabase.auth.signUp({
-email,
-password
-});
-
-if (error) {
-console.error("Register error:", error);
+// Email basic check
+if (!email.includes("@")) {
 return res.json({
 success: false,
-message: error.message || "Registrierung fehlgeschlagen."
+message: "Bitte geben Sie eine gültige E-Mail-Adresse ein."
 });
 }
 
-// 💥 KEIN Login direkt → erst Mail bestätigen
+// Prüfen ob User existiert
+const { data: existingUser } = await supabase
+.from("users")
+.select("*")
+.eq("email", email)
+.single();
+
+if (existingUser) {
+return res.json({
+success: false,
+message: "E-Mail bereits registriert."
+});
+}
+
+// Passwort hashen
+const hashedPassword = await bcrypt.hash(password, 10);
+
+// Token erstellen
+const token = createVerificationToken();
+
+// User speichern
+const { error } = await supabase.from("users").insert([
+{
+email,
+password: hashedPassword,
+verification_token: token,
+email_verified: false
+}
+]);
+
+if (error) {
+console.error(error);
+return res.json({
+success: false,
+message: "Registrierung fehlgeschlagen."
+});
+}
+
+// 🔥 EMAIL SENDEN (Resend)
+const verifyLink = `https://exposifyapp.com/verify.html?token=${token}`;
+
+await resend.emails.send({
+from: "Exposify <noreply@exposifyapp.com>",
+to: email,
+subject: "E-Mail bestätigen",
+html: `
+<h2>Willkommen bei Exposify</h2>
+<p>Bitte bestätigen Sie Ihre E-Mail-Adresse:</p>
+<a href="${verifyLink}">E-Mail bestätigen</a>
+`
+});
+
 res.json({
 success: true,
-message: "Bitte bestätigen Sie Ihre E-Mail-Adresse."
+message: "Bestätigungs-E-Mail wurde gesendet."
 });
 
 } catch (err) {
