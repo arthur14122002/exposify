@@ -174,15 +174,16 @@ message: "Registrierung fehlgeschlagen."
 const verifyLink = `https://exposifyapp.com/verify?token=${token}`;
 
 try {
+const mailResult = await resend.emails.send({
+from: "Exposify <arthur@exposifyapp.com>",
+to: email,
+subject: "E-Mail bestätigen",
 html: `
 <div style="font-family: Arial, sans-serif; background-color: #f4f6f8; padding: 40px 0;">
-
 <div style="max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 10px; text-align: center;">
 
-<!-- LOGO -->
 <img src="https://exposifyapp.com/logo.png" style="height:50px; margin-bottom:20px;" />
 
-<!-- BEGRÜSSUNG -->
 <p style="font-size: 18px; margin-bottom: 10px;">
 Hallo 👋
 </p>
@@ -193,7 +194,6 @@ Hallo 👋
 Bitte bestätigen Sie Ihre E-Mail-Adresse, um Ihr Konto zu aktivieren.
 </p>
 
-<!-- BUTTON -->
 <a href="${verifyLink}"
 style="
 display: inline-block;
@@ -207,21 +207,19 @@ font-weight: bold;
 E-Mail bestätigen
 </a>
 
-<!-- FALLBACK LINK -->
 <p style="font-size:12px; margin-top:25px; color:#888;">
 Oder kopieren Sie diesen Link:<br>
 ${verifyLink}
 </p>
 
-<!-- FOOTER -->
 <p style="margin-top: 30px; font-size: 12px; color: #aaa;">
 Falls Sie sich nicht bei Exposify registriert haben, können Sie diese E-Mail ignorieren.
 </p>
 
 </div>
-
 </div>
 `
+});
 
 console.log("RESEND RESULT:", mailResult);
 
