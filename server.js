@@ -253,44 +253,45 @@ return res.redirect("/login.html?verified=error");
 });
 
 app.post("/login", async (req, res) => {
-try {
 const { email, password } = req.body;
 
-const { data, error } = await supabase.auth.signInWithPassword({
-email,
-password
-});
+const { data: user, error } = await supabase
+.from("users")
+.select("*")
+.eq("email", email)
+.single();
 
-if (error || !data.user) {
+if (error || !user) {
 return res.json({
 success: false,
-message: "Login fehlgeschlagen."
+message: "User nicht gefunden"
 });
 }
 
-// 🔥 CHECK: Email bestätigt?
-if (!data.user.email_confirmed_at) {
+if (!user.email_verified) {
 return res.json({
 success: false,
-message: "Bitte bestätigen Sie zuerst Ihre E-Mail."
+message: "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse."
 });
 }
 
-// ✅ Session wie vorher
+const validPassword = await bcrypt.compare(password, user.password);
+
+if (!validPassword) {
+return res.json({
+success: false,
+message: "Falsches Passwort"
+});
+}
+
 req.session.user = {
-id: data.user.id,
-email: data.user.email
+id: user.id,
+email: user.email
 };
 
-res.json({ success: true });
-
-} catch (err) {
-console.error("Login crash:", err);
-res.json({
-success: false,
-message: "Login fehlgeschlagen."
+return res.json({
+success: true
 });
-}
 });
 
 app.post("/resend-confirmation", async (req, res) => {
