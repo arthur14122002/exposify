@@ -171,7 +171,7 @@ message: "Registrierung fehlgeschlagen."
 }
 
 // Verifizierungslink erstellen
-const verifyLink = `https://exposifyapp.com/verify.html?token=${token}`;
+const verifyLink = `https://exposifyapp.com/verify?token=${token}`;
 
 try {
 const mailResult = await resend.emails.send({
@@ -211,6 +211,44 @@ res.json({
 success: false,
 message: "Fehler beim Registrieren."
 });
+}
+});
+
+app.get("/verify", async (req, res) => {
+try {
+const { token } = req.query;
+
+if (!token) {
+return res.redirect("/login.html?verified=missing");
+}
+
+const { data: user, error: findError } = await supabase
+.from("users")
+.select("*")
+.eq("verification_token", token)
+.single();
+
+if (findError || !user) {
+return res.redirect("/login.html?verified=invalid");
+}
+
+const { error: updateError } = await supabase
+.from("users")
+.update({
+email_verified: true,
+verification_token: null
+})
+.eq("id", user.id);
+
+if (updateError) {
+console.error("Verify update error:", updateError);
+return res.redirect("/login.html?verified=error");
+}
+
+return res.redirect("/login.html?verified=success");
+} catch (err) {
+console.error("Verify crash:", err);
+return res.redirect("/login.html?verified=error");
 }
 });
 
