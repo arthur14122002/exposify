@@ -193,12 +193,18 @@ html: `
 
 <div style="max-width:520px; margin:0 auto; background-color:#ffffff; border-radius:14px; padding:40px 32px; text-align:center; box-sizing:border-box;">
 
+<div style="text-align:center; margin:0 0 24px 0;">
 <img
-src="https://exposifyapp.com/assets/logo-email.png"
+src="https://exposifyapp.com/assets/favicon.png"
 alt="Exposify"
 width="52"
-style="display:block; margin:0 auto 24px auto; width:52px; height:52px;"
+height="52"
+style="display:block; margin:0 auto 10px auto; width:52px; height:52px;"
 />
+<div style="font-family:Arial, sans-serif; font-size:22px; font-weight:700; line-height:1.2; color:#111827;">
+Exposify
+</div>
+</div>
 
 <p style="margin:0 0 14px 0; font-family:Arial, sans-serif; font-size:18px; line-height:1.5; color:#111827;">
 Hallo ${name},
@@ -234,9 +240,13 @@ E-Mail-Adresse bestätigen
 <p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#6b7280;">
 Falls der Button nicht funktioniert, können Sie diesen Link in Ihren Browser kopieren:
 </p>
-
-<p style="margin:0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#2563eb; word-break:break-word; overflow-wrap:anywhere;">
-${verifyLink.replace("token=", "token=<br>")}
+<p style="margin:0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; text-align:center;">
+<a
+href="${verifyLink}"
+style="color:#2563eb; text-decoration:underline; word-break:break-all;"
+>
+${verifyLink}
+</a>
 </p>
 </div>
 
