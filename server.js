@@ -170,10 +170,10 @@ message: "Registrierung fehlgeschlagen."
 });
 }
 
-// 🔥 EMAIL SENDEN (Resend)
+try {
 const verifyLink = `https://exposifyapp.com/verify.html?token=${token}`;
 
-await resend.emails.send({
+const mailResult = await resend.emails.send({
 from: "Exposify <arthur@exposifyapp.com>",
 to: email,
 subject: "E-Mail bestätigen",
@@ -184,10 +184,15 @@ html: `
 `
 });
 
-res.json({
-success: true,
-message: "Bestätigungs-E-Mail wurde gesendet."
+console.log("RESEND RESULT:", mailResult);
+} catch (mailError) {
+console.error("RESEND MAIL ERROR:", mailError);
+
+return res.json({
+success: false,
+message: "Bestätigungs-E-Mail konnte nicht gesendet werden."
 });
+}
 
 } catch (err) {
 console.error("Register crash:", err);
