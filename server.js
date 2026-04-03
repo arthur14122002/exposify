@@ -205,23 +205,6 @@ message: "E-Mail konnte nicht gesendet werden."
 });
 }
 
-const res = await fetch("/register", {
-method: "POST",
-headers: { "Content-Type": "application/json" },
-body: JSON.stringify({
-email,
-password
-})
-});
-
-const data = await res.json();
-
-if (data.success) {
-alert("✅ Verifizierungs-Mail wurde gesendet. Bitte prüfen Sie Ihr Postfach.");
-} else {
-alert("❌ " + data.message);
-}
-
 } catch (err) {
 console.error("Register crash:", err);
 res.json({

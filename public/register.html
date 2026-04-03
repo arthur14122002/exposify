@@ -50,13 +50,23 @@ return;
 }
 
 try {
-const res = await fetch("/resend-confirmation", {
+
+ const res = await fetch("/register", {
 method: "POST",
 headers: { "Content-Type": "application/json" },
-body: JSON.stringify({ email })
+body: JSON.stringify({
+email,
+password
+})
 });
 
 const data = await res.json();
+
+if (data.success) {
+alert("✅ Verifizierungs-Mail wurde gesendet. Bitte prüfen Sie Ihr Postfach.");
+} else {
+alert("❌ " + data.message);
+}
 
 if (data.success) {
 showAuthNotice(
