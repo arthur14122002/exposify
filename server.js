@@ -170,28 +170,56 @@ message: "Registrierung fehlgeschlagen."
 });
 }
 
-try {
+// Verifizierungslink erstellen
 const verifyLink = `https://exposifyapp.com/verify.html?token=${token}`;
 
+try {
 const mailResult = await resend.emails.send({
-from: "Exposify <arthur@exposifyapp.com>",
+from: "Exposify <arthur@exposifyapp.com>", // oder später noreply@
 to: email,
 subject: "E-Mail bestätigen",
 html: `
 <h2>Willkommen bei Exposify</h2>
 <p>Bitte bestätigen Sie Ihre E-Mail-Adresse:</p>
-<a href="${verifyLink}">E-Mail bestätigen</a>
+<p>
+<a href="${verifyLink}" style="padding:10px 20px; background:#2563eb; color:white; text-decoration:none; border-radius:6px;">
+E-Mail bestätigen
+</a>
+</p>
 `
 });
 
 console.log("RESEND RESULT:", mailResult);
+
+return res.json({
+success: true,
+message: "Verifizierungs-Mail wurde gesendet."
+});
+
 } catch (mailError) {
 console.error("RESEND MAIL ERROR:", mailError);
 
 return res.json({
 success: false,
-message: "Bestätigungs-E-Mail konnte nicht gesendet werden."
+message: "E-Mail konnte nicht gesendet werden."
 });
+}
+
+const res = await fetch("/register", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({
+email,
+password
+})
+});
+
+const data = await res.json();
+
+if (data.success) {
+alert("✅ Verifizierungs-Mail wurde gesendet. Bitte prüfen Sie Ihr Postfach.");
+} else {
+alert("❌ " + data.message);
 }
 
 } catch (err) {
