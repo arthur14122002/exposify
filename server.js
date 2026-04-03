@@ -196,7 +196,8 @@ html: `
 <img
 src="https://exposifyapp.com/assets/logo-email.png"
 alt="Exposify"
-style="display:block; margin:0 auto 24px auto; height:52px; width:auto;"
+width="52"
+style="display:block; margin:0 auto 24px auto; width:52px; height:52px;"
 />
 
 <p style="margin:0 0 14px 0; font-family:Arial, sans-serif; font-size:18px; line-height:1.5; color:#111827;">
@@ -219,7 +220,7 @@ padding:14px 28px;
 background-color:#2563eb;
 color:#ffffff;
 text-decoration:none;
-border-radius:8px;
+border-radius:999px;
 font-family:Arial, sans-serif;
 font-size:15px;
 font-weight:700;
@@ -229,12 +230,13 @@ line-height:1;
 E-Mail-Adresse bestätigen
 </a>
 
-<div style="margin-top:32px; padding:18px 16px; background-color:#f9fafb; border-radius:10px; text-align:left;">
+<div style="margin-top:32px; padding:18px 16px; background-color:#f9fafb; border-radius:10px; text-align:center;">
 <p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#6b7280;">
 Falls der Button nicht funktioniert, können Sie diesen Link in Ihren Browser kopieren:
 </p>
+
 <p style="margin:0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#2563eb; word-break:break-word; overflow-wrap:anywhere;">
-${verifyLink}
+${verifyLink.replace("token=", "token=<br>")}
 </p>
 </div>
 
@@ -246,8 +248,8 @@ Exposify – Ihr Tool zur Erstellung professioneller Immobilien-Exposés
 
 <p style="margin:0 0 6px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
 Exposify<br>
-[Straße Hausnummer]<br>
-[PLZ Ort]
+Fährstraße 217<br>
+40221 Düsseldorf
 </p>
 
 <p style="margin:0 0 10px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
