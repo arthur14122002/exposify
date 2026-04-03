@@ -174,48 +174,81 @@ message: "Registrierung fehlgeschlagen."
 const verifyLink = `https://exposifyapp.com/verify?token=${token}`;
 
 try {
+// Name aus Email sauber erzeugen
+const rawName = email.split("@")[0];
+
+const name = rawName
+.replace(/[._-]+/g, " ")
+.split(" ")
+.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+.join(" ");
+
 const mailResult = await resend.emails.send({
 from: "Exposify <noreply@exposifyapp.com>",
 to: email,
-subject: "E-Mail bestätigen",
+subject: "Bitte bestätigen Sie Ihre E-Mail-Adresse",
 html: `
-<div style="font-family: Arial, sans-serif; background-color: #f4f6f8; padding: 40px 0;">
-<div style="max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 10px; text-align: center;">
+<div style="margin:0; padding:0; background-color:#f4f6f8;">
+<div style="width:100%; background-color:#f4f6f8; padding:40px 20px;">
 
-<img src="https://exposifyapp.com/logo.png" style="height:50px; margin-bottom:20px;" />
+<div style="max-width:520px; margin:0 auto; background-color:#ffffff; border-radius:14px; padding:40px 32px; text-align:center; box-sizing:border-box;">
 
-<p style="font-size: 18px; margin-bottom: 10px;">
-Hallo 👋
+<img
+src="https://exposifyapp.com/assets/logo.svg"
+alt="Exposify"
+style="display:block; margin:0 auto 24px auto; height:52px; width:auto;"
+/>
+
+<p style="margin:0 0 14px 0; font-family:Arial, sans-serif; font-size:18px; line-height:1.5; color:#111827;">
+Hallo ${name},
 </p>
 
-<h2 style="margin-bottom: 20px;">Willkommen bei Exposify</h2>
+<h1 style="margin:0 0 18px 0; font-family:Arial, sans-serif; font-size:28px; line-height:1.25; font-weight:700; color:#111827;">
+Willkommen bei Exposify
+</h1>
 
-<p style="color: #555; margin-bottom: 30px;">
-Bitte bestätigen Sie Ihre E-Mail-Adresse, um Ihr Konto zu aktivieren.
+<p style="margin:0 0 30px 0; font-family:Arial, sans-serif; font-size:15px; line-height:1.7; color:#4b5563;">
+Bitte bestätigen Sie Ihre E-Mail-Adresse, um Ihr Konto zu aktivieren und Exposify vollständig nutzen zu können.
 </p>
 
-<a href="${verifyLink}"
+<a
+href="${verifyLink}"
 style="
-display: inline-block;
-padding: 12px 24px;
-background-color: #2563eb;
-color: white;
-text-decoration: none;
-border-radius: 6px;
-font-weight: bold;
-">
-E-Mail bestätigen
+display:inline-block;
+padding:14px 28px;
+background-color:#2563eb;
+color:#ffffff;
+text-decoration:none;
+border-radius:8px;
+font-family:Arial, sans-serif;
+font-size:15px;
+font-weight:700;
+line-height:1;
+"
+>
+E-Mail-Adresse bestätigen
 </a>
 
-<p style="font-size:12px; margin-top:25px; color:#888;">
-Oder kopieren Sie diesen Link:<br>
+<div style="margin-top:32px; padding:18px 16px; background-color:#f9fafb; border-radius:10px;">
+<p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:12px; color:#6b7280;">
+Falls der Button nicht funktioniert, können Sie diesen Link in Ihren Browser kopieren:
+</p>
+<p style="margin:0; word-break:break-all; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#2563eb;">
 ${verifyLink}
 </p>
+</div>
 
-<p style="margin-top: 30px; font-size: 12px; color: #aaa;">
-Falls Sie sich nicht bei Exposify registriert haben, können Sie diese E-Mail ignorieren.
+<hr style="border:none; border-top:1px solid #e5e7eb; margin:30px 0 22px 0;">
+
+<p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:13px; line-height:1.6; color:#6b7280;">
+Exposify – Ihr Tool zur Erstellung professioneller Immobilien-Exposés
 </p>
 
+<p style="margin:0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
+Falls Sie sich nicht bei Exposify registriert haben, können Sie diese E-Mail einfach ignorieren.
+</p>
+
+</div>
 </div>
 </div>
 `
