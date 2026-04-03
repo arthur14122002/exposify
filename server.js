@@ -174,12 +174,12 @@ message: "Registrierung fehlgeschlagen."
 const verifyLink = `https://exposifyapp.com/verify?token=${token}`;
 
 try {
-// Name aus Email sauber erzeugen
 const rawName = email.split("@")[0];
 
 const name = rawName
 .replace(/[._-]+/g, " ")
 .split(" ")
+.filter(Boolean)
 .map(word => word.charAt(0).toUpperCase() + word.slice(1))
 .join(" ");
 
@@ -194,7 +194,7 @@ html: `
 <div style="max-width:520px; margin:0 auto; background-color:#ffffff; border-radius:14px; padding:40px 32px; text-align:center; box-sizing:border-box;">
 
 <img
-src="https://exposifyapp.com/assets/logo.svg"
+src="https://exposifyapp.com/assets/logo-email.png"
 alt="Exposify"
 style="display:block; margin:0 auto 24px auto; height:52px; width:auto;"
 />
@@ -229,11 +229,11 @@ line-height:1;
 E-Mail-Adresse bestätigen
 </a>
 
-<div style="margin-top:32px; padding:18px 16px; background-color:#f9fafb; border-radius:10px;">
-<p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:12px; color:#6b7280;">
+<div style="margin-top:32px; padding:18px 16px; background-color:#f9fafb; border-radius:10px; text-align:left;">
+<p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#6b7280;">
 Falls der Button nicht funktioniert, können Sie diesen Link in Ihren Browser kopieren:
 </p>
-<p style="margin:0; word-break:break-all; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#2563eb;">
+<p style="margin:0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#2563eb; word-break:break-word; overflow-wrap:anywhere;">
 ${verifyLink}
 </p>
 </div>
@@ -242,6 +242,18 @@ ${verifyLink}
 
 <p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:13px; line-height:1.6; color:#6b7280;">
 Exposify – Ihr Tool zur Erstellung professioneller Immobilien-Exposés
+</p>
+
+<p style="margin:0 0 6px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
+Exposify<br>
+[Straße Hausnummer]<br>
+[PLZ Ort]
+</p>
+
+<p style="margin:0 0 10px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
+<a href="https://exposifyapp.com/impressum.html" style="color:#9ca3af; text-decoration:underline;">
+Impressum
+</a>
 </p>
 
 <p style="margin:0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
