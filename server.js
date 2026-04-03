@@ -174,7 +174,7 @@ message: "Registrierung fehlgeschlagen."
 const verifyLink = `https://exposifyapp.com/verify.html?token=${token}`;
 
 await resend.emails.send({
-from: "Exposify <noreply@exposifyapp.com>",
+from: "Exposify <arthur@exposifyapp.com>",
 to: email,
 subject: "E-Mail bestätigen",
 html: `
