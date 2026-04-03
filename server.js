@@ -226,28 +226,35 @@ padding:14px 28px;
 background-color:#2563eb;
 color:#ffffff;
 text-decoration:none;
-border-radius:999px;
+border-radius:30px;
 font-family:Arial, sans-serif;
 font-size:15px;
 font-weight:700;
 line-height:1;
+mso-padding-alt:0;
 "
 >
 E-Mail-Adresse bestätigen
 </a>
 
 <div style="margin-top:32px; padding:18px 16px; background-color:#f9fafb; border-radius:10px; text-align:center;">
-<p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#6b7280;">
+
+<p style="margin:0 0 10px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#6b7280;">
 Falls der Button nicht funktioniert, können Sie diesen Link in Ihren Browser kopieren:
 </p>
-<p style="margin:0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; text-align:center;">
-<a
-href="${verifyLink}"
-style="color:#2563eb; text-decoration:underline; word-break:break-all;"
->
-${verifyLink}
-</a>
-</p>
+
+<div style="font-family:Arial, sans-serif; font-size:12px; line-height:1.6; text-align:center; word-break:break-word;">
+
+<div style="color:#2563eb;">
+https://exposifyapp.com/verify?
+</div>
+
+<div style="color:#2563eb;">
+${verifyLink.split("token=")[1] ? "token=" + verifyLink.split("token=")[1] : ""}
+</div>
+
+</div>
+
 </div>
 
 <hr style="border:none; border-top:1px solid #e5e7eb; margin:30px 0 22px 0;">
