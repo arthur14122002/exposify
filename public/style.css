@@ -445,9 +445,17 @@ cursor: pointer;
 }
 
 .editorActions {
-max-width: 794px;
+display: flex;
+align-items: center;
+justify-content: flex-start;
+gap: 14px;
+flex-wrap: wrap;
+}
+
+.editorActions #helpBtn {
 margin-left: auto;
-margin-right: auto;
+white-space: nowrap;
+border-radius: 10px;
 }
 
 .projectActions button:hover,
@@ -1380,8 +1388,3 @@ padding: 10px 20px;
 border-radius: 8px; /* gleiche Richtung wie deine Buttons */
 }
 
-#helpBtn {
-margin-left: 10px;
-white-space: nowrap;
-border-radius: 10px;
-}
