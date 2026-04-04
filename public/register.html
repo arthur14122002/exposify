@@ -28,87 +28,7 @@
 <a href="/login.html">Zum Login</a>
 </div>
 
-<div id="authNoticeModal" class="modalOverlay hidden">
-<div class="modalBox">
-<p id="authNoticeText">Hinweis</p>
-
-<div style="display:flex; gap:10px; justify-content:center;">
-<button type="button" id="authNoticeOk">OK</button>
-<button type="button" id="resendBtn" style="display:none;">Erneut senden</button>
-</div>
-</div>
-</div>
-
 <script>
-const authNoticeModal = document.getElementById("authNoticeModal");
-const authNoticeText = document.getElementById("authNoticeText");
-const authNoticeOk = document.getElementById("authNoticeOk");
-const resendBtn = document.getElementById("resendBtn");
-
-if (resendBtn) {
-resendBtn.addEventListener("click", async () => {
-const email = document.getElementById("email").value.trim();
-
-if (!email) {
-showAuthNotice("Bitte geben Sie zuerst Ihre E-Mail-Adresse ein.");
-return;
-}
-
-try {
-
- const res = await fetch("/register", {
-method: "POST",
-headers: { "Content-Type": "application/json" },
-body: JSON.stringify({
-email,
-password
-})
-});
-
-const data = await res.json();
-
-if (data.success) {
-alert("✅ Verifizierungs-Mail wurde gesendet. Bitte prüfen Sie Ihr Postfach.");
-} else {
-alert("❌ " + data.message);
-}
-
-if (data.success) {
-showAuthNotice(
-`Die Bestätigungs-E-Mail wurde erneut an ${email} gesendet.`,
-true
-);
-} else {
-showAuthNotice(data.message || "E-Mail konnte nicht erneut gesendet werden.", true);
-}
-} catch (error) {
-console.error(error);
-showAuthNotice("E-Mail konnte nicht erneut gesendet werden.", true);
-}
-});
-}
-
-if (authNoticeOk) {
-authNoticeOk.addEventListener("click", () => {
-authNoticeModal.classList.add("hidden");
-
-// 🔥 Nach Bestätigung direkt zum Login
-window.location.href = "/login.html";
-});
-}
-
-function showAuthNotice(message, showResend = false) {
-if (!authNoticeModal || !authNoticeText) return;
-
-authNoticeText.textContent = message;
-authNoticeModal.classList.remove("hidden");
-
-const resendBtn = document.getElementById("resendBtn");
-
-if (resendBtn) {
-resendBtn.style.display = showResend ? "block" : "none";
-}
-}
 
 async function register() {
 const email = document.getElementById("email").value.trim();
@@ -124,12 +44,9 @@ body: JSON.stringify({ email, password })
 const data = await res.json();
 
 if (data.success) {
-showAuthNotice(
-`Eine Bestätigungs-E-Mail wurde an ${email} gesendet.\n\nBitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich einloggen.`,
-true
-);
+window.location.href = `/check-email.html?email=${encodeURIComponent(email)}`;
 return;
-}else {
+} else {
 let message = data.message || "Registrierung fehlgeschlagen.";
 
 if (message.includes("invalid")) {
@@ -140,11 +57,11 @@ if (message.includes("rate limit")) {
 message = "Es wurden gerade zu viele E-Mails angefordert. Bitte warten Sie einen Moment und versuchen Sie es dann erneut.";
 }
 
-showAuthNotice(message);
+alert(message);
 }
 } catch (error) {
 console.error(error);
-showAuthNotice("Registrierung fehlgeschlagen.");
+alert("Registrierung fehlgeschlagen.");
 }
 }
 

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+
+<link rel="icon" type="image/png" href="/favicon.png?v=21">
+
+<title>E-Mail bestätigen – Exposify</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+
+<body class="authPage">
+
+<div class="authCard">
+
+<div class="authLogo">
+<img src="/assets/logo.svg" alt="Exposify Logo">
+</div>
+
+<h1>E-Mail bestätigen</h1>
+
+<p id="infoText" style="margin-bottom:20px;">
+Wir haben Ihnen eine Bestätigungs-E-Mail gesendet.
+</p>
+
+<button id="resendBtn">E-Mail erneut senden</button>
+
+<p id="timerText" style="margin-top:10px; font-size:13px; color:#888;"></p>
+
+<p style="margin-top:20px;">
+<a href="/login.html">Zum Login</a>
+</p>
+
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const email = params.get("email");
+
+const infoText = document.getElementById("infoText");
+const resendBtn = document.getElementById("resendBtn");
+const timerText = document.getElementById("timerText");
+
+if (email) {
+infoText.textContent = `Wir haben eine Bestätigungs-E-Mail an ${email} gesendet.`;
+}
+
+let cooldown = 0;
+
+resendBtn.addEventListener("click", async () => {
+if (!email || cooldown > 0) return;
+
+try {
+const res = await fetch("/resend-verification", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ email })
+});
+
+const data = await res.json();
+
+if (data.success) {
+infoText.textContent = `Die Bestätigungs-E-Mail wurde erneut an ${email} gesendet.`;
+startCooldown();
+} else {
+infoText.textContent = data.message || "E-Mail konnte nicht erneut gesendet werden.";
+}
+
+} catch (e) {
+console.error(e);
+}
+});
+
+function startCooldown() {
+cooldown = 60;
+resendBtn.disabled = true;
+
+const interval = setInterval(() => {
+cooldown--;
+timerText.textContent = `Erneut senden in ${cooldown}s`;
+
+if (cooldown <= 0) {
+clearInterval(interval);
+resendBtn.disabled = false;
+timerText.textContent = "";
+}
+}, 1000);
+}
+</script>
+
+</body>
+</html>
