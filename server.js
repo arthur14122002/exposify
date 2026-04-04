@@ -732,6 +732,62 @@ message: "Fehler beim Senden des Reset-Links."
 }
 });
 
+app.post("/reset-password", async (req, res) => {
+try {
+const { token, password } = req.body;
+
+if (!token || !password) {
+return res.json({
+success: false,
+message: "Token oder Passwort fehlt."
+});
+}
+
+const { data: user, error } = await supabase
+.from("users")
+.select("*")
+.eq("reset_token", token)
+.single();
+
+if (error || !user) {
+return res.json({
+success: false,
+message: "Ungültiger oder abgelaufener Reset-Link."
+});
+}
+
+const hashedPassword = await bcrypt.hash(password, 10);
+
+const { error: updateError } = await supabase
+.from("users")
+.update({
+password: hashedPassword,
+reset_token: null
+})
+.eq("id", user.id);
+
+if (updateError) {
+console.error(updateError);
+return res.json({
+success: false,
+message: "Passwort konnte nicht aktualisiert werden."
+});
+}
+
+return res.json({
+success: true,
+message: "Passwort wurde erfolgreich aktualisiert."
+});
+
+} catch (err) {
+console.error("Reset password crash:", err);
+return res.json({
+success: false,
+message: "Fehler beim Zurücksetzen des Passworts."
+});
+}
+});
+
 app.post("/resend-confirmation", async (req, res) => {
 try {
 const { email } = req.body;
