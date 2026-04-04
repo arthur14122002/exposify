@@ -20,6 +20,8 @@
 <img src="/assets/logo.svg" alt="Exposify Logo">
 </div>
 
+<button id="helpBtn" class="helpBtn">Hilfe</button>
+
 <div class="sidebarTop">
 <button type="button" onclick="goNew()">Neues Projekt</button>
 <button type="button" onclick="goDashboard()">Meine Projekte</button>
@@ -1503,6 +1505,23 @@ updatePageButtons();
 updateImageButtons();
 }, 50);
 </script>
+
+<div id="helpModal" class="modalOverlay hidden">
+<div class="modalBox" style="max-width:400px; text-align:left;">
+
+<h3 style="margin-bottom:10px;">Editor-Hilfe</h3>
+
+<p style="font-size:14px; line-height:1.6;">
+• Bilder können frei verschoben werden<br>
+• Mit den Pfeiltasten wechseln Sie Bilder zwischen Seiten<br>
+• Bilder können skaliert werden<br>
+• Texte sind direkt bearbeitbar<br>
+• Neue Seiten entstehen automatisch bei mehr Inhalt
+</p>
+
+<button id="helpClose" style="margin-top:15px;">OK</button>
+</div>
+</div>
 
 </body>
 </html>

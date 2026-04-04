@@ -543,3 +543,26 @@ document.getElementById("vermarktung")?.addEventListener("change", updatePreisPl
 
 // Beim Laden direkt setzen
 document.addEventListener("DOMContentLoaded", updatePreisPlaceholder);
+
+const helpBtn = document.getElementById("helpBtn");
+const helpModal = document.getElementById("helpModal");
+const helpClose = document.getElementById("helpClose");
+
+// Button Klick
+if (helpBtn) {
+helpBtn.addEventListener("click", () => {
+helpModal.classList.remove("hidden");
+});
+}
+
+// Schließen
+if (helpClose) {
+helpClose.addEventListener("click", () => {
+helpModal.classList.add("hidden");
+});
+}
+
+if (!localStorage.getItem("editorHelpSeen")) {
+helpModal.classList.remove("hidden");
+localStorage.setItem("editorHelpSeen", "true");
+}
