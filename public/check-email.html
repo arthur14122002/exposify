@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 
-<link rel="icon" type="image/png" href="/favicon.png?v=21">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=21">
+<link rel="shortcut icon" href="/favicon.png?v=21">
+<link rel="apple-touch-icon" href="/favicon.png?v=21">
 
 <title>E-Mail bestätigen – Exposify</title>
 <link rel="stylesheet" href="/style.css">
@@ -25,8 +27,6 @@ Wir haben Ihnen eine Bestätigungs-E-Mail gesendet.
 
 <button id="resendBtn">E-Mail erneut senden</button>
 
-<p id="timerText" style="margin-top:10px; font-size:13px; color:#888;"></p>
-
 <p style="margin-top:20px;">
 <a href="/login.html">Zum Login</a>
 </p>
@@ -39,11 +39,12 @@ const email = params.get("email");
 
 const infoText = document.getElementById("infoText");
 const resendBtn = document.getElementById("resendBtn");
-const timerText = document.getElementById("timerText");
 
 if (email) {
 infoText.textContent = `Wir haben eine Bestätigungs-E-Mail an ${email} gesendet.`;
 }
+
+startCooldown();
 
 let cooldown = 0;
 
@@ -74,19 +75,25 @@ console.error(e);
 function startCooldown() {
 cooldown = 60;
 resendBtn.disabled = true;
+resendBtn.textContent = `Erneut senden in ${cooldown}s`;
 
 const interval = setInterval(() => {
 cooldown--;
-timerText.textContent = `Erneut senden in ${cooldown}s`;
+resendBtn.textContent = `Erneut senden in ${cooldown}s`;
 
 if (cooldown <= 0) {
 clearInterval(interval);
 resendBtn.disabled = false;
-timerText.textContent = "";
+resendBtn.textContent = "E-Mail erneut senden";
 }
 }, 1000);
 }
 </script>
+
+<footer class="footer">
+<a href="/impressum.html">Impressum</a>
+<a href="/datenschutz.html">Datenschutz</a>
+</footer>
 
 </body>
 </html>
