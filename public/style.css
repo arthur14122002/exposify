@@ -1360,26 +1360,28 @@ min-height: 100vh;
 margin: auto;
 }
 
-#helpBtn.helpBtn {
-position: fixed !important;
-top: 20px !important;
-right: 20px !important;
-left: auto !important;
-width: auto !important;
-min-width: 0 !important;
-display: inline-block !important;
-padding: 8px 16px !important;
-background: #2563eb !important;
-color: #fff !important;
-border: none !important;
-border-radius: 20px !important;
-font-size: 14px !important;
-line-height: 1.2 !important;
-cursor: pointer !important;
-z-index: 10001 !important;
-margin: 0 !important;
+.modalBox h3 {
+text-align: center;
 }
 
-#helpBtn.helpBtn:hover {
-background: #1d4ed8 !important;
+.modalBox p {
+text-align: left;
+}
+
+.modalBox button {
+display: block;
+margin: 20px auto 0 auto;
+}
+
+.modalBox button {
+display: block;
+margin: 20px auto 0 auto;
+padding: 10px 20px;
+border-radius: 8px; /* gleiche Richtung wie deine Buttons */
+}
+
+#helpBtn {
+margin-left: 10px;
+white-space: nowrap;
+border-radius: 10px;
 }
