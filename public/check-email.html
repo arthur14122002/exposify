@@ -40,13 +40,13 @@ const email = params.get("email");
 const infoText = document.getElementById("infoText");
 const resendBtn = document.getElementById("resendBtn");
 
+let cooldown = 0;
+
 if (email) {
 infoText.textContent = `Wir haben eine Bestätigungs-E-Mail an ${email} gesendet.`;
 }
 
 startCooldown();
-
-let cooldown = 0;
 
 resendBtn.addEventListener("click", async () => {
 if (!email || cooldown > 0) return;
@@ -75,6 +75,8 @@ console.error(e);
 function startCooldown() {
 cooldown = 60;
 resendBtn.disabled = true;
+resendBtn.style.opacity = "0.6";
+resendBtn.style.cursor = "not-allowed";
 resendBtn.textContent = `Erneut senden in ${cooldown}s`;
 
 const interval = setInterval(() => {
@@ -84,6 +86,8 @@ resendBtn.textContent = `Erneut senden in ${cooldown}s`;
 if (cooldown <= 0) {
 clearInterval(interval);
 resendBtn.disabled = false;
+resendBtn.style.opacity = "1";
+resendBtn.style.cursor = "pointer";
 resendBtn.textContent = "E-Mail erneut senden";
 }
 }, 1000);
