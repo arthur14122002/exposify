@@ -1521,6 +1521,35 @@ setTimeout(() => {
 updatePageButtons();
 updateImageButtons();
 }, 50);
+
+const helpBtn = document.getElementById("helpBtn");
+const helpModal = document.getElementById("helpModal");
+const helpClose = document.getElementById("helpClose");
+
+if (helpModal && helpModal.classList.contains("hidden")) {
+helpModal.style.display = "none";
+}
+
+if (helpBtn && helpModal) {
+helpBtn.addEventListener("click", () => {
+helpModal.classList.remove("hidden");
+helpModal.style.display = "flex";
+});
+}
+
+if (helpClose && helpModal) {
+helpClose.addEventListener("click", () => {
+helpModal.classList.add("hidden");
+helpModal.style.display = "none";
+});
+}
+
+if (helpModal && !localStorage.getItem("editorHelpSeen")) {
+helpModal.classList.remove("hidden");
+helpModal.style.display = "flex";
+localStorage.setItem("editorHelpSeen", "true");
+}
+
 </script>
 
 </body>
