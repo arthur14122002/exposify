@@ -896,6 +896,16 @@ currentProject = data;
 isUserLoggedIn = true;
 updateLoginButtonState();
 
+const helpStorageKey = currentProject?.userId
+? `editorHelpSeen_${currentProject.userId}`
+: "editorHelpSeen";
+
+if (helpModal && !localStorage.getItem(helpStorageKey)) {
+helpModal.classList.remove("hidden");
+helpModal.style.display = "flex";
+localStorage.setItem(helpStorageKey, "true");
+}
+
 const rawHtml = data.html || "Kein Inhalt vorhanden.";
 
 if (rawHtml.includes("editorPage")) {
@@ -1544,12 +1554,6 @@ helpClose.addEventListener("click", () => {
 helpModal.classList.add("hidden");
 helpModal.style.display = "none";
 });
-}
-
-if (helpModal && !localStorage.getItem("editorHelpSeen")) {
-helpModal.classList.remove("hidden");
-helpModal.style.display = "flex";
-localStorage.setItem("editorHelpSeen", "true");
 }
 
 </script>
