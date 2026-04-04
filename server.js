@@ -113,6 +113,10 @@ function createVerificationToken() {
 return crypto.randomBytes(32).toString("hex");
 }
 
+function isPasswordValid(password) {
+return typeof password === "string" && password.length >= 8 && /\d/.test(password);
+}
+
 app.post("/register", async (req, res) => {
 try {
 const { email, password } = req.body;
@@ -121,6 +125,13 @@ if (!email || !password) {
 return res.json({
 success: false,
 message: "Bitte E-Mail und Passwort eingeben."
+});
+}
+
+if (!isPasswordValid(password)) {
+return res.json({
+success: false,
+message: "Passwort muss mindestens 8 Zeichen enthalten und mindestens eine Zahl haben."
 });
 }
 
@@ -185,7 +196,7 @@ const name = rawName
 .join(" ");
 
 const mailResult = await resend.emails.send({
-from: "Exposify <noreply@exposifyapp.com>",
+from: "Exposify <hello@exposifyapp.com>",
 to: email,
 subject: "Bitte bestätigen Sie Ihre E-Mail-Adresse",
 html: `
@@ -380,7 +391,7 @@ const name = rawName
 .join(" ");
 
 const mailResult = await resend.emails.send({
-from: "Exposify <noreply@exposifyapp.com>",
+from: "Exposify <hello@exposifyapp.com>",
 to: email,
 subject: "Bitte bestätigen Sie Ihre E-Mail-Adresse",
 html: `
@@ -600,7 +611,8 @@ const token = createVerificationToken();
 const { error: updateError } = await supabase
 .from("users")
 .update({
-reset_token: token
+reset_token: token,
+reset_token_created_at: new Date().toISOString()
 })
 .eq("email", email);
 
@@ -623,7 +635,7 @@ const name = rawName
 .join(" ");
 
 const mailResult = await resend.emails.send({
-from: "Exposify <noreply@exposifyapp.com>",
+from: "Exposify <hello@exposifyapp.com>",
 to: email,
 subject: "Passwort zurücksetzen",
 html: `
@@ -743,6 +755,13 @@ message: "Token oder Passwort fehlt."
 });
 }
 
+if (!isPasswordValid(password)) {
+return res.json({
+success: false,
+message: "Passwort muss mindestens 8 Zeichen enthalten und mindestens eine Zahl haben."
+});
+}
+
 const { data: user, error } = await supabase
 .from("users")
 .select("*")
@@ -756,13 +775,28 @@ message: "Ungültiger oder abgelaufener Reset-Link."
 });
 }
 
+const createdAt = user.reset_token_created_at
+? new Date(user.reset_token_created_at).getTime()
+: 0;
+
+const now = Date.now();
+const diffMinutes = (now - createdAt) / (1000 * 60);
+
+if (!createdAt || diffMinutes > 60) {
+return res.json({
+success: false,
+message: "Dieser Reset-Link ist abgelaufen. Bitte fordern Sie einen neuen an."
+});
+}
+
 const hashedPassword = await bcrypt.hash(password, 10);
 
 const { error: updateError } = await supabase
 .from("users")
 .update({
 password: hashedPassword,
-reset_token: null
+reset_token: null,
+reset_token_created_at: null
 })
 .eq("id", user.id);
 
