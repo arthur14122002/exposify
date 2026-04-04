@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=21">
+<link rel="shortcut icon" href="/favicon.png?v=21">
+<link rel="apple-touch-icon" href="/favicon.png?v=21">
+
+<title>Reset-E-Mail gesendet – Exposify</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+
+<body class="authPage">
+
+<div class="authCard">
+
+<div class="authLogo">
+<img src="/assets/logo.svg" alt="Exposify Logo">
+</div>
+
+<h1>E-Mail prüfen</h1>
+
+<p id="infoText" style="margin-bottom:20px;">
+Wir haben Ihnen eine E-Mail zum Zurücksetzen Ihres Passworts gesendet.
+</p>
+
+<button id="resendBtn">Reset-Link erneut senden</button>
+
+<p style="margin-top:20px;">
+<a href="/login.html">Zurück zum Login</a>
+</p>
+
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const email = params.get("email");
+
+const infoText = document.getElementById("infoText");
+const resendBtn = document.getElementById("resendBtn");
+
+let cooldown = 0;
+
+if (email) {
+infoText.textContent = `Wir haben eine E-Mail zum Zurücksetzen Ihres Passworts an ${email} gesendet.`;
+}
+
+startCooldown();
+
+resendBtn.addEventListener("click", async () => {
+if (!email || cooldown > 0) return;
+
+try {
+const res = await fetch("/forgot-password", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ email })
+});
+
+const data = await res.json();
+
+if (data.success) {
+infoText.textContent = `Die Reset-E-Mail wurde erneut an ${email} gesendet.`;
+startCooldown();
+} else {
+infoText.textContent = data.message || "Reset-Link konnte nicht erneut gesendet werden.";
+}
+} catch (e) {
+console.error(e);
+infoText.textContent = "Reset-Link konnte nicht erneut gesendet werden.";
+}
+});
+
+function startCooldown() {
+cooldown = 60;
+resendBtn.disabled = true;
+resendBtn.style.opacity = "0.6";
+resendBtn.style.cursor = "not-allowed";
+resendBtn.textContent = `Erneut senden in ${cooldown}s`;
+
+const interval = setInterval(() => {
+cooldown--;
+resendBtn.textContent = `Erneut senden in ${cooldown}s`;
+
+if (cooldown <= 0) {
+clearInterval(interval);
+resendBtn.disabled = false;
+resendBtn.style.opacity = "1";
+resendBtn.style.cursor = "pointer";
+resendBtn.textContent = "Reset-Link erneut senden";
+}
+}, 1000);
+}
+</script>
+
+<footer class="footer">
+<a href="/impressum.html">Impressum</a>
+<a href="/datenschutz.html">Datenschutz</a>
+</footer>
+
+</body>
+</html>

@@ -571,6 +571,167 @@ success: true
 });
 });
 
+app.post("/forgot-password", async (req, res) => {
+try {
+const { email } = req.body;
+
+if (!email) {
+return res.json({
+success: false,
+message: "Bitte E-Mail eingeben."
+});
+}
+
+const { data: user, error } = await supabase
+.from("users")
+.select("*")
+.eq("email", email)
+.single();
+
+if (error || !user) {
+return res.json({
+success: false,
+message: "Benutzer nicht gefunden."
+});
+}
+
+const token = createVerificationToken();
+
+const { error: updateError } = await supabase
+.from("users")
+.update({
+reset_token: token
+})
+.eq("email", email);
+
+if (updateError) {
+console.error(updateError);
+return res.json({
+success: false,
+message: "Reset-Link konnte nicht vorbereitet werden."
+});
+}
+
+const resetLink = `https://exposifyapp.com/reset-password.html?token=${token}`;
+
+const rawName = email.split("@")[0];
+const name = rawName
+.replace(/[._-]+/g, " ")
+.split(" ")
+.filter(Boolean)
+.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+.join(" ");
+
+const mailResult = await resend.emails.send({
+from: "Exposify <noreply@exposifyapp.com>",
+to: email,
+subject: "Passwort zurücksetzen",
+html: `
+<div style="margin:0; padding:0; background-color:#f4f6f8;">
+<div style="width:100%; background-color:#f4f6f8; padding:40px 20px;">
+<div style="max-width:520px; margin:0 auto; background-color:#ffffff; border-radius:14px; padding:40px 32px; text-align:center; box-sizing:border-box;">
+
+<div style="text-align:center; margin:0 0 24px 0;">
+<img
+src="https://exposifyapp.com/assets/favicon.png"
+alt="Exposify"
+width="52"
+height="52"
+style="display:block; margin:0 auto 10px auto; width:52px; height:52px;"
+/>
+<div style="font-family:Arial, sans-serif; font-size:22px; font-weight:700; line-height:1.2; color:#111827;">
+Exposify
+</div>
+</div>
+
+<p style="margin:0 0 14px 0; font-family:Arial, sans-serif; font-size:18px; line-height:1.5; color:#111827;">
+Hallo ${name},
+</p>
+
+<h1 style="margin:0 0 18px 0; font-family:Arial, sans-serif; font-size:28px; line-height:1.25; font-weight:700; color:#111827;">
+Passwort zurücksetzen
+</h1>
+
+<p style="margin:0 0 30px 0; font-family:Arial, sans-serif; font-size:15px; line-height:1.7; color:#4b5563;">
+Sie haben eine Zurücksetzung Ihres Passworts angefordert. Klicken Sie auf den folgenden Button, um ein neues Passwort festzulegen.
+</p>
+
+<a
+href="${resetLink}"
+style="
+display:inline-block;
+padding:14px 28px;
+background-color:#2563eb;
+color:#ffffff;
+text-decoration:none;
+border-radius:30px;
+font-family:Arial, sans-serif;
+font-size:15px;
+font-weight:700;
+line-height:1;
+"
+>
+Passwort zurücksetzen
+</a>
+
+<div style="margin-top:32px; padding:18px 16px; background-color:#f9fafb; border-radius:10px; text-align:center;">
+<p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#6b7280;">
+Falls der Button nicht funktioniert, können Sie diesen Link in Ihren Browser kopieren:
+</p>
+<p style="margin:0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; text-align:center;">
+<a
+href="${resetLink}"
+style="color:#2563eb; text-decoration:underline; word-break:break-all;"
+>
+${resetLink}
+</a>
+</p>
+</div>
+
+<hr style="border:none; border-top:1px solid #e5e7eb; margin:30px 0 22px 0;">
+
+<p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:13px; line-height:1.6; color:#6b7280;">
+Exposify – Ihr Tool zur Erstellung professioneller Immobilien-Exposés
+</p>
+
+<p style="margin:0 0 6px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
+Exposify<br>
+Fährstraße 217<br>
+40221 Düsseldorf
+</p>
+
+<p style="margin:0 0 10px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
+<a href="https://exposifyapp.com/impressum.html" style="color:#9ca3af; text-decoration:underline;">
+Impressum
+</a>
+</p>
+
+<p style="margin:0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
+Falls Sie diese Anfrage nicht gestellt haben, können Sie diese E-Mail ignorieren.
+</p>
+
+</div>
+</div>
+</div>
+`
+});
+
+console.log("RESET MAIL RESULT:", mailResult);
+
+return res.json({
+success: true,
+message: "Reset-Link wurde gesendet."
+});
+
+} catch (err) {
+console.error("Forgot password crash:", err);
+return res.json({
+success: false,
+message: "Fehler beim Senden des Reset-Links."
+});
+}
+});
+
 app.post("/resend-confirmation", async (req, res) => {
 try {
 const { email } = req.body;
