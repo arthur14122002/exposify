@@ -21,8 +21,8 @@
 <h1>Erstelle professionelle Immobilien-Exposés in nur wenigen Minuten</h1>
 
 <p class="heroSub">
-Exposify nimmt dir Layout, Seitenaufteilung und PDF-Erstellung ab.
-Du konzentrierst dich nur noch auf den Inhalt.
+Exposify übernimmt Layout, Seitenaufteilung und PDF-Erstellung für dich.
+Du konzentrierst dich nur auf den Inhalt.
 </p>
 
 <div class="heroButtons">
@@ -42,13 +42,6 @@ Du konzentrierst dich nur noch auf den Inhalt.
 <section class="landingHeroImage">
 <div class="imageWrapper">
 <img src="/assets/editor-preview.png" alt="Exposify Editor Vorschau">
-</div>
-
-<div class="heroCTA">
-<button class="primaryBtn big" onclick="goToEditor()">
-Kostenlos Exposé erstellen
-</button>
-<p class="ctaSub">Keine Anmeldung notwendig • In wenigen Minuten zum fertigen Exposé</p>
 </div>
 </section>
 
@@ -101,30 +94,27 @@ Kostenlos Exposé erstellen
 <section class="cta">
 
 <h2>Bereit für dein erstes professionelles Exposé?</h2>
-<p>Starte jetzt kostenlos und erstelle dein erstes Projekt in wenigen Minuten.</p>
+<p>Teste Exposify 30 Tage kostenlos und erstelle hochwertige Exposés in wenigen Minuten.</p>
 
-<button class="primaryBtn big" onclick="goToEditor()">Jetzt kostenlos starten</button>
+<button class="primaryBtn big" onclick="goToEditor()">30 Tage kostenlos testen</button>
 
 </section>
 
 </div>
 
-    <footer class="footer">
-        <a href="/impressum.html">Impressum</a>
-        <a href="/datenschutz.html">Datenschutz</a>
-    </footer>
+<footer class="footer">
+<a href="/impressum.html">Impressum</a>
+<a href="/datenschutz.html">Datenschutz</a>
+</footer>
 
 <script>
+function scrollToSection() {
+document.getElementById("how").scrollIntoView({ behavior: "smooth" });
+}
 
-    function scrollToSection() {
-        document.getElementById("how").scrollIntoView({behavior: "smooth"});
-    }
-
-    function goToEditor() {
-        window.location.href = "/";
-    }
-
-
+function goToEditor() {
+window.location.href = "/";
+}
 </script>
 
 </body>
