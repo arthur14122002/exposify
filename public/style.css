@@ -1360,20 +1360,26 @@ min-height: 100vh;
 margin: auto;
 }
 
-.helpBtn {
-position: fixed;
-top: 20px;
-right: 20px;
-background: #2563eb;
-color: white;
-border: none;
-border-radius: 20px;
-padding: 8px 16px;
-font-size: 14px;
-cursor: pointer;
-z-index: 9999;
+#helpBtn.helpBtn {
+position: fixed !important;
+top: 20px !important;
+right: 20px !important;
+left: auto !important;
+width: auto !important;
+min-width: 0 !important;
+display: inline-block !important;
+padding: 8px 16px !important;
+background: #2563eb !important;
+color: #fff !important;
+border: none !important;
+border-radius: 20px !important;
+font-size: 14px !important;
+line-height: 1.2 !important;
+cursor: pointer !important;
+z-index: 10001 !important;
+margin: 0 !important;
 }
 
-.helpBtn:hover {
-background: #1d4ed8;
+#helpBtn.helpBtn:hover {
+background: #1d4ed8 !important;
 }
