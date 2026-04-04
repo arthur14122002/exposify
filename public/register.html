@@ -21,6 +21,9 @@
 
 <input id="email" type="email" placeholder="E-Mail">
 <input id="password" type="password" placeholder="Passwort">
+<p id="passwordHint" style="display:none; margin-top:8px; margin-bottom:0; font-size:13px; color:#dc2626;">
+Passwort muss mindestens 8 Zeichen enthalten und mindestens eine Zahl haben.
+</p>
 
 <button type="button" onclick="register()">Konto erstellen</button>
 
@@ -29,10 +32,42 @@
 </div>
 
 <script>
+function isPasswordValid(password) {
+return password.length >= 8 && /\d/.test(password);
+}
+
+function updatePasswordValidation() {
+const passwordInput = document.getElementById("password");
+const passwordHint = document.getElementById("passwordHint");
+if (!passwordInput || !passwordHint) return;
+
+const password = passwordInput.value.trim();
+
+if (password === "") {
+passwordInput.style.borderColor = "";
+passwordHint.style.display = "none";
+return;
+}
+
+if (isPasswordValid(password)) {
+passwordInput.style.borderColor = "";
+passwordHint.style.display = "none";
+} else {
+passwordInput.style.borderColor = "#dc2626";
+passwordHint.style.display = "block";
+}
+}
 
 async function register() {
 const email = document.getElementById("email").value.trim();
 const password = document.getElementById("password").value.trim();
+
+if (!isPasswordValid(password)) {
+updatePasswordValidation();
+alert("Passwort muss mindestens 8 Zeichen enthalten und mindestens eine Zahl haben.");
+return;
+}
+
 
 try {
 const res = await fetch("/register", {
@@ -68,6 +103,9 @@ alert("Registrierung fehlgeschlagen.");
 document.getElementById("password").addEventListener("keydown", (e) => {
 if (e.key === "Enter") register();
 });
+
+document.getElementById("password").addEventListener("input", updatePasswordValidation);
+document.getElementById("password").addEventListener("blur", updatePasswordValidation);
 
 document.getElementById("email").addEventListener("keydown", (e) => {
 if (e.key === "Enter") register();
