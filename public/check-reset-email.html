@@ -22,7 +22,7 @@
 <h1>E-Mail prüfen</h1>
 
 <p id="infoText" style="margin-bottom:20px;">
-Wir haben Ihnen eine E-Mail zum Zurücksetzen Ihres Passworts gesendet.
+Wir haben dir eine E-Mail zum Zurücksetzen deines Passworts gesendet.
 </p>
 
 <button id="resendBtn">Reset-Link erneut senden</button>
@@ -43,7 +43,7 @@ const resendBtn = document.getElementById("resendBtn");
 let cooldown = 0;
 
 if (email) {
-infoText.textContent = `Wir haben eine E-Mail zum Zurücksetzen Ihres Passworts an ${email} gesendet.`;
+infoText.textContent = `Wir haben eine E-Mail zum Zurücksetzen deines Passworts an ${email} gesendet.`;
 }
 
 startCooldown();

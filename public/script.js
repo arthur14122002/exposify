@@ -478,7 +478,7 @@ window.location.href = "/dashboard.html";
 
 function goLogin() {
 if (isUserLoggedIn) {
-showNotice("Sie sind bereits angemeldet.");
+showNotice("Du bist bereits angemeldet.");
 return;
 }
 

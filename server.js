@@ -53,7 +53,7 @@ function requireAuth(req, res, next) {
 if (!req.session.user) {
 return res.status(401).json({
 success: false,
-message: "Sie müssen angemeldet sein, um Exposés erstellen und bearbeiten zu können."
+message: "Du musst angemeldet sein, um Exposés erstellen und bearbeiten zu können."
 });
 }
 next();
@@ -139,7 +139,7 @@ message: "Passwort muss mindestens 8 Zeichen enthalten und mindestens eine Zahl 
 if (!email.includes("@")) {
 return res.json({
 success: false,
-message: "Bitte geben Sie eine gültige E-Mail-Adresse ein."
+message: "Bitte gib eine gültige E-Mail-Adresse ein."
 });
 }
 
@@ -198,7 +198,7 @@ const name = rawName
 const mailResult = await resend.emails.send({
 from: "Exposify <hello@exposifyapp.com>",
 to: email,
-subject: "Bitte bestätigen Sie Ihre E-Mail-Adresse",
+subject: "Bitte bestätige deine E-Mail-Adresse",
 html: `
 <div style="margin:0; padding:0; background-color:#f4f6f8;">
 <div style="width:100%; background-color:#f4f6f8; padding:40px 20px;">
@@ -227,7 +227,7 @@ Willkommen bei Exposify
 </h1>
 
 <p style="margin:0 0 30px 0; font-family:Arial, sans-serif; font-size:15px; line-height:1.7; color:#4b5563;">
-Bitte bestätigen Sie Ihre E-Mail-Adresse, um Ihr Konto zu aktivieren und Exposify vollständig nutzen zu können.
+Bitte bestätige deine E-Mail-Adresse, um dein Konto zu aktivieren und Exposify vollständig nutzen zu können.
 </p>
 
 <a
@@ -251,7 +251,7 @@ E-Mail-Adresse bestätigen
 
 <div style="margin-top:32px; padding:18px 16px; background-color:#f9fafb; border-radius:10px; text-align:center;">
 <p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#6b7280;">
-Falls der Button nicht funktioniert, können Sie diesen Link in Ihren Browser kopieren:
+Falls der Button nicht funktioniert, kannst du diesen Link in deinen Browser kopieren:
 </p>
 <p style="margin:0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; text-align:center;">
 <a
@@ -266,7 +266,7 @@ ${verifyLink}
 <hr style="border:none; border-top:1px solid #e5e7eb; margin:30px 0 22px 0;">
 
 <p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:13px; line-height:1.6; color:#6b7280;">
-Exposify – Ihr Tool zur Erstellung professioneller Immobilien-Exposés
+Exposify – Dein Tool zur Erstellung professioneller Immobilien-Exposés
 </p>
 
 <p style="margin:0 0 6px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
@@ -282,7 +282,7 @@ Impressum
 </p>
 
 <p style="margin:0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
-Falls Sie sich nicht bei Exposify registriert haben, können Sie diese E-Mail einfach ignorieren.
+Falls du dich nicht bei Exposify registriert hast, kannst du diese E-Mail einfach ignorieren.
 </p>
 
 </div>
@@ -357,7 +357,7 @@ const diffSeconds = Math.floor((now - lastSent) / 1000);
 if (diffSeconds < 60) {
 return res.json({
 success: false,
-message: `Bitte warten Sie noch ${60 - diffSeconds} Sekunden, bevor Sie die E-Mail erneut anfordern.`
+message: `Bitte warte noch ${60 - diffSeconds} Sekunden, bevor du die E-Mail erneut anforderst.`
 });
 }
 
@@ -393,7 +393,7 @@ const name = rawName
 const mailResult = await resend.emails.send({
 from: "Exposify <hello@exposifyapp.com>",
 to: email,
-subject: "Bitte bestätigen Sie Ihre E-Mail-Adresse",
+subject: "Bitte bestätige deine E-Mail-Adresse",
 html: `
 <div style="margin:0; padding:0; background-color:#f4f6f8;">
 <div style="width:100%; background-color:#f4f6f8; padding:40px 20px;">
@@ -422,7 +422,7 @@ Willkommen bei Exposify
 </h1>
 
 <p style="margin:0 0 30px 0; font-family:Arial, sans-serif; font-size:15px; line-height:1.7; color:#4b5563;">
-Bitte bestätigen Sie Ihre E-Mail-Adresse, um Ihr Konto zu aktivieren und Exposify vollständig nutzen zu können.
+Bitte bestätige deine E-Mail-Adresse, um dein Konto zu aktivieren und Exposify vollständig nutzen zu können.
 </p>
 
 <a
@@ -446,7 +446,7 @@ E-Mail-Adresse bestätigen
 
 <div style="margin-top:32px; padding:18px 16px; background-color:#f9fafb; border-radius:10px; text-align:center;">
 <p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#6b7280;">
-Falls der Button nicht funktioniert, können Sie diesen Link in Ihren Browser kopieren:
+Falls der Button nicht funktioniert, kannst du diesen Link in deinen Browser kopieren:
 </p>
 <p style="margin:0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; text-align:center;">
 <a
@@ -461,7 +461,7 @@ ${verifyLink}
 <hr style="border:none; border-top:1px solid #e5e7eb; margin:30px 0 22px 0;">
 
 <p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:13px; line-height:1.6; color:#6b7280;">
-Exposify – Ihr Tool zur Erstellung professioneller Immobilien-Exposés
+Exposify – Dein Tool zur Erstellung professioneller Immobilien-Exposés
 </p>
 
 <p style="margin:0 0 6px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
@@ -477,7 +477,7 @@ Impressum
 </p>
 
 <p style="margin:0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
-Falls Sie sich nicht bei Exposify registriert haben, können Sie diese E-Mail einfach ignorieren.
+Falls du dich nicht bei Exposify registriert hast, kannst du diese E-Mail einfach ignorieren.
 </p>
 
 </div>
@@ -650,7 +650,7 @@ message: "User nicht gefunden"
 if (!user.email_verified) {
 return res.json({
 success: false,
-message: "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse."
+message: "Bitte bestätige zuerst deine E-Mail-Adresse."
 });
 }
 
@@ -756,7 +756,7 @@ Passwort zurücksetzen
 </h1>
 
 <p style="margin:0 0 30px 0; font-family:Arial, sans-serif; font-size:15px; line-height:1.7; color:#4b5563;">
-Sie haben eine Zurücksetzung Ihres Passworts angefordert. Klicken Sie auf den folgenden Button, um ein neues Passwort festzulegen.
+Du hast eine Zurücksetzung deines Passworts angefordert. Klicke auf den folgenden Button, um ein neues Passwort festzulegen.
 </p>
 
 <a
@@ -779,7 +779,7 @@ Passwort zurücksetzen
 
 <div style="margin-top:32px; padding:18px 16px; background-color:#f9fafb; border-radius:10px; text-align:center;">
 <p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#6b7280;">
-Falls der Button nicht funktioniert, können Sie diesen Link in Ihren Browser kopieren:
+Falls der Button nicht funktioniert, kannst du diesen Link in deinen Browser kopieren:
 </p>
 <p style="margin:0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; text-align:center;">
 <a
@@ -794,7 +794,7 @@ ${resetLink}
 <hr style="border:none; border-top:1px solid #e5e7eb; margin:30px 0 22px 0;">
 
 <p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:13px; line-height:1.6; color:#6b7280;">
-Exposify – Ihr Tool zur Erstellung professioneller Immobilien-Exposés
+Exposify – Dein Tool zur Erstellung professioneller Immobilien-Exposés
 </p>
 
 <p style="margin:0 0 6px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
@@ -810,7 +810,7 @@ Impressum
 </p>
 
 <p style="margin:0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
-Falls Sie diese Anfrage nicht gestellt haben, können Sie diese E-Mail ignorieren.
+Falls du diese Anfrage nicht gestellt hast, kannst du diese E-Mail ignorieren.
 </p>
 
 </div>
@@ -876,7 +876,7 @@ const diffMinutes = (now - createdAt) / (1000 * 60);
 if (!createdAt || diffMinutes > 60) {
 return res.json({
 success: false,
-message: "Dieser Reset-Link ist abgelaufen. Bitte fordern Sie einen neuen an."
+message: "Dieser Reset-Link ist abgelaufen. Bitte forder einen neuen an."
 });
 }
 

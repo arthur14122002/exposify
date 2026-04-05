@@ -85,11 +85,11 @@ return;
 let message = data.message || "Registrierung fehlgeschlagen.";
 
 if (message.includes("invalid")) {
-message = "Bitte geben Sie eine gültige E-Mail-Adresse ein.";
+message = "Bitte gib eine gültige E-Mail-Adresse ein.";
 }
 
 if (message.includes("rate limit")) {
-message = "Es wurden gerade zu viele E-Mails angefordert. Bitte warten Sie einen Moment und versuchen Sie es dann erneut.";
+message = "Es wurden gerade zu viele E-Mails angefordert. Bitte warte einen Moment und versuche es dann erneut.";
 }
 
 alert(message);
