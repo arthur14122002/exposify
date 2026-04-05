@@ -1379,10 +1379,12 @@ margin: auto;
 }
 
 .modalBox button {
-display: block;
-margin: 20px auto 0 auto;
-padding: 10px 20px;
-border-radius: 8px;
+padding: 10px 18px;
+font-size: 14px;
+border-radius: 10px;
+width: auto; /
+min-width: 80px;
+display: inline-block;
 }
 
 .modalBox {

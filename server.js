@@ -539,49 +539,67 @@ const welcomeHtml = `
 
 <div style="max-width:520px; margin:0 auto; background-color:#ffffff; border-radius:14px; padding:40px 32px; text-align:center; box-sizing:border-box;">
 
+<div style="text-align:center; margin:0 0 24px 0;">
+<img
+src="https://exposifyapp.com/assets/favicon.png"
+alt="Exposify"
+width="52"
+height="52"
+style="display:block; margin:0 auto 10px auto; width:52px; height:52px;"
+/>
+<div style="font-family:Arial, sans-serif; font-size:22px; font-weight:700; line-height:1.2; color:#111827;">
+Exposify
+</div>
+</div>
 
-<div style="text-align:center;">
-
-<img src="https://exposifyapp.com/favicon.png" alt="Exposify" style="width:42px; margin-bottom:14px;">
-
-<h1 style="margin:0 0 10px 0; font-family:Arial, sans-serif; font-size:22px; color:#111827;">
+<h1 style="margin:0 0 18px 0; font-family:Arial, sans-serif; font-size:28px; line-height:1.25; font-weight:700; color:#111827;">
 Willkommen bei Exposify
 </h1>
 
-<p style="margin:0 0 22px 0; font-family:Arial, sans-serif; font-size:14px; color:#6b7280;">
+<p style="margin:0 0 14px 0; font-family:Arial, sans-serif; font-size:18px; line-height:1.5; color:#111827;">
 Schön, dass du dabei bist.
 </p>
 
-<p style="margin:0 0 30px 0; font-family:Arial, sans-serif; font-size:14px; line-height:1.6; color:#374151;">
+<p style="margin:0 0 30px 0; font-family:Arial, sans-serif; font-size:15px; line-height:1.7; color:#4b5563;">
 Mit Exposify kannst du professionelle Immobilien-Exposés in wenigen Minuten erstellen,
 flexibel bearbeiten und direkt als PDF exportieren.
 </p>
 
-<a href="https://exposifyapp.com/"
-style="display:inline-block; padding:12px 22px; background:#2563eb; color:white; border-radius:10px; font-weight:600; font-size:14px; text-decoration:none;">
+<a
+href="https://exposifyapp.com/"
+style="
+display:inline-block;
+padding:14px 28px;
+background-color:#2563eb;
+color:#ffffff;
+text-decoration:none;
+border-radius:30px;
+font-family:Arial, sans-serif;
+font-size:15px;
+font-weight:700;
+line-height:1;
+"
+>
 Jetzt starten
 </a>
 
-</div>
-
-<!-- 👇 WICHTIG: gleiche Box wie Verify-Mail -->
 <div style="margin-top:32px; padding:18px 16px; background-color:#f9fafb; border-radius:10px; text-align:center;">
 
-<p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:13px; color:#6b7280;">
+<p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#6b7280;">
 Fragen?
 </p>
 
-<p style="margin:0 0 12px 0; font-family:Arial, sans-serif; font-size:13px;">
+<p style="margin:0 0 12px 0; font-family:Arial, sans-serif; font-size:12px;">
 <a href="mailto:support@exposifyapp.com" style="color:#2563eb; text-decoration:underline;">
 support@exposifyapp.com
 </a>
 </p>
 
-<p style="margin:0 0 6px 0; font-family:Arial, sans-serif; font-size:13px; color:#6b7280;">
+<p style="margin:0 0 6px 0; font-family:Arial, sans-serif; font-size:12px; color:#6b7280;">
 Feedback oder Ideen:
 </p>
 
-<p style="margin:0; font-family:Arial, sans-serif; font-size:13px;">
+<p style="margin:0; font-family:Arial, sans-serif; font-size:12px;">
 <a href="mailto:arthur@exposifyapp.com" style="color:#2563eb; text-decoration:underline;">
 arthur@exposifyapp.com
 </a>
@@ -591,22 +609,23 @@ arthur@exposifyapp.com
 
 <hr style="border:none; border-top:1px solid #e5e7eb; margin:30px 0 22px 0;">
 
-<p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:13px; line-height:1.6; color:#6b7280; text-align: center;">
-Exposify – Dein Tool für professionelle Immobilien-Exposés
+<p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:13px; line-height:1.6; color:#6b7280;">
+Exposify – Dein Tool zur Erstellung professioneller Immobilien-Exposés
 </p>
 
-<p style="margin:0 0 6px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af; text-align: center;">
+<p style="margin:0 0 6px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
 Exposify<br>
 Fährstraße 217<br>
 40221 Düsseldorf
 </p>
 
-<p style="margin:0 0 10px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af; text-align: center;">
+<p style="margin:0 0 10px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
 <a href="https://exposifyapp.com/impressum.html" style="color:#9ca3af; text-decoration:underline;">
 Impressum
 </a>
 </p>
 
+</div>
 </div>
 </div>
 `;
