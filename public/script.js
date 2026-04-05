@@ -548,22 +548,23 @@ const helpBtn = document.getElementById("helpBtn");
 const helpModal = document.getElementById("helpModal");
 const helpClose = document.getElementById("helpClose");
 
-// Button Klick
-if (helpBtn) {
+if (helpBtn && helpModal) {
 helpBtn.addEventListener("click", () => {
 helpModal.classList.remove("hidden");
+helpModal.style.display = "flex";
 });
 }
 
-// Schließen
-if (helpClose) {
+if (helpClose && helpModal) {
 helpClose.addEventListener("click", () => {
 helpModal.classList.add("hidden");
+helpModal.style.display = "none";
 });
 }
 
-if (!localStorage.getItem("editorHelpSeen")) {
+if (helpModal && !localStorage.getItem("editorHelpSeen")) {
 helpModal.classList.remove("hidden");
+helpModal.style.display = "flex";
 localStorage.setItem("editorHelpSeen", "true");
 }
 
