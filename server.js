@@ -582,8 +582,8 @@ Feedback oder Ideen:
 </p>
 
 <p style="margin:0; font-family:Arial, sans-serif; font-size:13px;">
-<a href="mailto:artur@exposifyapp.com" style="color:#2563eb; text-decoration:underline;">
-artur@exposifyapp.com
+<a href="mailto:arthur@exposifyapp.com" style="color:#2563eb; text-decoration:underline;">
+arthur@exposifyapp.com
 </a>
 </p>
 

@@ -566,3 +566,33 @@ if (!localStorage.getItem("editorHelpSeen")) {
 helpModal.classList.remove("hidden");
 localStorage.setItem("editorHelpSeen", "true");
 }
+
+const welcomeModal = document.getElementById("welcomeModal");
+const welcomeModalOk = document.getElementById("welcomeModalOk");
+
+function openWelcomeModal() {
+if (!welcomeModal) return;
+welcomeModal.classList.remove("hidden");
+welcomeModal.style.display = "flex";
+}
+
+function closeWelcomeModal() {
+if (!welcomeModal) return;
+welcomeModal.classList.add("hidden");
+welcomeModal.style.display = "none";
+}
+
+if (welcomeModalOk) {
+welcomeModalOk.addEventListener("click", () => {
+closeWelcomeModal();
+});
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+const shouldShowWelcome = localStorage.getItem("showWelcomePopup") === "true";
+
+if (shouldShowWelcome) {
+openWelcomeModal();
+localStorage.removeItem("showWelcomePopup");
+}
+});

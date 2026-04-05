@@ -105,6 +105,7 @@ body: JSON.stringify({ email, password })
 const data = await res.json();
 
 if (data.success) {
+localStorage.setItem("showWelcomePopup", "true");
 window.location.href = "/";
 } else {
 showAuthNotice(data.message || "Login fehlgeschlagen.");
