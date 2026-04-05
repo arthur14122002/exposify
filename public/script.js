@@ -589,7 +589,7 @@ closeWelcomeModal();
 });
 }
 
-window.addEventListener("DOMContentLoaded", () => {
+function checkWelcomePopup() {
 if (welcomeModal) {
 welcomeModal.classList.add("hidden");
 welcomeModal.style.display = "none";
@@ -601,4 +601,7 @@ if (shouldShowWelcome) {
 openWelcomeModal();
 localStorage.removeItem("showWelcomePopup");
 }
-});
+}
+
+checkWelcomePopup();
+window.addEventListener("DOMContentLoaded", checkWelcomePopup);
