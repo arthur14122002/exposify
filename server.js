@@ -534,8 +534,8 @@ return res.redirect("/login.html?verified=error");
 }
 
 const welcomeHtml = `
-<div style="background-color:#f3f4f6; padding:40px 0;">
-<div style="max-width:520px; margin:0 auto; background:white; border-radius:14px; padding:40px 32px; box-shadow:0 10px 30px rgba(0,0,0,0.08);">
+<div style="background-color:#f3f4f6; padding:40px 16px;">
+<div style="max-width:500px; margin:0 auto; background:white; border-radius:14px; padding:40px 32px; box-shadow:0 10px 30px rgba(0,0,0,0.08);">
 
 <div style="text-align:center;">
 
@@ -588,17 +588,17 @@ artur@exposifyapp.com
 
 <hr style="border:none; border-top:1px solid #e5e7eb; margin:30px 0 22px 0;">
 
-<p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:13px; line-height:1.6; color:#6b7280;">
+<p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:13px; line-height:1.6; color:#6b7280; text-align: center;">
 Exposify – Dein Tool für professionelle Immobilien-Exposés
 </p>
 
-<p style="margin:0 0 6px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
+<p style="margin:0 0 6px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af; text-align: center;">
 Exposify<br>
 Fährstraße 217<br>
 40221 Düsseldorf
 </p>
 
-<p style="margin:0 0 10px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af;">
+<p style="margin:0 0 10px 0; font-family:Arial, sans-serif; font-size:12px; line-height:1.6; color:#9ca3af; text-align: center;">
 <a href="https://exposifyapp.com/impressum.html" style="color:#9ca3af; text-decoration:underline;">
 Impressum
 </a>
