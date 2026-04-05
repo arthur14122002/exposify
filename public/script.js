@@ -589,6 +589,11 @@ closeWelcomeModal();
 }
 
 window.addEventListener("DOMContentLoaded", () => {
+if (welcomeModal) {
+welcomeModal.classList.add("hidden");
+welcomeModal.style.display = "none";
+}
+
 const shouldShowWelcome = localStorage.getItem("showWelcomePopup") === "true";
 
 if (shouldShowWelcome) {
