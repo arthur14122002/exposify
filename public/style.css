@@ -1378,23 +1378,34 @@ min-height: 100vh;
 margin: auto;
 }
 
-.modalBox h3 {
-text-align: center;
-}
-
-.modalBox p {
-text-align: left;
-}
-
-.modalBox button {
-display: block;
-margin: 20px auto 0 auto;
-}
-
 .modalBox button {
 display: block;
 margin: 20px auto 0 auto;
 padding: 10px 20px;
-border-radius: 8px; /* gleiche Richtung wie deine Buttons */
+border-radius: 8px;
+}
+
+.modalBox {
+text-align: center;
+}
+
+#noticeModalText,
+#authNoticeText {
+text-align: center;
+}
+
+#helpModal .modalBox h3 {
+text-align: center;
+}
+
+#helpModal .modalBox p {
+text-align: left;
+}
+
+#helpClose,
+#noticeModalOk,
+#authNoticeOk {
+display: block;
+margin: 20px auto 0 auto;
 }
 
