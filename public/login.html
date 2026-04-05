@@ -40,6 +40,16 @@
 </div>
 
 <script>
+
+function setupWelcomeEligibility() {
+const params = new URLSearchParams(window.location.search);
+const verified = params.get("verified");
+
+if (verified === "success" && !localStorage.getItem("welcomeShown")) {
+localStorage.setItem("welcomeEligible", "true");
+}
+}
+
 const authNoticeModal = document.getElementById("authNoticeModal");
 const authNoticeText = document.getElementById("authNoticeText");
 const authNoticeOk = document.getElementById("authNoticeOk");
@@ -105,7 +115,15 @@ body: JSON.stringify({ email, password })
 const data = await res.json();
 
 if (data.success) {
+const welcomeEligible = localStorage.getItem("welcomeEligible") === "true";
+const welcomeShown = localStorage.getItem("welcomeShown") === "true";
+
+if (welcomeEligible && !welcomeShown) {
 localStorage.setItem("showWelcomePopup", "true");
+localStorage.setItem("welcomeShown", "true");
+localStorage.removeItem("welcomeEligible");
+}
+
 window.location.href = "/";
 } else {
 showAuthNotice(data.message || "Login fehlgeschlagen.");
@@ -125,6 +143,7 @@ if (e.key === "Enter") login();
 });
 
 window.addEventListener("DOMContentLoaded", () => {
+setupWelcomeEligibility();
 checkAuthStatus();
 });
 
