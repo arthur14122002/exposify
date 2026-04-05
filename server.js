@@ -534,8 +534,11 @@ return res.redirect("/login.html?verified=error");
 }
 
 const welcomeHtml = `
-<div style="background-color:#f3f4f6; padding:40px 16px;">
-<div style="max-width:500px; margin:0 auto; background:white; border-radius:14px; padding:40px 32px; box-shadow:0 10px 30px rgba(0,0,0,0.08);">
+<div style="margin:0; padding:0; background-color:#f4f6f8;">
+<div style="width:100%; background-color:#f4f6f8; padding:40px 20px;">
+
+<div style="max-width:520px; margin:0 auto; background-color:#ffffff; border-radius:14px; padding:40px 32px; text-align:center; box-sizing:border-box;">
+
 
 <div style="text-align:center;">
 
