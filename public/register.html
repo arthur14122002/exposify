@@ -59,6 +59,7 @@ const openModal = document.querySelector(".modalOverlay:not(.hidden)");
 
 if (openModal) {
 e.preventDefault();
+e.stopPropagation();
 closeAllModals();
 }
 }
@@ -104,6 +105,15 @@ passwordHint.style.display = "block";
 }
 }
 
+<script>
+const authNoticeModal = document.getElementById("authNoticeModal");
+const authNoticeText = document.getElementById("authNoticeText");
+const authNoticeOk = document.getElementById("authNoticeOk");
+
+function isModalOpen() {
+return !!document.querySelector(".modalOverlay:not(.hidden)");
+}
+
 async function register() {
 const email = document.getElementById("email").value.trim();
 const password = document.getElementById("password").value.trim();
@@ -146,16 +156,33 @@ showAuthNotice("Registrierung fehlgeschlagen.");
 }
 }
 
+function isModalOpen() {
+return !!document.querySelector(".modalOverlay:not(.hidden)");
+}
+
 document.getElementById("password").addEventListener("keydown", (e) => {
-if (e.key === "Enter") register();
+if (e.key === "Enter") {
+if (isModalOpen()) {
+e.preventDefault();
+return;
+}
+register();
+}
+});
+
+document.getElementById("email").addEventListener("keydown", (e) => {
+if (e.key === "Enter") {
+if (isModalOpen()) {
+e.preventDefault();
+return;
+}
+register();
+}
 });
 
 document.getElementById("password").addEventListener("input", updatePasswordValidation);
 document.getElementById("password").addEventListener("blur", updatePasswordValidation);
 
-document.getElementById("email").addEventListener("keydown", (e) => {
-if (e.key === "Enter") register();
-});
 </script>
 
 <footer class="footer">
