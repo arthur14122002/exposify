@@ -533,6 +533,50 @@ console.error("Verify update error:", updateError);
 return res.redirect("/login.html?verified=error");
 }
 
+const welcomeHtml = `
+<div style="font-family:Arial,sans-serif; line-height:1.6;">
+<h2>Willkommen bei Exposify </h2>
+<p>Schön, dass du dabei bist.</p>
+
+<p>
+Mit Exposify kannst du professionelle Immobilien-Exposés
+in wenigen Minuten erstellen, bearbeiten und als PDF exportieren.
+</p>
+
+<p>
+Wenn du Fragen hast:<br>
+support@exposifyapp.com
+</p>
+
+<p>
+Feedback oder Ideen:<br>
+artur@exposifyapp.com
+</p>
+
+<p style="margin-top:20px;">
+Viel Erfolg mit deinem ersten Exposé!
+</p>
+
+<p>
+<strong>Exposify</strong><br>
+Dein Tool für professionelle Immobilien-Exposés
+</p>
+</div>
+`;
+
+// ✅ Willkommens-Mail senden
+try {
+await resend.emails.send({
+from: "Exposify <hello@exposifyapp.com>",
+to: user.email,
+subject: "Willkommen bei Exposify",
+html: welcomeHtml
+});
+} catch (mailError) {
+console.error("Welcome mail error:", mailError);
+}
+
+// Weiterleitung
 return res.redirect("/login.html?verified=success");
 } catch (err) {
 console.error("Verify crash:", err);
