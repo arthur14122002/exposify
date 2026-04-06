@@ -9,25 +9,28 @@
 <title>Zahlung erfolgreich – Exposify</title>
 <link rel="stylesheet" href="/style.css">
 </head>
-<body>
+<body style="min-height:100vh; display:flex; flex-direction:column;">
 
-<div class="landing">
-<section class="hero" style="padding-bottom:40px;">
-<div class="heroContent">
-<h1>Zahlung erfolgreich</h1>
-<p class="heroSub">
-Dein Zugang wurde erfolgreich aktiviert. Du kannst jetzt mit Exposify starten.
+<div class="landing" style="flex:1; display:flex; align-items:center; justify-content:center;">
+<section class="hero" style="width:100%; padding:80px 20px 40px 20px;">
+<div class="heroContent" style="max-width:900px; margin:0 auto; text-align:center;">
+
+<h1 style="margin-bottom:28px;">Zahlung erfolgreich</h1>
+
+<p class="heroSub" style="max-width:720px; margin:0 auto 40px auto; font-size:22px; line-height:1.7;">
+Dein Zugang wurde erfolgreich aktiviert. Du kannst jetzt direkt mit Exposify starten und professionelle Exposés erstellen.
 </p>
 
-<div class="heroButtons">
+<div class="heroButtons" style="display:flex; justify-content:center; gap:18px; flex-wrap:wrap; margin-top:10px;">
 <button class="primaryBtn" onclick="goToApp()">Zur App</button>
 <button class="secondaryBtn" onclick="goToDashboard()">Meine Projekte</button>
 </div>
+
 </div>
 </section>
 </div>
 
-<footer class="footer">
+<footer class="footer" style="margin-top:auto;">
 <a href="/support.html">Support</a>
 <a href="/impressum.html">Impressum</a>
 <a href="/datenschutz.html">Datenschutz</a>
