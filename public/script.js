@@ -595,11 +595,11 @@ welcomeModal.classList.add("hidden");
 welcomeModal.style.display = "none";
 }
 
-const shouldShowWelcome = localStorage.getItem("showWelcomePopup") === "true";
+const shouldShowWelcome = sessionStorage.getItem("showWelcomePopup") === "true";
 
 if (shouldShowWelcome) {
 openWelcomeModal();
-localStorage.removeItem("showWelcomePopup");
+sessionStorage.removeItem("showWelcomePopup");
 }
 }
 

@@ -45,8 +45,8 @@ function setupWelcomeEligibility() {
 const params = new URLSearchParams(window.location.search);
 const verified = params.get("verified");
 
-if (verified === "success" && !localStorage.getItem("welcomeShown")) {
-localStorage.setItem("welcomeEligible", "true");
+if (verified === "success") {
+sessionStorage.setItem("showWelcomeAfterLogin", "true");
 }
 }
 
@@ -115,13 +115,13 @@ body: JSON.stringify({ email, password })
 const data = await res.json();
 
 if (data.success) {
-const welcomeEligible = localStorage.getItem("welcomeEligible") === "true";
+const shouldShowAfterLogin = sessionStorage.getItem("showWelcomeAfterLogin") === "true";
 const welcomeShown = localStorage.getItem("welcomeShown") === "true";
 
-if (welcomeEligible && !welcomeShown) {
-localStorage.setItem("showWelcomePopup", "true");
+if (shouldShowAfterLogin && !welcomeShown) {
+sessionStorage.setItem("showWelcomePopup", "true");
 localStorage.setItem("welcomeShown", "true");
-localStorage.removeItem("welcomeEligible");
+sessionStorage.removeItem("showWelcomeAfterLogin");
 }
 
 window.location.href = "/";
