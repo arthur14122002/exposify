@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=21">
+<link rel="shortcut icon" href="/favicon.png?v=21">
+<link rel="apple-touch-icon" href="/favicon.png?v=21">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preise – Exposify</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="landing">
+
+<section class="hero" style="padding-bottom:40px;">
+<div class="heroContent">
+<h1>Wähle das passende Modell für Exposify</h1>
+
+<p class="heroSub">
+Starte flexibel mit einem einzelnen Exposé oder nutze Exposify Pro für unbegrenzte Erstellung und Bearbeitung.
+</p>
+</div>
+</section>
+
+<section class="features" style="align-items:stretch;">
+
+<div class="feature" style="max-width:420px; margin:0 auto;">
+<h3>Einzelnes Exposé</h3>
+<p style="font-size:32px; font-weight:800; color:#111827; margin:16px 0 10px 0;">4,99 €</p>
+<p style="margin-bottom:18px;">Einmalige Zahlung pro Exposé.</p>
+
+<p>✓ 1 Exposé erstellen</p>
+<p>✓ PDF-Export</p>
+<p>✓ Ideal für gelegentliche Nutzung</p>
+
+<div style="margin-top:22px;">
+<button class="primaryBtn" onclick="selectPlan('single')">Einmalig starten</button>
+</div>
+</div>
+
+<div class="feature" style="max-width:420px; margin:0 auto; border:2px solid #2563eb;">
+<div style="display:inline-block; margin-bottom:14px; padding:6px 12px; border-radius:999px; background:#2563eb; color:white; font-size:13px; font-weight:700;">
+Beste Wahl
+</div>
+
+<h3>Exposify Pro</h3>
+<p style="font-size:32px; font-weight:800; color:#111827; margin:16px 0 10px 0;">34,99 €<span style="font-size:16px; font-weight:600;"> / Monat</span></p>
+<p style="margin-bottom:18px;">30 Tage kostenlos testen, danach monatlich kündbar.</p>
+
+<p>✓ Unbegrenzt Exposés erstellen</p>
+<p>✓ Bearbeiten und speichern</p>
+<p>✓ PDF-Export inklusive</p>
+<p>✓ Für Makler und regelmäßige Nutzung</p>
+
+<div style="margin-top:22px;">
+<button class="primaryBtn" onclick="selectPlan('pro')">30 Tage kostenlos testen</button>
+</div>
+</div>
+
+</section>
+
+<section class="cta" style="padding-top:30px;">
+<p>Schon ein Konto vorhanden?</p>
+<button class="secondaryBtn" onclick="goToLogin()">Zum Login</button>
+</section>
+
+</div>
+
+<footer class="footer">
+<a href="/support.html">Support</a>
+<a href="/impressum.html">Impressum</a>
+<a href="/datenschutz.html">Datenschutz</a>
+</footer>
+
+<script>
+function selectPlan(plan) {
+localStorage.setItem("selectedPlan", plan);
+window.location.href = "/register.html";
+}
+
+function goToLogin() {
+window.location.href = "/login.html";
+}
+</script>
+
+</body>
+</html>
