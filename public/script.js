@@ -590,18 +590,20 @@ closeWelcomeModal();
 }
 
 function checkWelcomePopup() {
-if (welcomeModal) {
+if (!welcomeModal) return;
+
 welcomeModal.classList.add("hidden");
 welcomeModal.style.display = "none";
-}
 
-const shouldShowWelcome = sessionStorage.getItem("showWelcomePopup") === "true";
+const params = new URLSearchParams(window.location.search);
+const shouldShowWelcome = params.get("welcome") === "1";
+const welcomeShown = localStorage.getItem("welcomeShown") === "true";
 
-if (shouldShowWelcome) {
+if (shouldShowWelcome && !welcomeShown) {
 openWelcomeModal();
-sessionStorage.removeItem("showWelcomePopup");
+localStorage.setItem("welcomeShown", "true");
+window.history.replaceState({}, document.title, "/");
 }
 }
 
 checkWelcomePopup();
-window.addEventListener("DOMContentLoaded", checkWelcomePopup);

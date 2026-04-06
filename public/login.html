@@ -119,9 +119,9 @@ const shouldShowAfterLogin = sessionStorage.getItem("showWelcomeAfterLogin") ===
 const welcomeShown = localStorage.getItem("welcomeShown") === "true";
 
 if (shouldShowAfterLogin && !welcomeShown) {
-sessionStorage.setItem("showWelcomePopup", "true");
-localStorage.setItem("welcomeShown", "true");
 sessionStorage.removeItem("showWelcomeAfterLogin");
+window.location.href = "/?welcome=1";
+return;
 }
 
 window.location.href = "/";
