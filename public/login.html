@@ -40,7 +40,6 @@
 </div>
 
 <script>
-
 function setupWelcomeEligibility() {
 const params = new URLSearchParams(window.location.search);
 const verified = params.get("verified");
@@ -78,20 +77,19 @@ modal.style.display = "none";
 
 document.addEventListener("keydown", (e) => {
 if (e.key === "Enter") {
-
 const openModal = document.querySelector(".modalOverlay:not(.hidden)");
 
 if (openModal) {
 e.preventDefault();
 closeAllModals();
 }
-
 }
 });
 
 if (authNoticeOk) {
 authNoticeOk.addEventListener("click", () => {
 authNoticeModal.classList.add("hidden");
+authNoticeModal.style.display = "none";
 });
 }
 
@@ -99,6 +97,7 @@ function showAuthNotice(message) {
 if (!authNoticeModal || !authNoticeText) return;
 authNoticeText.textContent = message;
 authNoticeModal.classList.remove("hidden");
+authNoticeModal.style.display = "flex";
 }
 
 async function login() {
@@ -146,8 +145,6 @@ window.addEventListener("DOMContentLoaded", () => {
 setupWelcomeEligibility();
 checkAuthStatus();
 });
-
-
 </script>
 
 <footer class="footer">
