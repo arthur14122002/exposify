@@ -110,9 +110,36 @@ Beste Wahl
 </footer>
 
 <script>
-function selectPlan(plan) {
+async function selectPlan(plan) {
 localStorage.setItem("selectedPlan", plan);
+
+try {
+const authRes = await fetch("/auth/status");
+const authData = await authRes.json();
+
+if (!authData.loggedIn) {
 window.location.href = "/register.html";
+return;
+}
+
+const res = await fetch("/create-checkout-session", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ plan })
+});
+
+const data = await res.json();
+
+if (data.success && data.url) {
+window.location.href = data.url;
+return;
+}
+
+alert(data.message || "Checkout konnte nicht gestartet werden.");
+} catch (error) {
+console.error(error);
+alert("Checkout konnte nicht gestartet werden.");
+}
 }
 
 function goToLogin() {

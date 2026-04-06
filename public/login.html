@@ -59,7 +59,13 @@ const res = await fetch("/auth/status");
 const data = await res.json();
 
 if (data.loggedIn) {
+const selectedPlan = localStorage.getItem("selectedPlan") || "";
+
+if (selectedPlan === "pro" || selectedPlan === "single") {
+window.location.href = `/pricing.html?continue=${selectedPlan}`;
+} else {
 window.location.href = "/";
+}
 }
 } catch (error) {
 console.error("Auth check failed:", error);

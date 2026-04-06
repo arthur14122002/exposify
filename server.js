@@ -20,6 +20,7 @@ import OpenAI from "openai";
 import puppeteer from "puppeteer";
 import { Resend } from "resend";
 import crypto from "crypto";
+import Stripe from "stripe";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,6 +49,8 @@ const openai = new OpenAI({
 });
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 function requireAuth(req, res, next) {
 if (!req.session.user) {
@@ -981,6 +984,60 @@ res.json({
 loggedIn: !!req.session.user,
 user: req.session.user || null
 });
+});
+
+app.post("/create-checkout-session", requireAuth, async (req, res) => {
+try {
+const { plan } = req.body;
+
+let priceId = "";
+let mode = "payment";
+
+if (plan === "pro") {
+priceId = process.env.STRIPE_PRO_PRICE_ID;
+mode = "subscription";
+} else if (plan === "single") {
+priceId = process.env.STRIPE_SINGLE_PRICE_ID;
+mode = "payment";
+} else {
+return res.status(400).json({
+success: false,
+message: "Ungültiger Plan."
+});
+}
+
+if (!priceId) {
+return res.status(500).json({
+success: false,
+message: "Stripe Preis-ID fehlt."
+});
+}
+
+const session = await stripe.checkout.sessions.create({
+mode,
+line_items: [
+{
+price: priceId,
+quantity: 1
+}
+],
+success_url: "https://exposifyapp.com/checkout-success.html?session_id={CHECKOUT_SESSION_ID}",
+cancel_url: "https://exposifyapp.com/pricing.html",
+client_reference_id: req.session.user.id,
+customer_email: req.session.user.email
+});
+
+return res.json({
+success: true,
+url: session.url
+});
+} catch (error) {
+console.error("Stripe checkout error:", error);
+return res.status(500).json({
+success: false,
+message: "Checkout konnte nicht gestartet werden."
+});
+}
 });
 
 app.get("/projects", requireAuth, async (req, res) => {

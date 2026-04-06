@@ -128,7 +128,8 @@ body: JSON.stringify({ email, password })
 const data = await res.json();
 
 if (data.success) {
-window.location.href = `/check-email.html?email=${encodeURIComponent(email)}`;
+const selectedPlan = localStorage.getItem("selectedPlan") || "";
+window.location.href = `/check-email.html?email=${encodeURIComponent(email)}&plan=${encodeURIComponent(selectedPlan)}`;
 return;
 } else {
 let message = data.message || "Registrierung fehlgeschlagen.";
