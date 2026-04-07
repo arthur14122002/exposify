@@ -488,7 +488,7 @@ showLoading(false);
 }
 
 function newProject() {
-window.location.href = "/";
+window.location.href = "/app";
 }
 
 function loadProjects() {
