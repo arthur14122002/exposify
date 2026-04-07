@@ -64,7 +64,7 @@ const selectedPlan = localStorage.getItem("selectedPlan") || "";
 if (selectedPlan === "pro" || selectedPlan === "single") {
 window.location.href = `/pricing.html?autocheckout=1`;
 } else {
-window.location.href = "/";
+window.location.href = "/app";
 }
 }
 } catch (error) {
@@ -141,7 +141,7 @@ window.location.href = "/pricing.html?autocheckout=1";
 return;
 }
 
-window.location.href = "/";
+window.location.href = "/app";
 } else {
 showAuthNotice(data.message || "Login fehlgeschlagen.");
 }

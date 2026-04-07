@@ -149,8 +149,8 @@ app.get("/", (req, res) => {
 res.sendFile(path.join(__dirname, "public", "landing.html"));
 });
 
-app.get("/index.html", (req, res) => {
-res.redirect("/");
+app.get("/app", (req, res) => {
+res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 app.use(express.static("public"));
