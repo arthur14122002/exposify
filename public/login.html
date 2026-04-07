@@ -115,7 +115,7 @@ const data = await res.json();
 
 if (data.success) {
 const selectedPlan = localStorage.getItem("selectedPlan") || "";
-const pendingCheckout = sessionStorage.getItem("pendingCheckout") === "true";
+const pendingCheckout = localStorage.getItem("pendingCheckout") === "true";
 const shouldShowAfterLogin = sessionStorage.getItem("showWelcomeAfterLogin") === "true";
 const hasPlan = selectedPlan === "pro" || selectedPlan === "single";
 

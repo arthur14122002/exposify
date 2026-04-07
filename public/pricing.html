@@ -135,7 +135,7 @@ alert("Checkout konnte nicht gestartet werden.");
 
 async function selectPlan(plan) {
 localStorage.setItem("selectedPlan", plan);
-sessionStorage.setItem("pendingCheckout", "true");
+localStorage.setItem("pendingCheckout", "true");
 
 try {
 const authRes = await fetch("/auth/status");
@@ -182,7 +182,7 @@ sessionStorage.setItem("showWelcomeAfterLogin", "true");
 }
 
 if (autoCheckout === "1" && (selectedPlan === "pro" || selectedPlan === "single")) {
-sessionStorage.removeItem("pendingCheckout");
+localStorage.removeItem("pendingCheckout");
 window.history.replaceState({}, document.title, "/pricing.html");
 setTimeout(async () => {
 await startCheckout(selectedPlan);
