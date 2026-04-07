@@ -33,6 +33,128 @@ path.join(__dirname, "public", "style.css"),
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.post("/stripe-webhook", express.raw({ type: "application/json" }), async (req, res) => {
+let event;
+
+try {
+const signature = req.headers["stripe-signature"];
+
+event = stripe.webhooks.constructEvent(
+req.body,
+signature,
+process.env.STRIPE_WEBHOOK_SECRET
+);
+} catch (err) {
+console.error("Webhook signature error:", err.message);
+return res.status(400).send(`Webhook Error: ${err.message}`);
+}
+
+try {
+switch (event.type) {
+case "checkout.session.completed": {
+const session = event.data.object;
+const userId = session.metadata?.user_id;
+const plan = session.metadata?.plan;
+const stripeCustomerId = session.customer || null;
+const stripeSubscriptionId = session.subscription || null;
+
+if (!userId || !plan) {
+break;
+}
+
+if (plan === "pro") {
+const { error } = await supabase
+.from("users")
+.update({
+plan: "pro",
+payment_status: "active",
+stripe_customer_id: stripeCustomerId,
+stripe_subscription_id: stripeSubscriptionId,
+single_credits: 0
+})
+.eq("id", userId);
+
+if (error) {
+console.error("Webhook update pro error:", error);
+}
+}
+
+if (plan === "single") {
+const { data: user, error: userError } = await supabase
+.from("users")
+.select("single_credits")
+.eq("id", userId)
+.single();
+
+if (userError) {
+console.error("Webhook fetch single user error:", userError);
+break;
+}
+
+const currentCredits = Number(user?.single_credits || 0);
+
+const { error } = await supabase
+.from("users")
+.update({
+plan: "single",
+payment_status: "active",
+stripe_customer_id: stripeCustomerId,
+single_credits: currentCredits + 1
+})
+.eq("id", userId);
+
+if (error) {
+console.error("Webhook update single error:", error);
+}
+}
+break;
+}
+
+case "customer.subscription.updated": {
+const subscription = event.data.object;
+
+const { error } = await supabase
+.from("users")
+.update({
+payment_status: subscription.status === "active" ? "active" : subscription.status
+})
+.eq("stripe_subscription_id", subscription.id);
+
+if (error) {
+console.error("Webhook subscription updated error:", error);
+}
+break;
+}
+
+case "customer.subscription.deleted": {
+const subscription = event.data.object;
+
+const { error } = await supabase
+.from("users")
+.update({
+plan: "free",
+payment_status: "inactive",
+stripe_subscription_id: null
+})
+.eq("stripe_subscription_id", subscription.id);
+
+if (error) {
+console.error("Webhook subscription deleted error:", error);
+}
+break;
+}
+
+default:
+break;
+}
+
+res.json({ received: true });
+} catch (error) {
+console.error("Stripe webhook handling error:", error);
+res.status(500).json({ success: false });
+}
+});
+
 app.use(express.json({ limit: "30mb" }));
 app.use(express.static("public"));
 
@@ -173,7 +295,12 @@ email,
 password: hashedPassword,
 verification_token: token,
 email_verified: false,
-last_verification_sent_at: new Date().toISOString()
+last_verification_sent_at: new Date().toISOString(),
+plan: "free",
+single_credits: 0,
+stripe_customer_id: null,
+stripe_subscription_id: null,
+payment_status: "inactive"
 }
 ]);
 
@@ -1024,7 +1151,11 @@ quantity: 1
 success_url: "https://exposifyapp.com/checkout-success.html?session_id={CHECKOUT_SESSION_ID}",
 cancel_url: "https://exposifyapp.com/pricing.html",
 client_reference_id: req.session.user.id,
-customer_email: req.session.user.email
+customer_email: req.session.user.email,
+metadata: {
+user_id: req.session.user.id,
+plan
+}
 });
 
 return res.json({
