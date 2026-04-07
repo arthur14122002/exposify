@@ -26,7 +26,7 @@ Du konzentrierst dich nur auf den Inhalt.
 </p>
 
 <div class="heroButtons">
-<button class="primaryBtn" onclick="goToPricing()">Kostenlos starten</button>
+<button class="primaryBtn" onclick="goToDemo()">Kostenlos starten</button>
 <button class="secondaryBtn" onclick="scrollToSection()">So funktioniert’s</button>
 </div>
 
@@ -111,6 +111,10 @@ Du konzentrierst dich nur auf den Inhalt.
 <script>
 function scrollToSection() {
 document.getElementById("how").scrollIntoView({ behavior: "smooth" });
+}
+
+function goToDemo() {
+window.location.href = "/demo.html";
 }
 
 function goToPricing() {
