@@ -62,7 +62,7 @@ if (data.loggedIn) {
 const selectedPlan = localStorage.getItem("selectedPlan") || "";
 
 if (selectedPlan === "pro" || selectedPlan === "single") {
-window.location.href = `/pricing.html?continue=${selectedPlan}`;
+window.location.href = `/pricing.html?autocheckout=1`;
 } else {
 window.location.href = "/";
 }
@@ -120,12 +120,24 @@ body: JSON.stringify({ email, password })
 const data = await res.json();
 
 if (data.success) {
+const selectedPlan = localStorage.getItem("selectedPlan") || "";
 const shouldShowAfterLogin = sessionStorage.getItem("showWelcomeAfterLogin") === "true";
-const welcomeShown = localStorage.getItem("welcomeShown") === "true";
+const hasPlan = selectedPlan === "pro" || selectedPlan === "single";
 
-if (shouldShowAfterLogin && !welcomeShown) {
+if (shouldShowAfterLogin) {
 sessionStorage.removeItem("showWelcomeAfterLogin");
+
+if (hasPlan) {
+window.location.href = "/pricing.html?autocheckout=1&welcome=1";
+return;
+}
+
 window.location.href = "/?welcome=1";
+return;
+}
+
+if (hasPlan) {
+window.location.href = "/pricing.html?autocheckout=1";
 return;
 }
 

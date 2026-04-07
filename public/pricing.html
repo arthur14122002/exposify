@@ -110,18 +110,8 @@ Beste Wahl
 </footer>
 
 <script>
-async function selectPlan(plan) {
-localStorage.setItem("selectedPlan", plan);
-
+async function startCheckout(plan) {
 try {
-const authRes = await fetch("/auth/status");
-const authData = await authRes.json();
-
-if (!authData.loggedIn) {
-window.location.href = "/register.html";
-return;
-}
-
 const res = await fetch("/create-checkout-session", {
 method: "POST",
 headers: { "Content-Type": "application/json" },
@@ -142,9 +132,50 @@ alert("Checkout konnte nicht gestartet werden.");
 }
 }
 
+async function selectPlan(plan) {
+localStorage.setItem("selectedPlan", plan);
+
+try {
+const authRes = await fetch("/auth/status");
+const authData = await authRes.json();
+
+if (!authData.loggedIn) {
+window.location.href = "/register.html";
+return;
+}
+
+await startCheckout(plan);
+} catch (error) {
+console.error(error);
+alert("Checkout konnte nicht gestartet werden.");
+}
+}
+
 function goToLogin() {
 window.location.href = "/login.html";
 }
+
+window.addEventListener("DOMContentLoaded", async () => {
+const params = new URLSearchParams(window.location.search);
+const autoCheckout = params.get("autocheckout");
+const continuePlan = params.get("continue");
+const welcome = params.get("welcome");
+
+if (continuePlan === "pro" || continuePlan === "single") {
+localStorage.setItem("selectedPlan", continuePlan);
+}
+
+const selectedPlan = localStorage.getItem("selectedPlan") || "";
+
+if (welcome === "1") {
+sessionStorage.setItem("showWelcomeAfterLogin", "true");
+}
+
+if (autoCheckout === "1" && (selectedPlan === "pro" || selectedPlan === "single")) {
+window.history.replaceState({}, document.title, "/pricing.html");
+await startCheckout(selectedPlan);
+}
+});
 </script>
 
 </body>
