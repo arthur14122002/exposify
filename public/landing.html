@@ -18,6 +18,12 @@
 <section class="hero">
 <div class="heroContent">
 
+<div style="display:flex; justify-content:flex-end; margin-bottom:18px;">
+<button class="secondaryBtn" type="button" onclick="goToAccount()" style="min-width:220px;">
+Ich habe bereits ein Konto
+</button>
+</div>
+
 <h1>Erstelle professionelle Immobilien-Exposés in nur wenigen Minuten</h1>
 
 <p class="heroSub">
@@ -120,6 +126,21 @@ window.location.href = "/demo.html";
 
 function goToPricing() {
 window.location.href = "/pricing.html";
+}
+
+async function goToAccount() {
+try {
+const res = await fetch("/auth/status");
+const data = await res.json();
+
+if (data.loggedIn) {
+window.location.href = "/app";
+} else {
+window.location.href = "/login.html";
+}
+} catch (error) {
+window.location.href = "/login.html";
+}
 }
 </script>
 

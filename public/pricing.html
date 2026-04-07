@@ -135,6 +135,7 @@ alert("Checkout konnte nicht gestartet werden.");
 
 async function selectPlan(plan) {
 localStorage.setItem("selectedPlan", plan);
+sessionStorage.setItem("pendingCheckout", "true");
 
 try {
 const authRes = await fetch("/auth/status");

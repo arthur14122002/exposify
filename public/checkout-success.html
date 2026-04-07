@@ -38,6 +38,9 @@ Dein Zugang wurde erfolgreich aktiviert. Du kannst jetzt direkt mit Exposify sta
 </footer>
 
 <script>
+localStorage.removeItem("selectedPlan");
+sessionStorage.removeItem("pendingCheckout");
+
 function goToApp() {
 window.location.href = "/app";
 }

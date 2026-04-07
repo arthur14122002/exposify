@@ -59,13 +59,7 @@ const res = await fetch("/auth/status");
 const data = await res.json();
 
 if (data.loggedIn) {
-const selectedPlan = localStorage.getItem("selectedPlan") || "";
-
-if (selectedPlan === "pro" || selectedPlan === "single") {
-window.location.href = `/pricing.html?autocheckout=1`;
-} else {
 window.location.href = "/app";
-}
 }
 } catch (error) {
 console.error("Auth check failed:", error);
@@ -121,22 +115,23 @@ const data = await res.json();
 
 if (data.success) {
 const selectedPlan = localStorage.getItem("selectedPlan") || "";
+const pendingCheckout = sessionStorage.getItem("pendingCheckout") === "true";
 const shouldShowAfterLogin = sessionStorage.getItem("showWelcomeAfterLogin") === "true";
 const hasPlan = selectedPlan === "pro" || selectedPlan === "single";
 
 if (shouldShowAfterLogin) {
 sessionStorage.removeItem("showWelcomeAfterLogin");
 
-if (hasPlan) {
+if (pendingCheckout && hasPlan) {
 window.location.href = "/pricing.html?autocheckout=1&welcome=1";
 return;
 }
 
-window.location.href = "/?welcome=1";
+window.location.href = "/app?welcome=1";
 return;
 }
 
-if (hasPlan) {
+if (pendingCheckout && hasPlan) {
 window.location.href = "/pricing.html?autocheckout=1";
 return;
 }
