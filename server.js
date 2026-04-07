@@ -832,7 +832,6 @@ success: true
 });
 });
 });
-});
 
 app.post("/forgot-password", async (req, res) => {
 try {
