@@ -818,8 +818,19 @@ id: user.id,
 email: user.email
 };
 
+req.session.save((err) => {
+if (err) {
+console.error("Session save error:", err);
+return res.status(500).json({
+success: false,
+message: "Login konnte nicht gespeichert werden."
+});
+}
+
 return res.json({
 success: true
+});
+});
 });
 });
 

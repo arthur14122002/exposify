@@ -162,12 +162,20 @@ const params = new URLSearchParams(window.location.search);
 const autoCheckout = params.get("autocheckout");
 const continuePlan = params.get("continue");
 const welcome = params.get("welcome");
+const urlPlan = params.get("plan");
 
 if (continuePlan === "pro" || continuePlan === "single") {
 localStorage.setItem("selectedPlan", continuePlan);
 }
 
-const selectedPlan = localStorage.getItem("selectedPlan") || "";
+if (urlPlan === "pro" || urlPlan === "single") {
+localStorage.setItem("selectedPlan", urlPlan);
+}
+
+const selectedPlan =
+(urlPlan === "pro" || urlPlan === "single")
+? urlPlan
+: (localStorage.getItem("selectedPlan") || "");
 
 if (welcome === "1") {
 sessionStorage.setItem("showWelcomeAfterLogin", "true");
@@ -176,7 +184,9 @@ sessionStorage.setItem("showWelcomeAfterLogin", "true");
 if (autoCheckout === "1" && (selectedPlan === "pro" || selectedPlan === "single")) {
 sessionStorage.removeItem("pendingCheckout");
 window.history.replaceState({}, document.title, "/pricing.html");
+setTimeout(async () => {
 await startCheckout(selectedPlan);
+}, 250);
 }
 });
 </script>

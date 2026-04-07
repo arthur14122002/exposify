@@ -123,7 +123,7 @@ if (shouldShowAfterLogin) {
 sessionStorage.removeItem("showWelcomeAfterLogin");
 
 if (pendingCheckout && hasPlan) {
-window.location.href = "/pricing.html?autocheckout=1&welcome=1";
+window.location.href = `/pricing.html?autocheckout=1&welcome=1&plan=${encodeURIComponent(selectedPlan)}`;
 return;
 }
 
@@ -132,7 +132,7 @@ return;
 }
 
 if (pendingCheckout && hasPlan) {
-window.location.href = "/pricing.html?autocheckout=1";
+window.location.href = `/pricing.html?autocheckout=1&plan=${encodeURIComponent(selectedPlan)}`;
 return;
 }
 
