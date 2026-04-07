@@ -144,11 +144,16 @@ res.status(500).json({ success: false });
 });
 
 app.use(express.json({ limit: "30mb" }));
-app.use(express.static("public"));
 
 app.get("/", (req, res) => {
 res.sendFile(path.join(__dirname, "public", "landing.html"));
 });
+
+app.get("/index.html", (req, res) => {
+res.redirect("/");
+});
+
+app.use(express.static("public"));
 
 app.use(
 session({
