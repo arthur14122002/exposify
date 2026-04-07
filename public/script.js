@@ -621,7 +621,7 @@ const welcomeShown = localStorage.getItem("welcomeShown") === "true";
 if (shouldShowWelcome && !welcomeShown) {
 openWelcomeModal();
 localStorage.setItem("welcomeShown", "true");
-window.history.replaceState({}, document.title, "/");
+window.history.replaceState({}, document.title, "/app");
 }
 }
 
