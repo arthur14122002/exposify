@@ -166,6 +166,13 @@ In der Vollversion kannst du Bilder hinzufügen, Exposés speichern, bearbeiten 
 </main>
 </div>
 
+<div id="demoLoadingOverlay" class="loadingOverlay hidden" style="display:none;">
+<div class="loadingBox">
+<div class="spinner"></div>
+<p>Exposé wird erstellt...</p>
+</div>
+</div>
+
 <div id="demoWelcomeModal" class="modalOverlay hidden">
 <div class="modalBox" style="max-width:430px; text-align:center;">
 <h3 style="margin-bottom:12px; font-weight:800; font-size:20px;">Willkommen zur Exposify Demo</h3>
@@ -185,6 +192,13 @@ Bilder, Speichern, Bearbeiten und PDF-Export sind nur in der Vollversion verfüg
 <script>
 const generateBtn = document.getElementById("generateBtn");
 const generateHint = document.getElementById("generateHint");
+const demoLoadingOverlay = document.getElementById("demoLoadingOverlay");
+
+function showDemoLoading(show) {
+if (!demoLoadingOverlay) return;
+demoLoadingOverlay.classList.toggle("hidden", !show);
+demoLoadingOverlay.style.display = show ? "flex" : "none";
+}
 
 const demoWelcomeModal = document.getElementById("demoWelcomeModal");
 const demoWelcomeOk = document.getElementById("demoWelcomeOk");
@@ -289,6 +303,8 @@ preisInput.placeholder = "Kaufpreis";
 }
 
 async function generateDemoExpose() {
+showDemoLoading(true);
+
 const data = {
 ort: getValue("ort"),
 wohnflaeche: getValue("wohnflaeche"),
@@ -333,6 +349,8 @@ demoResult.scrollIntoView({ behavior: "smooth", block: "start" });
 } catch (error) {
 console.error(error);
 alert("Demo-Exposé konnte nicht erstellt werden.");
+} finally {
+showDemoLoading(false);
 }
 }
 
