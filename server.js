@@ -1511,6 +1511,91 @@ res.json(fallback);
 }
 });
 
+app.post("/generate-demo", async (req, res) => {
+try {
+const data = req.body || {};
+
+if (!process.env.OPENAI_API_KEY) {
+const fallback = fallbackExposeTexts(data);
+return res.json(fallback);
+}
+
+const promptData = {
+ort: data.ort || "",
+wohnflaeche: data.wohnflaeche || "",
+zimmer: data.zimmer || "",
+grundstueck: data.grundstueck || "",
+heizungsart: data.heizungsart || "",
+baujahr: data.baujahr || "",
+park: data.park || "",
+stellplaetze: data.stellplaetze || "",
+schlafzimmer: data.schlafzimmer || "",
+badezimmer: data.badezimmer || "",
+objektart: data.objektart || "",
+objekttyp: data.objekttyp || "",
+nutzungsart: data.nutzungsart || "",
+vermarktungsart: data.vermarktungsart || "",
+preis: data.preis || "",
+merkmale: data.merkmale || ""
+};
+
+const instructions = `
+Du schreibst professionelle deutsche Immobilientexte für eine Demo-Version eines Immobilien-Exposé-Tools.
+Antworte ausschließlich als gültiges JSON ohne Markdown und ohne Zusatztext.
+
+Verwende exakt dieses Format:
+{
+"title": "string",
+"description": "string",
+"features": "string",
+"location": "string"
+}
+
+Regeln:
+- Sprache: professionelles, flüssiges Deutsch
+- Kein erfundener Unsinn
+- Nur Informationen verwenden, die plausibel aus den Daten ableitbar sind
+- Fehlende Angaben elegant auslassen
+- Wenn vermarktungsart "Mieten" ist und ein preis vorhanden ist, nenne die monatliche Miete ausdrücklich im Text.
+- Wenn vermarktungsart "Kaufen" ist und ein preis vorhanden ist, nenne den Kaufpreis ausdrücklich im Text.
+- description: 2 bis 4 Sätze
+- features: 2 bis 3 Sätze
+- location: 2 bis 3 Sätze
+- title: kurz, hochwertig, maklertauglich
+- Keine Aufzählungszeichen
+- Keine doppelte Nennung desselben Fakts
+- Es handelt sich um eine Demo-Vorschau, daher soll der Text kompakt und überzeugend sein
+`;
+
+const response = await openai.responses.create({
+model: "gpt-5",
+reasoning: { effort: "low" },
+instructions,
+input: `Erstelle eine deutsche Demo-Vorschau für ein Immobilien-Exposé auf Basis dieser Daten:\n${JSON.stringify(promptData, null, 2)}`
+});
+
+const text = response.output_text || "";
+const parsed = safeParseJson(text);
+
+if (!parsed) {
+const fallback = fallbackExposeTexts(data);
+return res.json(fallback);
+}
+
+return res.json({
+title: parsed.title || fallbackExposeTexts(data).title,
+description: parsed.description || fallbackExposeTexts(data).description,
+features: parsed.features || fallbackExposeTexts(data).features,
+location: parsed.location || fallbackExposeTexts(data).location
+});
+} catch (error) {
+console.error("Generate demo error:", error);
+
+const fallback = fallbackExposeTexts(req.body || {});
+return res.json(fallback);
+}
+});
+
 app.post("/pdf", requireAuth, async (req, res) => {
 try {
 const html = req.body.html;

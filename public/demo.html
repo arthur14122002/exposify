@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=21">
+<link rel="shortcut icon" href="/favicon.png?v=21">
+<link rel="apple-touch-icon" href="/favicon.png?v=21">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo – Exposify</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="layout">
+
+<aside class="sidebar">
+<div>
+<div class="logoWrap">
+<img src="/assets/logo.svg" alt="Exposify Logo">
+</div>
+
+<div class="sidebarTop">
+<button type="button" onclick="goToPricing()">Jetzt upgraden</button>
+<button type="button" onclick="goToLanding()">Zur Landingpage</button>
+</div>
+</div>
+
+<div class="sidebarBottom">
+<div class="sidebarBottomLinks">
+<a href="/support.html">Support</a>
+<a href="/impressum.html">Impressum</a>
+<a href="/datenschutz.html">Datenschutz</a>
+</div>
+</div>
+</aside>
+
+<main class="content">
+
+<div class="pageTitleRow">
+<h1>Exposify Demo</h1>
+</div>
+
+<div class="sectionHeading">
+<h3>Objektdaten</h3>
+</div>
+
+<div class="grid2">
+<div class="colStack">
+<input id="ort" placeholder="Ort">
+<input id="zimmer" placeholder="Zimmer">
+<input id="heizung" placeholder="Heizungsart">
+<input id="park" placeholder="Parkmöglichkeiten">
+<input id="stellplaetze" placeholder="Stellplätze">
+<input id="objektart" placeholder="Objektart">
+<input id="nutzungsart" placeholder="Nutzungsart">
+<textarea id="merkmale" placeholder="Besondere Merkmale"></textarea>
+</div>
+
+<div class="colStack">
+<input id="wohnflaeche" placeholder="Wohnfläche">
+<input id="grundstueck" placeholder="Grundstücksgröße">
+<input id="baujahr" placeholder="Baujahr">
+<input id="schlafzimmer" placeholder="Anzahl Schlafzimmer">
+<input id="badezimmer" placeholder="Anzahl Badezimmer">
+<input id="objekttyp" placeholder="Objekttyp">
+<select id="vermarktung">
+<option value="Kaufen">Kaufen</option>
+<option value="Mieten">Mieten</option>
+</select>
+<input id="preis" placeholder="Kaufpreis">
+</div>
+</div>
+
+<div class="bottomArea">
+<div class="bigBox demoDisabledBox">
+<h3>Titelbild</h3>
+<div class="uploadFancy demoDisabled">
+<span>Titelbild hochladen</span>
+<small>Nur in der Vollversion verfügbar</small>
+</div>
+</div>
+
+<div class="bigBox demoDisabledBox">
+<h3>Weitere Bilder</h3>
+<div class="uploadFancy demoDisabled">
+<span>Bilder hochladen</span>
+<small>Nur in der Vollversion verfügbar</small>
+</div>
+</div>
+</div>
+
+<div class="sectionHeading">
+<h3>Maklerdaten</h3>
+</div>
+
+<div class="grid2">
+<div class="colStack">
+<input id="maklerName" placeholder="Name">
+<input id="maklerTelefon" placeholder="Telefon">
+</div>
+
+<div class="colStack">
+<input id="maklerFirma" placeholder="Firma">
+<input id="maklerMail" placeholder="E-Mail">
+</div>
+</div>
+
+<div class="bottomArea">
+<div class="bigBox demoDisabledBox">
+<h3>Firmenlogo</h3>
+<div class="uploadFancy demoDisabled">
+<span>Logo hochladen</span>
+<small>Nur in der Vollversion verfügbar</small>
+</div>
+</div>
+
+<div class="bigBox demoDisabledBox">
+<h3>Maklerfoto</h3>
+<div class="uploadFancy demoDisabled">
+<span>Foto hochladen</span>
+<small>Nur in der Vollversion verfügbar</small>
+</div>
+</div>
+</div>
+
+<div class="toolbar">
+<button id="generateBtn" type="button" onclick="generateDemoExpose()" disabled>Exposé in der Demo erstellen</button>
+</div>
+
+<p id="generateHint" class="generateHint">Bitte mindestens 3 Angaben ausfüllen.</p>
+
+<div id="demoResult" class="hidden" style="margin-top:32px;">
+<div class="editorCard" style="max-width:900px; margin:0 auto;">
+<h2 id="demoTitle" style="margin-bottom:18px;">Demo-Exposé</h2>
+
+<div style="margin-bottom:22px;">
+<h3>Beschreibung</h3>
+<p id="demoDescription"></p>
+</div>
+
+<div style="margin-bottom:22px;">
+<h3>Ausstattung</h3>
+<p id="demoFeatures"></p>
+</div>
+
+<div style="margin-bottom:0;">
+<h3>Lage</h3>
+<p id="demoLocation"></p>
+</div>
+</div>
+
+<div style="text-align:center; margin-top:22px;">
+<p style="margin-bottom:16px; font-size:15px; color:#4b5563;">
+In der Vollversion kannst du Bilder hinzufügen, Exposés speichern, bearbeiten und als PDF exportieren.
+</p>
+
+<div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+<button class="primaryBtn" type="button" onclick="goToPricing()">Jetzt upgraden</button>
+<button class="secondaryBtn" type="button" onclick="scrollToTop()">Zurück zur Demo</button>
+</div>
+</div>
+</div>
+
+</main>
+</div>
+
+<div id="demoWelcomeModal" class="modalOverlay hidden">
+<div class="modalBox" style="max-width:430px; text-align:center;">
+<h3 style="margin-bottom:12px; font-weight:800; font-size:20px;">Willkommen zur Exposify Demo</h3>
+
+<p style="margin:0 0 14px 0; font-size:15px; line-height:1.6;">
+Hier kannst du Exposify mit eingeschränkten Funktionen testen.
+</p>
+
+<p style="margin:0 0 18px 0; font-size:14px; line-height:1.7; text-align:center;">
+Bilder, Speichern, Bearbeiten und PDF-Export sind nur in der Vollversion verfügbar.
+</p>
+
+<button type="button" id="demoWelcomeOk">Verstanden</button>
+</div>
+</div>
+
+<script>
+const generateBtn = document.getElementById("generateBtn");
+const generateHint = document.getElementById("generateHint");
+
+const demoWelcomeModal = document.getElementById("demoWelcomeModal");
+const demoWelcomeOk = document.getElementById("demoWelcomeOk");
+
+function goToPricing() {
+window.location.href = "/pricing.html";
+}
+
+function goToLanding() {
+window.location.href = "/landing.html";
+}
+
+function scrollToTop() {
+window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function showDemoWelcome() {
+if (!demoWelcomeModal) return;
+demoWelcomeModal.classList.remove("hidden");
+demoWelcomeModal.style.display = "flex";
+}
+
+function closeDemoWelcome() {
+if (!demoWelcomeModal) return;
+demoWelcomeModal.classList.add("hidden");
+demoWelcomeModal.style.display = "none";
+}
+
+if (demoWelcomeOk) {
+demoWelcomeOk.addEventListener("click", () => {
+closeDemoWelcome();
+localStorage.setItem("demoWelcomeSeen", "true");
+});
+}
+
+document.addEventListener("keydown", (e) => {
+if (e.key === "Enter") {
+const openModal = document.querySelector(".modalOverlay:not(.hidden)");
+if (openModal) {
+e.preventDefault();
+closeDemoWelcome();
+}
+}
+});
+
+function getValue(id) {
+const el = document.getElementById(id);
+return el ? el.value.trim() : "";
+}
+
+function countFilledFields() {
+const fields = [
+"ort",
+"wohnflaeche",
+"zimmer",
+"grundstueck",
+"heizung",
+"baujahr",
+"park",
+"stellplaetze",
+"schlafzimmer",
+"badezimmer",
+"objektart",
+"objekttyp",
+"nutzungsart",
+"preis",
+"merkmale"
+];
+
+let count = 0;
+
+fields.forEach((id) => {
+if (getValue(id)) count++;
+});
+
+return count;
+}
+
+function updateGenerateState() {
+const filled = countFilledFields();
+
+if (filled >= 3) {
+generateBtn.disabled = false;
+if (generateHint) generateHint.style.display = "none";
+} else {
+generateBtn.disabled = true;
+if (generateHint) generateHint.style.display = "block";
+}
+}
+
+function updatePreisPlaceholder() {
+const vermarktung = document.getElementById("vermarktung");
+const preisInput = document.getElementById("preis");
+
+if (!vermarktung || !preisInput) return;
+
+if (vermarktung.value === "Mieten") {
+preisInput.placeholder = "Miete pro Monat";
+} else {
+preisInput.placeholder = "Kaufpreis";
+}
+}
+
+async function generateDemoExpose() {
+const data = {
+ort: getValue("ort"),
+wohnflaeche: getValue("wohnflaeche"),
+zimmer: getValue("zimmer"),
+grundstueck: getValue("grundstueck"),
+heizungsart: getValue("heizung"),
+baujahr: getValue("baujahr"),
+park: getValue("park"),
+stellplaetze: getValue("stellplaetze"),
+schlafzimmer: getValue("schlafzimmer"),
+badezimmer: getValue("badezimmer"),
+objektart: getValue("objektart"),
+objekttyp: getValue("objekttyp"),
+nutzungsart: getValue("nutzungsart"),
+vermarktungsart: getValue("vermarktung"),
+preis: getValue("preis"),
+merkmale: getValue("merkmale")
+};
+
+try {
+const res = await fetch("/generate-demo", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify(data)
+});
+
+const result = await res.json();
+
+if (!res.ok) {
+alert(result.message || "Demo-Exposé konnte nicht erstellt werden.");
+return;
+}
+
+document.getElementById("demoTitle").textContent = result.title || "Demo-Exposé";
+document.getElementById("demoDescription").textContent = result.description || "";
+document.getElementById("demoFeatures").textContent = result.features || "";
+document.getElementById("demoLocation").textContent = result.location || "";
+
+const demoResult = document.getElementById("demoResult");
+demoResult.classList.remove("hidden");
+demoResult.scrollIntoView({ behavior: "smooth", block: "start" });
+} catch (error) {
+console.error(error);
+alert("Demo-Exposé konnte nicht erstellt werden.");
+}
+}
+
+const formFields = [
+"ort",
+"wohnflaeche",
+"zimmer",
+"grundstueck",
+"heizung",
+"baujahr",
+"park",
+"stellplaetze",
+"schlafzimmer",
+"badezimmer",
+"objektart",
+"objekttyp",
+"nutzungsart",
+"vermarktung",
+"preis",
+"merkmale"
+];
+
+formFields.forEach((id) => {
+const el = document.getElementById(id);
+
+if (!el) return;
+
+el.addEventListener("input", updateGenerateState);
+el.addEventListener("change", updateGenerateState);
+el.addEventListener("keyup", updateGenerateState);
+});
+
+document.getElementById("vermarktung")?.addEventListener("change", updatePreisPlaceholder);
+document.addEventListener("DOMContentLoaded", updatePreisPlaceholder);
+
+window.addEventListener("DOMContentLoaded", () => {
+updateGenerateState();
+
+if (!localStorage.getItem("demoWelcomeSeen")) {
+showDemoWelcome();
+}
+});
+</script>
+
+</body>
+</html>
