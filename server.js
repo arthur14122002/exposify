@@ -1103,7 +1103,7 @@ loggedIn: false,
 user: null,
 plan: "free",
 single_credits: 0,
-payment_status: "inactive"
+payment_status: "inactive",
 single_used: false,
 });
 }
