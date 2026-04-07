@@ -22,6 +22,10 @@ let titleImageFile = null;
 let logoFile = null;
 let fotoFile = null;
 let isUserLoggedIn = false;
+let userPlan = "free";
+let userCredits = 0;
+let userSingleUsed = false;
+let paymentStatus = "inactive";
 
 if (authModalOk) {
 authModalOk.addEventListener("click", () => {
@@ -95,10 +99,25 @@ async function checkAuthStatus() {
 try {
 const res = await fetch("/auth/status");
 const data = await res.json();
+
 isUserLoggedIn = !!data.loggedIn;
+userPlan = data.plan || "free";
+userCredits = Number(data.single_credits || 0);
+userSingleUsed = !!data.single_used;
+paymentStatus = data.payment_status || "inactive";
+
+const hasProAccess = userPlan === "pro" && paymentStatus === "active";
+const hasSingleAccess = userPlan === "single" && paymentStatus === "active";
+const hasAccess = hasProAccess || hasSingleAccess;
+
+if (!isUserLoggedIn || !hasAccess) {
+window.location.href = "/pricing.html";
+return;
+}
 } catch (error) {
 console.error("Auth check failed:", error);
 isUserLoggedIn = false;
+window.location.href = "/pricing.html";
 }
 }
 

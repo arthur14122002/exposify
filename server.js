@@ -80,26 +80,14 @@ console.error("Webhook update pro error:", error);
 }
 
 if (plan === "single") {
-const { data: user, error: userError } = await supabase
-.from("users")
-.select("single_credits")
-.eq("id", userId)
-.single();
-
-if (userError) {
-console.error("Webhook fetch single user error:", userError);
-break;
-}
-
-const currentCredits = Number(user?.single_credits || 0);
-
 const { error } = await supabase
 .from("users")
 .update({
 plan: "single",
 payment_status: "active",
 stripe_customer_id: stripeCustomerId,
-single_credits: currentCredits + 1
+single_credits: 1,
+single_used: false
 })
 .eq("id", userId);
 
@@ -298,6 +286,7 @@ email_verified: false,
 last_verification_sent_at: new Date().toISOString(),
 plan: "free",
 single_credits: 0,
+single_used: false,
 stripe_customer_id: null,
 stripe_subscription_id: null,
 payment_status: "inactive"
@@ -1106,11 +1095,56 @@ res.json({ success: true });
 });
 });
 
-app.get("/auth/status", (req, res) => {
-res.json({
-loggedIn: !!req.session.user,
-user: req.session.user || null
+app.get("/auth/status", async (req, res) => {
+try {
+if (!req.session.user) {
+return res.json({
+loggedIn: false,
+user: null,
+plan: "free",
+single_credits: 0,
+payment_status: "inactive"
+single_used: false,
 });
+}
+
+const { data: user, error } = await supabase
+.from("users")
+.select("id, email, plan, single_credits, single_used, payment_status")
+.eq("id", req.session.user.id)
+.single();
+
+if (error || !user) {
+return res.json({
+loggedIn: false,
+user: null,
+plan: "free",
+single_credits: 0,
+payment_status: "inactive"
+});
+}
+
+return res.json({
+loggedIn: true,
+user: {
+id: user.id,
+email: user.email
+},
+plan: user.plan || "free",
+single_credits: Number(user.single_credits || 0),
+single_used: !!user.single_used,
+payment_status: user.payment_status || "inactive"
+});
+} catch (error) {
+console.error("Auth status error:", error);
+return res.json({
+loggedIn: false,
+user: null,
+plan: "free",
+single_credits: 0,
+payment_status: "inactive"
+});
+}
 });
 
 app.post("/create-checkout-session", requireAuth, async (req, res) => {
@@ -1244,6 +1278,56 @@ message: "Projekt konnte nicht geladen werden."
 
 app.post("/projects", requireAuth, async (req, res) => {
 try {
+const { data: currentUser, error: userError } = await supabase
+.from("users")
+.select("plan, single_credits, single_used, payment_status")
+.eq("id", req.session.user.id)
+.single();
+
+if (userError || !currentUser) {
+console.error("Supabase user fetch error:", userError);
+return res.status(500).json({
+success: false,
+message: "Benutzerstatus konnte nicht geladen werden."
+});
+}
+
+const plan = currentUser.plan || "free";
+const paymentStatus = currentUser.payment_status || "inactive";
+const singleUsed = !!currentUser.single_used;
+
+const hasProAccess = plan === "pro" && paymentStatus === "active";
+const hasSingleAccess = plan === "single" && paymentStatus === "active";
+
+if (!hasProAccess && !hasSingleAccess) {
+return res.status(403).json({
+success: false,
+message: "Du hast aktuell keinen aktiven Zugriff auf Exposify."
+});
+}
+
+if (hasSingleAccess) {
+const { count, error: countError } = await supabase
+.from("exposes")
+.select("*", { count: "exact", head: true })
+.eq("user_id", req.session.user.id);
+
+if (countError) {
+console.error("Single project count error:", countError);
+return res.status(500).json({
+success: false,
+message: "Projektstatus konnte nicht geprüft werden."
+});
+}
+
+if ((count || 0) >= 1 || singleUsed) {
+return res.status(403).json({
+success: false,
+message: "Dein Einzelkauf wurde bereits für ein Exposé verwendet. Bitte kauf ein neues Exposé oder upgrade auf Pro."
+});
+}
+}
+
 const payload = {
 user_id: req.session.user.id,
 title: req.body.title || "Immobilien-Exposé",
@@ -1264,6 +1348,20 @@ return res.status(500).json({
 success: false,
 message: "Projekt konnte nicht gespeichert werden."
 });
+}
+
+if (hasSingleAccess) {
+const { error: updateError } = await supabase
+.from("users")
+.update({
+single_used: true,
+single_credits: 0
+})
+.eq("id", req.session.user.id);
+
+if (updateError) {
+console.error("Single used update error:", updateError);
+}
 }
 
 res.json({
