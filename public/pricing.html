@@ -137,30 +137,9 @@ alert("Checkout konnte nicht gestartet werden.");
 
 async function selectPlan(plan) {
 localStorage.setItem("selectedPlan", plan);
-
-const termsConfirmed = localStorage.getItem("termsConfirmed") === "true";
-
-if (!termsConfirmed) {
+localStorage.removeItem("termsConfirmed");
+localStorage.removeItem("pendingCheckout");
 window.location.href = "/terms-confirm.html";
-return;
-}
-
-localStorage.setItem("pendingCheckout", "true");
-
-try {
-const authRes = await fetch("/auth/status");
-const authData = await authRes.json();
-
-if (!authData.loggedIn) {
-window.location.href = "/register.html";
-return;
-}
-
-await startCheckout(plan);
-} catch (error) {
-console.error(error);
-alert("Checkout konnte nicht gestartet werden.");
-}
 }
 
 function goToLogin() {
