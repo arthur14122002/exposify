@@ -111,8 +111,18 @@ Du konzentrierst dich nur auf den Inhalt.
 <footer class="footer">
 <a href="/support.html">Support</a>
 <a href="/impressum.html">Impressum</a>
-<a href="/datenschutz.html">Datenschutz</a>
+
+<div class="footerDropdown">
+<button type="button" class="footerDropdownToggle" onclick="toggleLegalMenu()">
+Rechtliches <span id="legalArrow">▾</span>
+</button>
+
+<div id="legalMenu" class="footerDropdownMenu hidden">
 <a href="/agb.html">AGB</a>
+<a href="/datenschutz.html">Datenschutz</a>
+<a href="/widerruf.html">Widerruf</a>
+</div>
+</div>
 </footer>
 
 <script>
@@ -142,6 +152,31 @@ window.location.href = "/login.html";
 window.location.href = "/login.html";
 }
 }
+</script>
+
+<script>
+function toggleLegalMenu() {
+const menu = document.getElementById("legalMenu");
+const arrow = document.getElementById("legalArrow");
+
+if (!menu || !arrow) return;
+
+menu.classList.toggle("hidden");
+arrow.textContent = menu.classList.contains("hidden") ? "▾" : "▴";
+}
+
+document.addEventListener("click", function (e) {
+const dropdown = document.querySelector(".footerDropdown");
+const menu = document.getElementById("legalMenu");
+const arrow = document.getElementById("legalArrow");
+
+if (!dropdown || !menu || !arrow) return;
+
+if (!dropdown.contains(e.target)) {
+menu.classList.add("hidden");
+arrow.textContent = "▾";
+}
+});
 </script>
 
 </body>

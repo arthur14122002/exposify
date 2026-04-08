@@ -1411,3 +1411,71 @@ display: block;
 margin: 20px auto 0 auto;
 }
 
+.footer {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 28px;
+flex-wrap: wrap;
+padding: 18px 20px;
+border-top: 1px solid #e5e7eb;
+background: #ffffff;
+position: relative;
+}
+
+.footer a,
+.footerDropdownToggle {
+font-size: 15px;
+color: #4b5563;
+text-decoration: none;
+background: none;
+border: none;
+cursor: pointer;
+font-family: inherit;
+}
+
+.footer a:hover,
+.footerDropdownToggle:hover {
+color: #111827;
+}
+
+.footerDropdown {
+position: relative;
+}
+
+.footerDropdownToggle {
+display: flex;
+align-items: center;
+gap: 6px;
+padding: 0;
+}
+
+.footerDropdownMenu {
+position: absolute;
+bottom: 28px;
+left: 50%;
+transform: translateX(-50%);
+min-width: 170px;
+background: #ffffff;
+border: 1px solid #e5e7eb;
+border-radius: 12px;
+box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+padding: 10px 0;
+display: flex;
+flex-direction: column;
+z-index: 50;
+}
+
+.footerDropdownMenu a {
+padding: 10px 16px;
+white-space: nowrap;
+text-align: left;
+}
+
+.footerDropdownMenu a:hover {
+background: #f9fafb;
+}
+
+.hidden {
+display: none !important;
+}
