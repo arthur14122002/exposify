@@ -51,7 +51,7 @@ try {
 const res = await fetch("/auth/status");
 const data = await res.json();
 
-document.getElementById("userEmail").textContent = data.email || "-";
+document.getElementById("userEmail").textContent = data.user?.email || "-";
 
 // Plan anzeigen
 if (data.plan === "pro" && data.payment_status === "active") {
@@ -95,6 +95,8 @@ location.reload();
 
 loadProfile();
 </script>
+
+
 
 </body>
 </html>

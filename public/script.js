@@ -544,6 +544,10 @@ await checkAuthStatus();
 updateGenerateState();
 })();
 
+function goToProfile() {
+window.location.href = "/profile.html";
+}
+
 function updatePreisPlaceholder() {
 const vermarktung = document.getElementById("vermarktung");
 const preisInput = document.getElementById("preis");
