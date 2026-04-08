@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mein Profil – Exposify</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body class="authPage">
+
+<div class="authCard" style="max-width:700px; text-align:left;">
+
+<h1 style="text-align:center; margin-bottom:24px;">Mein Profil</h1>
+
+<!-- Account -->
+<div class="profileSection">
+<h3>Account</h3>
+<p><strong>E-Mail:</strong> <span id="userEmail">wird geladen...</span></p>
+
+<button class="dangerBtn" onclick="deleteAccount()">Account löschen</button>
+</div>
+
+<!-- Abo -->
+<div class="profileSection">
+<h3>Abo</h3>
+<p id="planStatus">wird geladen...</p>
+<p id="nextPayment"></p>
+
+<button id="cancelBtn" class="secondaryBtn hidden" onclick="cancelSubscription()">Abo kündigen</button>
+</div>
+
+<!-- Nutzung -->
+<div class="profileSection">
+<h3>Nutzung</h3>
+<p id="tokenInfo">wird geladen...</p>
+</div>
+
+<!-- Support -->
+<div class="profileSection">
+<h3>Support & Feedback</h3>
+<p>Support: support@exposifyapp.com</p>
+<p>Feedback: arthur@exposifyapp.com</p>
+</div>
+
+</div>
+
+<script>
+async function loadProfile() {
+try {
+const res = await fetch("/auth/status");
+const data = await res.json();
+
+document.getElementById("userEmail").textContent = data.email || "-";
+
+// Plan anzeigen
+if (data.plan === "pro" && data.payment_status === "active") {
+document.getElementById("planStatus").textContent = "Pro Abo aktiv";
+document.getElementById("cancelBtn").classList.remove("hidden");
+
+if (data.next_payment) {
+document.getElementById("nextPayment").textContent =
+"Nächste Zahlung: " + data.next_payment;
+}
+
+} else if (data.plan === "single") {
+document.getElementById("planStatus").textContent = "Einzel Exposé Paket";
+} else {
+document.getElementById("planStatus").textContent = "Kein aktives Abo";
+}
+
+// Tokens
+document.getElementById("tokenInfo").textContent =
+"Verbleibende Exposés: " + (data.single_credits || 0);
+
+} catch (err) {
+console.error(err);
+}
+}
+
+async function deleteAccount() {
+if (!confirm("Willst du deinen Account wirklich löschen?")) return;
+
+await fetch("/delete-account", { method: "POST" });
+window.location.href = "/";
+}
+
+async function cancelSubscription() {
+if (!confirm("Abo wirklich kündigen?")) return;
+
+await fetch("/cancel-subscription", { method: "POST" });
+alert("Abo wurde gekündigt.");
+location.reload();
+}
+
+loadProfile();
+</script>
+
+</body>
+</html>
