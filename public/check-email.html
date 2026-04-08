@@ -95,9 +95,20 @@ resendBtn.textContent = "E-Mail erneut senden";
 </script>
 
 <footer class="footer">
+<a href="/support.html">Support</a>
 <a href="/impressum.html">Impressum</a>
-<a href="/datenschutz.html">Datenschutz</a>
+
+<div class="footerDropdown">
+<button type="button" class="footerDropdownToggle" onclick="toggleLegalMenu()">
+Rechtliches <span id="legalArrow">▾</span>
+</button>
+
+<div id="legalMenu" class="footerDropdownMenu hidden">
 <a href="/agb.html">AGB</a>
+<a href="/datenschutz.html">Datenschutz</a>
+<a href="/widerruf.html">Widerruf</a>
+</div>
+</div>
 </footer>
 
 </body>

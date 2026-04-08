@@ -1479,3 +1479,41 @@ background: #f9fafb;
 .hidden {
 display: none !important;
 }
+
+.sidebarLegal {
+margin-top: auto;
+display: flex;
+flex-direction: column;
+gap: 10px;
+padding-top: 20px;
+border-top: 1px solid #e5e7eb;
+}
+
+.sidebarLegal a,
+.sidebarLegal button {
+font-size: 14px;
+color: #6b7280;
+text-decoration: none;
+background: none;
+border: none;
+text-align: left;
+cursor: pointer;
+}
+
+.sidebarLegal a:hover,
+.sidebarLegal button:hover {
+color: #111827;
+}
+
+.sidebarDropdown {
+display: flex;
+flex-direction: column;
+}
+
+#sidebarLegalMenu {
+margin-top: 6px;
+display: flex;
+flex-direction: column;
+gap: 6px;
+padding-left: 10px;
+}

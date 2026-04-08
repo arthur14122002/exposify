@@ -28,12 +28,26 @@
 </div>
 
 <div class="sidebarBottom">
-<div class="sidebarBottomLinks">
+
+ <div class="sidebarLegal">
+
 <a href="/support.html">Support</a>
 <a href="/impressum.html">Impressum</a>
-<a href="/datenschutz.html">Datenschutz</a>
+
+<div class="sidebarDropdown">
+<button onclick="toggleSidebarLegal()">
+Rechtliches <span id="sidebarArrow">▾</span>
+</button>
+
+<div id="sidebarLegalMenu" class="hidden">
 <a href="/agb.html">AGB</a>
+<a href="/datenschutz.html">Datenschutz</a>
+<a href="/widerruf.html">Widerruf</a>
 </div>
+</div>
+
+</div>
+
 </div>
 </aside>
 
@@ -394,6 +408,18 @@ if (!localStorage.getItem("demoWelcomeSeen")) {
 showDemoWelcome();
 }
 });
+</script>
+
+<script>
+function toggleSidebarLegal() {
+const menu = document.getElementById("sidebarLegalMenu");
+const arrow = document.getElementById("sidebarArrow");
+
+if (!menu || !arrow) return;
+
+menu.classList.toggle("hidden");
+arrow.textContent = menu.classList.contains("hidden") ? "▾" : "▴";
+}
 </script>
 
 </body>
