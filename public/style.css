@@ -1562,3 +1562,35 @@ background: #f9fafb;
 .hidden {
 display: none !important;
 }
+
+.landingLogo {
+display: flex;
+justify-content: center;
+margin-bottom: 22px;
+}
+
+.landingLogo img {
+height: 46px;
+width: auto;
+}
+
+.landingTopBar {
+position: absolute;
+top: 24px;
+right: 32px;
+z-index: 20;
+}
+
+.landingLoginBtn {
+background: transparent;
+border: none;
+color: #2563eb;
+font-size: 14px;
+font-weight: 600;
+cursor: pointer;
+padding: 0;
+}
+
+.landingLoginBtn:hover {
+text-decoration: underline;
+}
