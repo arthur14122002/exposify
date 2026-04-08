@@ -1480,40 +1480,70 @@ background: #f9fafb;
 display: none !important;
 }
 
-.sidebarLegal {
-margin-top: auto;
-display: flex;
-flex-direction: column;
-gap: 10px;
-padding-top: 20px;
+.sidebarLegalRow {
+margin-top: 18px;
+padding-top: 16px;
 border-top: 1px solid #e5e7eb;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 14px;
+position: relative;
 }
 
-.sidebarLegal a,
-.sidebarLegal button {
+.sidebarLegalRow a,
+.sidebarLegalRow button {
 font-size: 14px;
 color: #6b7280;
 text-decoration: none;
 background: none;
 border: none;
-text-align: left;
+padding: 0;
+margin: 0;
 cursor: pointer;
+font-family: inherit;
+font-weight: 500;
 }
 
-.sidebarLegal a:hover,
-.sidebarLegal button:hover {
+.sidebarLegalRow a:hover,
+.sidebarLegalRow button:hover {
 color: #111827;
 }
 
-.sidebarDropdown {
-display: flex;
-flex-direction: column;
+.sidebarDropdownInline {
+position: relative;
 }
 
-#sidebarLegalMenu {
-margin-top: 6px;
+.sidebarDropdownInline button {
+display: flex;
+align-items: center;
+gap: 6px;
+}
+
+.sidebarLegalMenu {
+position: absolute;
+bottom: 26px;
+right: 0;
+min-width: 150px;
+background: #ffffff;
+border: 1px solid #e5e7eb;
+border-radius: 12px;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+padding: 8px 0;
 display: flex;
 flex-direction: column;
-gap: 6px;
-padding-left: 10px;
+z-index: 100;
+}
+
+.sidebarLegalMenu a {
+padding: 10px 14px;
+white-space: nowrap;
+}
+
+.sidebarLegalMenu a:hover {
+background: #f9fafb;
+}
+
+.hidden {
+display: none !important;
 }
