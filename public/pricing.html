@@ -98,13 +98,6 @@ Beste Wahl
 
 </section>
 
-<div style="text-align:center; margin-top:20px; margin-bottom:10px; font-size:13px;">
-<label>
-<input type="checkbox" id="agbCheckbox">
-Ich akzeptiere die <a href="/agb.html" target="_blank">AGB</a>.
-</label>
-</div>
-
 <section class="cta" style="padding-top:30px;">
 <p>Schon ein Konto vorhanden?</p>
 <button class="secondaryBtn" onclick="goToLogin()">Zum Login</button>
@@ -142,32 +135,10 @@ alert("Checkout konnte nicht gestartet werden.");
 }
 }
 
-async function selectPlan(plan) {
-
-const agbAccepted = document.getElementById("agbCheckbox")?.checked;
-
-if (!agbAccepted) {
-alert("Bitte akzeptiere die AGB, bevor du fortfährst.");
-return;
-}
-
+function selectPlan(plan) {
 localStorage.setItem("selectedPlan", plan);
-localStorage.setItem("pendingCheckout", "true");
-
-try {
-const authRes = await fetch("/auth/status");
-const authData = await authRes.json();
-
-if (!authData.loggedIn) {
-window.location.href = "/register.html";
-return;
-}
-
-await startCheckout(plan);
-} catch (error) {
-console.error(error);
-alert("Checkout konnte nicht gestartet werden.");
-}
+localStorage.removeItem("termsConfirmed");
+window.location.href = "/terms-confirm.html";
 }
 
 function goToLogin() {

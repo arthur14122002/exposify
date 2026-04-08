@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=21">
+<link rel="shortcut icon" href="/favicon.png?v=21">
+<link rel="apple-touch-icon" href="/favicon.png?v=21">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bedingungen bestätigen – Exposify</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body class="authPage">
+
+<div class="authCard" style="max-width:620px;">
+<div class="authLogo">
+<img src="/assets/logo.svg" alt="Exposify Logo">
+</div>
+
+<h1 style="margin-bottom:12px;">Bevor du fortfährst</h1>
+
+<p style="margin-bottom:24px; line-height:1.7; color:#4b5563;">
+Bitte bestätige die folgenden Punkte, bevor du mit dem Kauf fortfährst.
+</p>
+
+<div id="selectedPlanBox" style="
+margin-bottom:22px;
+padding:14px 16px;
+border:1px solid #dbeafe;
+background:#eff6ff;
+border-radius:12px;
+font-size:14px;
+font-weight:600;
+color:#1e3a8a;
+">
+Gewähltes Modell: wird geladen...
+</div>
+
+<div style="display:flex; flex-direction:column; gap:16px; text-align:left; margin-bottom:24px;">
+
+<label style="display:flex; align-items:flex-start; gap:10px; line-height:1.6; cursor:pointer;">
+<input type="checkbox" id="confirmBusiness" style="margin-top:4px;">
+<span>Ich bestätige, dass ich als Unternehmer handle.</span>
+</label>
+
+<label style="display:flex; align-items:flex-start; gap:10px; line-height:1.6; cursor:pointer;">
+<input type="checkbox" id="confirmAGB" style="margin-top:4px;">
+<span>Ich akzeptiere die <a href="/agb.html" target="_blank">AGB</a>.</span>
+</label>
+
+</div>
+
+<button type="button" id="continueBtn" disabled style="opacity:0.55; cursor:not-allowed;">
+Weiter
+</button>
+
+<p style="margin-top:18px; font-size:13px; color:#6b7280; line-height:1.6;">
+Mit dem Fortfahren bestätigst du die oben genannten Angaben für den nächsten Kaufvorgang.
+</p>
+</div>
+
+<footer class="footer">
+<a href="/support.html">Support</a>
+<a href="/impressum.html">Impressum</a>
+<a href="/datenschutz.html">Datenschutz</a>
+<a href="/agb.html">AGB</a>
+</footer>
+
+<script>
+const confirmBusiness = document.getElementById("confirmBusiness");
+const confirmAGB = document.getElementById("confirmAGB");
+const continueBtn = document.getElementById("continueBtn");
+const selectedPlanBox = document.getElementById("selectedPlanBox");
+
+function getSelectedPlanLabel(plan) {
+if (plan === "pro") return "Exposify Pro – 34,99 € / Monat";
+if (plan === "single") return "Einzelnes Exposé – 4,99 € einmalig";
+return "Kein Modell ausgewählt";
+}
+
+function updateContinueState() {
+const enabled = confirmBusiness.checked && confirmAGB.checked;
+continueBtn.disabled = !enabled;
+continueBtn.style.opacity = enabled ? "1" : "0.55";
+continueBtn.style.cursor = enabled ? "pointer" : "not-allowed";
+}
+
+async function continueFlow() {
+const selectedPlan = localStorage.getItem("selectedPlan") || "";
+
+if (selectedPlan !== "pro" && selectedPlan !== "single") {
+alert("Kein gültiges Modell ausgewählt.");
+window.location.href = "/pricing.html";
+return;
+}
+
+localStorage.setItem("termsConfirmed", "true");
+
+try {
+const authRes = await fetch("/auth/status");
+const authData = await authRes.json();
+
+if (authData.loggedIn) {
+window.location.href = `/pricing.html?autocheckout=1&plan=${encodeURIComponent(selectedPlan)}`;
+return;
+}
+
+window.location.href = "/register.html";
+} catch (error) {
+console.error(error);
+window.location.href = "/register.html";
+}
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+const selectedPlan = localStorage.getItem("selectedPlan") || "";
+selectedPlanBox.textContent = `Gewähltes Modell: ${getSelectedPlanLabel(selectedPlan)}`;
+
+if (selectedPlan !== "pro" && selectedPlan !== "single") {
+alert("Bitte wähle zuerst ein Modell aus.");
+window.location.href = "/pricing.html";
+return;
+}
+
+confirmBusiness.addEventListener("change", updateContinueState);
+confirmAGB.addEventListener("change", updateContinueState);
+continueBtn.addEventListener("click", continueFlow);
+
+updateContinueState();
+});
+</script>
+
+</body>
+</html>
