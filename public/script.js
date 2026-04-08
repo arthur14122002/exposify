@@ -548,6 +548,14 @@ function goToProfile() {
 window.location.href = "/profile.html";
 }
 
+function goBack() {
+window.history.back();
+}
+
+function goToPricing() {
+window.location.href = "/pricing.html";
+}
+
 function updatePreisPlaceholder() {
 const vermarktung = document.getElementById("vermarktung");
 const preisInput = document.getElementById("preis");
