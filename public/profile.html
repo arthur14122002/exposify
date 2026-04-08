@@ -44,6 +44,25 @@ Abo kündigen
 <button type="button" class="dangerBtn" onclick="deleteAccount()">Account löschen</button>
 </div>
 
+<div id="deleteAccountModal" class="modalOverlay hidden">
+<div class="modalBox" style="max-width:460px; text-align:center;">
+<h3 style="margin-bottom:12px;">Account wirklich löschen?</h3>
+
+<p style="margin:0 0 14px 0; font-size:14px; line-height:1.7;">
+Wenn du deinen Account löschst, werden auch deine gespeicherten Exposés dauerhaft entfernt.
+</p>
+
+<p style="margin:0 0 22px 0; font-size:14px; line-height:1.7;">
+Diese Aktion kann nicht rückgängig gemacht werden.
+</p>
+
+<div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+<button type="button" class="secondaryBtn" onclick="closeDeleteModal()">Abbrechen</button>
+<button type="button" class="dangerBtn" onclick="confirmDeleteAccount()">Endgültig löschen</button>
+</div>
+</div>
+</div>
+
 </div>
 
 <script>
@@ -85,11 +104,38 @@ function goToPricing() {
 window.location.href = "/pricing.html";
 }
 
-async function deleteAccount() {
-if (!confirm("Willst du deinen Account wirklich löschen?")) return;
+function openDeleteModal() {
+const modal = document.getElementById("deleteAccountModal");
+if (!modal) return;
+modal.classList.remove("hidden");
+modal.style.display = "flex";
+}
 
-await fetch("/delete-account", { method: "POST" });
+function closeDeleteModal() {
+const modal = document.getElementById("deleteAccountModal");
+if (!modal) return;
+modal.classList.add("hidden");
+modal.style.display = "none";
+}
+
+async function confirmDeleteAccount() {
+try {
+const res = await fetch("/delete-account", {
+method: "POST"
+});
+
+const data = await res.json();
+
+if (data.success) {
 window.location.href = "/";
+return;
+}
+
+alert(data.message || "Account konnte nicht gelöscht werden.");
+} catch (error) {
+console.error(error);
+alert("Fehler beim Löschen des Accounts.");
+}
 }
 
 async function cancelSubscription() {

@@ -792,6 +792,80 @@ return res.redirect("/login.html?verified=error");
 }
 });
 
+app.post("/delete-account", requireAuth, async (req, res) => {
+try {
+const userId = req.session.user.id;
+
+const { data: currentUser, error: fetchError } = await supabase
+.from("users")
+.select("stripe_subscription_id")
+.eq("id", userId)
+.single();
+
+if (fetchError || !currentUser) {
+console.error("Delete account fetch user error:", fetchError);
+return res.status(404).json({
+success: false,
+message: "Benutzer nicht gefunden."
+});
+}
+
+// Falls ein aktives Stripe-Abo existiert: zuerst kündigen
+if (currentUser.stripe_subscription_id) {
+try {
+await stripe.subscriptions.cancel(currentUser.stripe_subscription_id);
+} catch (stripeError) {
+console.error("Stripe cancel before account delete error:", stripeError);
+return res.status(500).json({
+success: false,
+message: "Abo konnte vor dem Löschen nicht beendet werden."
+});
+}
+}
+
+// Erst alle Exposés löschen
+const { error: exposesDeleteError } = await supabase
+.from("exposes")
+.delete()
+.eq("user_id", userId);
+
+if (exposesDeleteError) {
+console.error("Delete account exposes error:", exposesDeleteError);
+return res.status(500).json({
+success: false,
+message: "Exposés konnten nicht gelöscht werden."
+});
+}
+
+// Dann User löschen
+const { error: userDeleteError } = await supabase
+.from("users")
+.delete()
+.eq("id", userId);
+
+if (userDeleteError) {
+console.error("Delete account user error:", userDeleteError);
+return res.status(500).json({
+success: false,
+message: "Account konnte nicht gelöscht werden."
+});
+}
+
+req.session.destroy(() => {
+return res.json({
+success: true
+});
+});
+
+} catch (error) {
+console.error("Delete account crash:", error);
+return res.status(500).json({
+success: false,
+message: "Fehler beim Löschen des Accounts."
+});
+}
+});
+
 app.post("/login", async (req, res) => {
 const { email, password } = req.body;
 
