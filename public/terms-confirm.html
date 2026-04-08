@@ -37,16 +37,64 @@ color:#1e3a8a;
 Gewähltes Modell: wird geladen...
 </div>
 
-<div style="display:flex; flex-direction:column; gap:18px; text-align:left; margin-bottom:24px; max-width:440px; margin-left:auto; margin-right:auto;">
+<div style="
+width:100%;
+max-width:520px;
+margin:0 auto 24px auto;
+display:flex;
+flex-direction:column;
+gap:18px;
+text-align:left;
+">
 
-<label style="display:flex; align-items:flex-start; gap:12px; line-height:1.6; cursor:pointer;">
-<input type="checkbox" id="confirmBusiness" style="margin-top:4px; flex-shrink:0;">
-<span>Ich bestätige, dass ich als Unternehmer gemäß § 14 BGB handle.</span>
+<label style="
+width:100%;
+display:flex;
+align-items:flex-start;
+justify-content:flex-start;
+gap:12px;
+line-height:1.6;
+cursor:pointer;
+text-align:left;
+">
+<input
+type="checkbox"
+id="confirmBusiness"
+style="
+margin-top:3px;
+flex:0 0 auto;
+width:18px;
+height:18px;
+"
+>
+<span style="display:block; flex:1;">
+Ich bestätige, dass ich als Unternehmer gemäß § 14 BGB handle.
+</span>
 </label>
 
-<label style="display:flex; align-items:flex-start; gap:12px; line-height:1.6; cursor:pointer;">
-<input type="checkbox" id="confirmAGB" style="margin-top:4px; flex-shrink:0;">
-<span>Ich akzeptiere die <a href="/agb.html" target="_blank">AGB</a>.</span>
+<label style="
+width:100%;
+display:flex;
+align-items:flex-start;
+justify-content:flex-start;
+gap:12px;
+line-height:1.6;
+cursor:pointer;
+text-align:left;
+">
+<input
+type="checkbox"
+id="confirmAGB"
+style="
+margin-top:3px;
+flex:0 0 auto;
+width:18px;
+height:18px;
+"
+>
+<span style="display:block; flex:1;">
+Ich akzeptiere die <a href="/agb.html" target="_blank">AGB</a>.
+</span>
 </label>
 
 </div>
@@ -80,7 +128,7 @@ return "Kein Modell ausgewählt";
 }
 
 function updateContinueState() {
-const enabled = confirmBusiness.checked && confirmAGB.checked;
+const enabled = confirmBusiness. checked && confirmAGB.checked;
 continueBtn.disabled = !enabled;
 continueBtn.style.opacity = enabled ? "1" : "0.55";
 continueBtn.style.cursor = enabled ? "pointer" : "not-allowed";
