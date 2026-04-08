@@ -1498,6 +1498,26 @@ font-size: 14px;
 color: #6b7280;
 cursor: pointer;
 font-family: inherit;
+background: transparent !important;
+border: none !important;
+box-shadow: none !important;
+outline: none !important;
+-webkit-appearance: none;
+appearance: none;
+}
+
+.sidebarLegalRow button:focus,
+.sidebarLegalRow button:focus-visible,
+.sidebarLegalRow a:focus,
+.sidebarLegalRow a:focus-visible {
+outline: none !important;
+box-shadow: none !important;
+background: transparent !important;
+}
+
+.sidebarLegalRow button::selection,
+.sidebarLegalRow a::selection {
+background: transparent;
 }
 
 .sidebarLegalRow a:hover,
