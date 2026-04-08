@@ -80,19 +80,30 @@ console.error("Webhook update pro error:", error);
 }
 
 if (plan === "single") {
+const { data: existingUser, error: fetchError } = await supabase
+.from("users")
+.select("single_credits")
+.eq("id", userId)
+.single();
+
+if (fetchError || !existingUser) {
+console.error("Webhook fetch single user error:", fetchError);
+} else {
+const newCredits = Number(existingUser.single_credits || 0) + 1;
+
 const { error } = await supabase
 .from("users")
 .update({
 plan: "single",
 payment_status: "active",
 stripe_customer_id: stripeCustomerId,
-single_credits: 1,
-single_used: false
+single_credits: newCredits
 })
 .eq("id", userId);
 
 if (error) {
 console.error("Webhook update single error:", error);
+}
 }
 }
 break;
@@ -1302,7 +1313,7 @@ app.post("/projects", requireAuth, async (req, res) => {
 try {
 const { data: currentUser, error: userError } = await supabase
 .from("users")
-.select("plan, single_credits, single_used, payment_status")
+.select("plan, single_credits, payment_status")
 .eq("id", req.session.user.id)
 .single();
 
@@ -1316,38 +1327,16 @@ message: "Benutzerstatus konnte nicht geladen werden."
 
 const plan = currentUser.plan || "free";
 const paymentStatus = currentUser.payment_status || "inactive";
-const singleUsed = !!currentUser.single_used;
+const singleCredits = Number(currentUser.single_credits || 0);
 
 const hasProAccess = plan === "pro" && paymentStatus === "active";
-const hasSingleAccess = plan === "single" && paymentStatus === "active";
+const hasSingleAccess = paymentStatus === "active" && singleCredits > 0;
 
 if (!hasProAccess && !hasSingleAccess) {
 return res.status(403).json({
 success: false,
 message: "Du hast aktuell keinen aktiven Zugriff auf Exposify."
 });
-}
-
-if (hasSingleAccess) {
-const { count, error: countError } = await supabase
-.from("exposes")
-.select("*", { count: "exact", head: true })
-.eq("user_id", req.session.user.id);
-
-if (countError) {
-console.error("Single project count error:", countError);
-return res.status(500).json({
-success: false,
-message: "Projektstatus konnte nicht geprüft werden."
-});
-}
-
-if ((count || 0) >= 1 || singleUsed) {
-return res.status(403).json({
-success: false,
-message: "Dein Einzelkauf wurde bereits für ein Exposé verwendet. Bitte kauf ein neues Exposé oder upgrade auf Pro."
-});
-}
 }
 
 const payload = {
@@ -1372,17 +1361,25 @@ message: "Projekt konnte nicht gespeichert werden."
 });
 }
 
-if (hasSingleAccess) {
+if (!hasProAccess && hasSingleAccess) {
+const newCredits = Math.max(0, singleCredits - 1);
+
+const updatePayload = {
+single_credits: newCredits
+};
+
+if (newCredits === 0) {
+updatePayload.plan = "free";
+updatePayload.payment_status = "inactive";
+}
+
 const { error: updateError } = await supabase
 .from("users")
-.update({
-single_used: true,
-single_credits: 0
-})
+.update(updatePayload)
 .eq("id", req.session.user.id);
 
 if (updateError) {
-console.error("Single used update error:", updateError);
+console.error("Single credits update error:", updateError);
 }
 }
 
