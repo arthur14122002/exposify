@@ -1599,11 +1599,10 @@ text-decoration: underline;
 display: flex;
 justify-content: center;
 margin-bottom: 30px;
-margin-top: -20px;
 }
 
 .landingLogo img {
-height: 80px;
+height: 90px;
 width: auto;
 display: block;
 }
@@ -1634,6 +1633,3 @@ cursor: pointer;
 background: #f8fafc;
 }
 
-.hero {
-padding-top: 140px;
-}
