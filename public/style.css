@@ -1656,3 +1656,39 @@ cursor: pointer;
 .dangerBtn:hover {
 background: #dc2626;
 }
+
+.profileSection {
+margin-bottom: 28px;
+padding-bottom: 18px;
+border-bottom: 1px solid #e5e7eb;
+}
+
+.profileSection h3 {
+margin-bottom: 10px;
+}
+
+.profileActions {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 12px;
+margin-top: 26px;
+padding-top: 8px;
+}
+
+.profileActions button {
+flex: 1;
+}
+
+.dangerBtn {
+background: #ef4444;
+color: white;
+border: none;
+padding: 10px 16px;
+border-radius: 999px;
+cursor: pointer;
+}
+
+.dangerBtn:hover {
+background: #dc2626;
+}

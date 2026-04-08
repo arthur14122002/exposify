@@ -2,7 +2,6 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mein Profil – Exposify</title>
 <link rel="stylesheet" href="/style.css">
@@ -13,34 +12,36 @@
 
 <h1 style="text-align:center; margin-bottom:24px;">Mein Profil</h1>
 
-<!-- Account -->
 <div class="profileSection">
 <h3>Account</h3>
 <p><strong>E-Mail:</strong> <span id="userEmail">wird geladen...</span></p>
-
-<button class="dangerBtn" onclick="deleteAccount()">Account löschen</button>
 </div>
 
-<!-- Abo -->
 <div class="profileSection">
 <h3>Abo</h3>
 <p id="planStatus">wird geladen...</p>
 <p id="nextPayment"></p>
 
-<button id="cancelBtn" class="secondaryBtn hidden" onclick="cancelSubscription()">Abo kündigen</button>
+<button id="cancelBtn" class="secondaryBtn hidden" type="button" onclick="cancelSubscription()">
+Abo kündigen
+</button>
 </div>
 
-<!-- Nutzung -->
 <div class="profileSection">
 <h3>Nutzung</h3>
 <p id="tokenInfo">wird geladen...</p>
 </div>
 
-<!-- Support -->
 <div class="profileSection">
 <h3>Support & Feedback</h3>
 <p>Support: support@exposifyapp.com</p>
 <p>Feedback: arthur@exposifyapp.com</p>
+</div>
+
+<div class="profileActions">
+<button type="button" class="secondaryBtn" onclick="goBack()">Zurück</button>
+<button type="button" class="primaryBtn" onclick="goToPricing()">Upgrade / Exposé kaufen</button>
+<button type="button" class="dangerBtn" onclick="deleteAccount()">Account löschen</button>
 </div>
 
 </div>
@@ -53,7 +54,6 @@ const data = await res.json();
 
 document.getElementById("userEmail").textContent = data.user?.email || "-";
 
-// Plan anzeigen
 if (data.plan === "pro" && data.payment_status === "active") {
 document.getElementById("planStatus").textContent = "Pro Abo aktiv";
 document.getElementById("cancelBtn").classList.remove("hidden");
@@ -69,13 +69,20 @@ document.getElementById("planStatus").textContent = "Einzel Exposé Paket";
 document.getElementById("planStatus").textContent = "Kein aktives Abo";
 }
 
-// Tokens
 document.getElementById("tokenInfo").textContent =
 "Verbleibende Exposés: " + (data.single_credits || 0);
 
 } catch (err) {
 console.error(err);
 }
+}
+
+function goBack() {
+window.history.back();
+}
+
+function goToPricing() {
+window.location.href = "/pricing.html";
 }
 
 async function deleteAccount() {
@@ -94,13 +101,6 @@ location.reload();
 }
 
 loadProfile();
-
-<div class="profileActions">
-<button type="button" class="secondaryBtn" onclick="goBack()">Zurück</button>
-<button type="button" class="primaryBtn" onclick="goToPricing()">Upgrade / Exposé kaufen</button>
-<button type="button" class="dangerBtn" onclick="deleteAccount()">Account löschen</button>
-</div>
-
 </script>
 
 </body>
