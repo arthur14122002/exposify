@@ -60,6 +60,7 @@ justify-content:space-between;
 
 <div style="margin-top:auto; padding-top:24px; text-align:center;">
 <button class="primaryBtn" onclick="selectPlan('single')">Einmalig starten</button>
+
 </div>
 </div>
 
@@ -91,10 +92,18 @@ Beste Wahl
 
 <div style="margin-top:auto; padding-top:24px; text-align:center;">
 <button class="primaryBtn" onclick="selectPlan('pro')">30 Tage kostenlos testen</button>
+
 </div>
 </div>
 
 </section>
+
+<div style="text-align:center; margin-top:20px; margin-bottom:10px; font-size:13px;">
+<label>
+<input type="checkbox" id="agbCheckbox">
+Ich akzeptiere die <a href="/agb.html" target="_blank">AGB</a>.
+</label>
+</div>
 
 <section class="cta" style="padding-top:30px;">
 <p>Schon ein Konto vorhanden?</p>
@@ -134,6 +143,14 @@ alert("Checkout konnte nicht gestartet werden.");
 }
 
 async function selectPlan(plan) {
+
+const agbAccepted = document.getElementById("agbCheckbox")?.checked;
+
+if (!agbAccepted) {
+alert("Bitte akzeptiere die AGB, bevor du fortfährst.");
+return;
+}
+
 localStorage.setItem("selectedPlan", plan);
 localStorage.setItem("pendingCheckout", "true");
 
