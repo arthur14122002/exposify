@@ -1599,10 +1599,11 @@ text-decoration: underline;
 display: flex;
 justify-content: center;
 margin-bottom: 30px;
+margin-top: -20px;
 }
 
 .landingLogo img {
-height: 64px;
+height: 80px;
 width: auto;
 display: block;
 }
@@ -1613,7 +1614,7 @@ position: relative;
 
 .landingTopBar {
 position: absolute;
-top: 28px;
+top: 40px;
 right: 40px;
 z-index: 50;
 }
@@ -1631,4 +1632,8 @@ cursor: pointer;
 
 .landingLoginBtn:hover {
 background: #f8fafc;
+}
+
+.hero {
+padding-top: 140px;
 }
