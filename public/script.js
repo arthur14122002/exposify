@@ -110,8 +110,8 @@ const hasProAccess = userPlan === "pro" && paymentStatus === "active";
 const hasSingleAccess = userPlan === "single" && paymentStatus === "active";
 const hasAccess = hasProAccess || hasSingleAccess;
 
-if (!isUserLoggedIn || !hasAccess) {
-window.location.href = "/pricing.html";
+if (!isUserLoggedIn {
+window.location.href = "/login.html";
 return;
 }
 } catch (error) {
