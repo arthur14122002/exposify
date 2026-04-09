@@ -17,6 +17,10 @@ const generateHint = document.getElementById("generateHint");
 const authModal = document.getElementById("authModal");
 const authModalOk = document.getElementById("authModalOk");
 
+const creditModal = document.getElementById("creditModal");
+const creditModalClose = document.getElementById("creditModalClose");
+const creditModalUpgrade = document.getElementById("creditModalUpgrade");
+
 let imageFiles = [];
 let titleImageFile = null;
 let logoFile = null;
@@ -60,6 +64,30 @@ function showAuthModal() {
 if (!authModal) return;
 authModal.classList.remove("hidden");
 authModal.style.display = "flex";
+}
+
+function showCreditModal() {
+if (!creditModal) return;
+creditModal.classList.remove("hidden");
+creditModal.style.display = "flex";
+}
+
+function closeCreditModal() {
+if (!creditModal) return;
+creditModal.classList.add("hidden");
+creditModal.style.display = "none";
+}
+
+if (creditModalClose) {
+creditModalClose.addEventListener("click", () => {
+closeCreditModal();
+});
+}
+
+if (creditModalUpgrade) {
+creditModalUpgrade.addEventListener("click", () => {
+window.location.href = "/pricing.html";
+});
 }
 
 function showNotice(message) {
@@ -344,6 +372,19 @@ if (generateHint) generateHint.style.display = "block";
 
 async function generateExpose() {
 try {
+const hasProAccess = userPlan === "pro" && paymentStatus === "active";
+const hasSingleAccess = paymentStatus === "active" && userCredits > 0;
+
+if (!hasProAccess && userPlan === "single" && userCredits <= 0) {
+showCreditModal();
+return;
+}
+
+if (!isUserLoggedIn) {
+showAuthModal();
+return;
+}
+
 showLoading(true);
 
 const data = {
