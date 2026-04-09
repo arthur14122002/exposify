@@ -70,7 +70,9 @@ plan: "pro",
 payment_status: "active",
 stripe_customer_id: stripeCustomerId,
 stripe_subscription_id: stripeSubscriptionId,
-single_credits: 0
+single_credits: 0,
+trial_used: true,
+trial_started_at: new Date().toISOString(),
 })
 .eq("id", userId);
 
@@ -1258,6 +1260,19 @@ app.post("/create-checkout-session", requireAuth, async (req, res) => {
 try {
 const { plan } = req.body;
 
+const { data: currentUser, error: userError } = await supabase
+.from("users")
+.select("trial_used")
+.eq("id", req.session.user.id)
+.single();
+
+if (userError || !currentUser) {
+return res.status(500).json({
+success: false,
+message: "Benutzer konnte nicht geladen werden."
+});
+}
+
 let priceId = "";
 let mode = "payment";
 
@@ -1281,7 +1296,7 @@ message: "Stripe Preis-ID fehlt."
 });
 }
 
-const session = await stripe.checkout.sessions.create({
+const sessionConfig = {
 mode,
 line_items: [
 {
@@ -1297,7 +1312,15 @@ metadata: {
 user_id: req.session.user.id,
 plan
 }
-});
+};
+
+if (plan === "pro" && !currentUser.trial_used) {
+sessionConfig.subscription_data = {
+trial_period_days: 30
+};
+}
+
+const session = await stripe.checkout.sessions.create(sessionConfig);
 
 return res.json({
 success: true,
