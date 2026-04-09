@@ -373,9 +373,8 @@ if (generateHint) generateHint.style.display = "block";
 async function generateExpose() {
 try {
 const hasProAccess = userPlan === "pro" && paymentStatus === "active";
-const hasSingleAccess = paymentStatus === "active" && userCredits > 0;
 
-if (!hasProAccess && userPlan === "single" && userCredits <= 0) {
+if (!hasProAccess && userCredits <= 0) {
 showCreditModal();
 return;
 }
