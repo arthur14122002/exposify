@@ -291,7 +291,7 @@ const { data: existingUser } = await supabase
 .from("users")
 .select("*")
 .eq("email", normalizedEmail)
-.single();
+.maybeSingle();
 
 if (existingUser) {
 return res.json({
@@ -484,7 +484,7 @@ const { data: user, error: userError } = await supabase
 .from("users")
 .select("*")
 .eq("email", normalizedEmail)
-.single();
+.maybeSingle();
 
 if (userError || !user) {
 return res.json({
@@ -907,7 +907,7 @@ const { data: user, error } = await supabase
 .from("users")
 .select("*")
 .eq("email", normalizedEmail)
-.single();
+.maybeSingle();
 
 if (error || !user) {
 return res.json({
@@ -969,7 +969,7 @@ const { data: user, error } = await supabase
 .from("users")
 .select("*")
 .eq("email", normalizedEmail)
-.single();
+.maybeSingle();
 
 if (error || !user) {
 return res.json({
