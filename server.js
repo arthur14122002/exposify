@@ -170,11 +170,14 @@ app.use(express.static("public"));
 
 app.use(
 session({
-secret: "exposify-secret",
+secret: process.env.SESSION_SECRET,
 resave: false,
 saveUninitialized: false,
 cookie: {
-maxAge: 1000 * 60 * 60 * 24 * 30
+maxAge: 1000 * 60 * 60 * 24 * 30,
+httpOnly: true,
+sameSite: "lax",
+secure: true
 }
 })
 );
@@ -259,6 +262,8 @@ app.post("/register", async (req, res) => {
 try {
 const { email, password } = req.body;
 
+const normalizedEmail = String(email || "").toLowerCase().trim();
+
 if (!email || !password) {
 return res.json({
 success: false,
@@ -274,7 +279,7 @@ message: "Passwort muss mindestens 8 Zeichen enthalten und mindestens eine Zahl 
 }
 
 // Email basic check
-if (!email.includes("@")) {
+if (!normalizedEmail.includes("@")) {
 return res.json({
 success: false,
 message: "Bitte gib eine gültige E-Mail-Adresse ein."
@@ -285,7 +290,7 @@ message: "Bitte gib eine gültige E-Mail-Adresse ein."
 const { data: existingUser } = await supabase
 .from("users")
 .select("*")
-.eq("email", email)
+.eq("email", normalizedEmail)
 .single();
 
 if (existingUser) {
@@ -304,7 +309,7 @@ const token = createVerificationToken();
 // User speichern
 const { error } = await supabase.from("users").insert([
 {
-email,
+email: normalizedEmail,
 password: hashedPassword,
 verification_token: token,
 email_verified: false,
@@ -312,6 +317,8 @@ last_verification_sent_at: new Date().toISOString(),
 plan: "free",
 single_credits: 0,
 single_used: false,
+trial_used: false,
+trial_started_at: null,
 stripe_customer_id: null,
 stripe_subscription_id: null,
 payment_status: "inactive"
@@ -330,7 +337,7 @@ message: "Registrierung fehlgeschlagen."
 const verifyLink = `https://exposifyapp.com/verify?token=${token}`;
 
 try {
-const rawName = email.split("@")[0];
+const rawName = normalizedEmail.split("@")[0];
 
 const name = rawName
 .replace(/[._-]+/g, " ")
@@ -341,7 +348,7 @@ const name = rawName
 
 const mailResult = await resend.emails.send({
 from: "Exposify <hello@exposifyapp.com>",
-to: email,
+to: normalizedEmail,
 subject: "Bitte bestätige deine E-Mail-Adresse",
 html: `
 <div style="margin:0; padding:0; background-color:#f4f6f8;">
@@ -464,6 +471,8 @@ app.post("/resend-verification", async (req, res) => {
 try {
 const { email } = req.body;
 
+const normalizedEmail = String(email || "").toLowerCase().trim();
+
 if (!email) {
 return res.json({
 success: false,
@@ -474,7 +483,7 @@ message: "E-Mail fehlt."
 const { data: user, error: userError } = await supabase
 .from("users")
 .select("*")
-.eq("email", email)
+.eq("email", normalizedEmail)
 .single();
 
 if (userError || !user) {
@@ -513,7 +522,7 @@ const { error: updateError } = await supabase
 verification_token: token,
 last_verification_sent_at: new Date().toISOString()
 })
-.eq("email", email);
+.eq("email", normalizedEmail);
 
 if (updateError) {
 console.error(updateError);
@@ -525,7 +534,7 @@ message: "Verifizierungs-Mail konnte nicht vorbereitet werden."
 
 const verifyLink = `https://exposifyapp.com/verify?token=${token}`;
 
-const rawName = email.split("@")[0];
+const rawName = normalizedEmail.split("@")[0];
 
 const name = rawName
 .replace(/[._-]+/g, " ")
@@ -536,7 +545,7 @@ const name = rawName
 
 const mailResult = await resend.emails.send({
 from: "Exposify <hello@exposifyapp.com>",
-to: email,
+to: normalizedEmail,
 subject: "Bitte bestätige deine E-Mail-Adresse",
 html: `
 <div style="margin:0; padding:0; background-color:#f4f6f8;">
@@ -800,7 +809,7 @@ const userId = req.session.user.id;
 
 const { data: currentUser, error: fetchError } = await supabase
 .from("users")
-.select("stripe_subscription_id")
+.select("stripe_subscription_id, email, trial_used, trial_started_at")
 .eq("id", userId)
 .single();
 
@@ -839,6 +848,27 @@ message: "Exposés konnten nicht gelöscht werden."
 });
 }
 
+if (currentUser.email) {
+const { error: historyError } = await supabase
+.from("trial_history")
+.upsert({
+email: currentUser.email.toLowerCase().trim(),
+trial_used: !!currentUser.trial_used,
+trial_started_at: currentUser.trial_started_at || null,
+deleted_at: new Date().toISOString()
+}, {
+onConflict: "email"
+});
+
+if (historyError) {
+console.error("Trial history save error:", historyError);
+return res.status(500).json({
+success: false,
+message: "Trial-Historie konnte nicht gespeichert werden."
+});
+}
+}
+
 // Dann User löschen
 const { error: userDeleteError } = await supabase
 .from("users")
@@ -871,10 +901,12 @@ message: "Fehler beim Löschen des Accounts."
 app.post("/login", async (req, res) => {
 const { email, password } = req.body;
 
+const normalizedEmail = String(email || "").toLowerCase().trim();
+
 const { data: user, error } = await supabase
 .from("users")
 .select("*")
-.eq("email", email)
+.eq("email", normalizedEmail)
 .single();
 
 if (error || !user) {
@@ -924,6 +956,8 @@ app.post("/forgot-password", async (req, res) => {
 try {
 const { email } = req.body;
 
+const normalizedEmail = String(email || "").toLowerCase().trim();
+
 if (!email) {
 return res.json({
 success: false,
@@ -934,7 +968,7 @@ message: "Bitte E-Mail eingeben."
 const { data: user, error } = await supabase
 .from("users")
 .select("*")
-.eq("email", email)
+.eq("email", normalizedEmail)
 .single();
 
 if (error || !user) {
@@ -952,7 +986,7 @@ const { error: updateError } = await supabase
 reset_token: token,
 reset_token_created_at: new Date().toISOString()
 })
-.eq("email", email);
+.eq("email", normalizedEmail);
 
 if (updateError) {
 console.error(updateError);
@@ -964,7 +998,7 @@ message: "Reset-Link konnte nicht vorbereitet werden."
 
 const resetLink = `https://exposifyapp.com/reset-password.html?token=${token}`;
 
-const rawName = email.split("@")[0];
+const rawName = normalizedEmail.split("@")[0];
 const name = rawName
 .replace(/[._-]+/g, " ")
 .split(" ")
@@ -974,7 +1008,7 @@ const name = rawName
 
 const mailResult = await resend.emails.send({
 from: "Exposify <hello@exposifyapp.com>",
-to: email,
+to: normalizedEmail,
 subject: "Passwort zurücksetzen",
 html: `
 <div style="margin:0; padding:0; background-color:#f4f6f8;">
@@ -1160,44 +1194,6 @@ message: "Fehler beim Zurücksetzen des Passworts."
 }
 });
 
-app.post("/resend-confirmation", async (req, res) => {
-try {
-const { email } = req.body;
-
-if (!email) {
-return res.json({
-success: false,
-message: "Bitte E-Mail eingeben."
-});
-}
-
-const { error } = await supabase.auth.resend({
-type: "signup",
-email
-});
-
-if (error) {
-console.error("Resend error:", error);
-return res.json({
-success: false,
-message: "E-Mail konnte nicht erneut gesendet werden."
-});
-}
-
-res.json({
-success: true,
-message: "Bestätigungs-E-Mail wurde erneut gesendet."
-});
-
-} catch (err) {
-console.error("Resend crash:", err);
-res.json({
-success: false,
-message: "Fehler beim Senden."
-});
-}
-});
-
 app.post("/logout", (req, res) => {
 req.session.destroy(() => {
 res.json({ success: true });
@@ -1273,6 +1269,21 @@ message: "Benutzer konnte nicht geladen werden."
 });
 }
 
+const normalizedEmail = req.session.user.email.toLowerCase().trim();
+
+const { data: historyEntry, error: historyError } = await supabase
+.from("trial_history")
+.select("trial_used")
+.eq("email", normalizedEmail)
+.maybeSingle();
+
+if (historyError) {
+return res.status(500).json({
+success: false,
+message: "Trial-Historie konnte nicht geladen werden."
+});
+}
+
 let priceId = "";
 let mode = "payment";
 
@@ -1314,7 +1325,9 @@ plan
 }
 };
 
-if (plan === "pro" && !currentUser.trial_used) {
+const hasUsedTrial = !!currentUser.trial_used || !!historyEntry?.trial_used;
+
+if (plan === "pro" && !hasUsedTrial) {
 sessionConfig.subscription_data = {
 trial_period_days: 30
 };

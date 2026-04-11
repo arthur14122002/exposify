@@ -100,6 +100,30 @@ authNoticeModal.classList.remove("hidden");
 authNoticeModal.style.display = "flex";
 }
 
+<script>
+async function startCheckout(plan) {
+try {
+const res = await fetch("/create-checkout-session", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ plan })
+});
+
+const data = await res.json();
+
+if (data.success && data.url) {
+window.location.href = data.url;
+return;
+}
+
+showAuthNotice(data.message || "Checkout konnte nicht gestartet werden.");
+} catch (error) {
+console.error(error);
+showAuthNotice("Checkout konnte nicht gestartet werden.");
+}
+}
+</script>
+
 async function login() {
 const email = document.getElementById("email").value.trim();
 const password = document.getElementById("password").value.trim();
@@ -123,7 +147,8 @@ if (shouldShowAfterLogin) {
 sessionStorage.removeItem("showWelcomeAfterLogin");
 
 if (pendingCheckout && hasPlan) {
-window.location.href = `/pricing.html?autocheckout=1&welcome=1&plan=${encodeURIComponent(selectedPlan)}`;
+sessionStorage.setItem("showWelcomeAfterLogin", "true");
+await startCheckout(selectedPlan);
 return;
 }
 
@@ -132,7 +157,7 @@ return;
 }
 
 if (pendingCheckout && hasPlan) {
-window.location.href = `/pricing.html?autocheckout=1&plan=${encodeURIComponent(selectedPlan)}`;
+await startCheckout(selectedPlan);
 return;
 }
 

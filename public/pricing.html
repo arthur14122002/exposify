@@ -183,9 +183,7 @@ sessionStorage.setItem("showWelcomeAfterLogin", "true");
 if (autoCheckout === "1" && (selectedPlan === "pro" || selectedPlan === "single")) {
 localStorage.removeItem("pendingCheckout");
 window.history.replaceState({}, document.title, "/pricing.html");
-setTimeout(async () => {
 await startCheckout(selectedPlan);
-}, 250);
 }
 });
 </script>
