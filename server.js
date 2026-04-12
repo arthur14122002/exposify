@@ -33,6 +33,8 @@ path.join(__dirname, "public", "style.css"),
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.set("trust proxy", 1);
+
 app.post("/stripe-webhook", express.raw({ type: "application/json" }), async (req, res) => {
 let event;
 
