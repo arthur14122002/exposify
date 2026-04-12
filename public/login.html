@@ -123,6 +123,15 @@ showAuthNotice("Checkout konnte nicht gestartet werden.");
 }
 
 async function login() {
+
+const urlParams = new URLSearchParams(window.location.search);
+const forceNormalLogin = urlParams.get("normal") === "1";
+
+if (forceNormalLogin) {
+localStorage.removeItem("pendingCheckout");
+localStorage.removeItem("selectedPlan");
+}
+
 const email = document.getElementById("email").value.trim();
 const password = document.getElementById("password").value.trim();
 
@@ -144,7 +153,7 @@ const hasPlan = selectedPlan === "pro" || selectedPlan === "single";
 if (shouldShowAfterLogin) {
 sessionStorage.removeItem("showWelcomeAfterLogin");
 
-if (pendingCheckout && hasPlan) {
+if (!forceNormalLogin && pendingCheckout && hasPlan) {
 sessionStorage.setItem("showWelcomeAfterLogin", "true");
 await startCheckout(selectedPlan);
 return;
