@@ -152,7 +152,11 @@ localStorage.removeItem("pendingCheckout");
 window.location.href = "/terms-confirm.html";
 }
 
-function goToLogin() {
+function goLogin() {
+localStorage.removeItem("pendingCheckout");
+localStorage.removeItem("selectedPlan");
+localStorage.removeItem("termsConfirmed");
+
 window.location.href = "/login.html";
 }
 
