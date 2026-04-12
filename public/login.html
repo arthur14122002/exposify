@@ -130,6 +130,7 @@ const forceNormalLogin = urlParams.get("normal") === "1";
 if (forceNormalLogin) {
 localStorage.removeItem("pendingCheckout");
 localStorage.removeItem("selectedPlan");
+localStorage.removeItem("termsConfirmed");
 }
 
 const email = document.getElementById("email").value.trim();
