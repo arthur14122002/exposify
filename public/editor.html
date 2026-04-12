@@ -696,34 +696,13 @@ return;
 
 if (!pageInner) return;
 
-const isHeroImage = img.classList.contains("heroImage");
+const naturalWidth = img.naturalWidth;
+const naturalHeight = img.naturalHeight;
 
-const rect = img.getBoundingClientRect();
-const pageWidth = pageInner.clientWidth || 698;
+const maxWidth = 300;
 
-let naturalWidth = img.naturalWidth || 0;
-let naturalHeight = img.naturalHeight || 0;
-
-let startWidth;
-let startHeight;
-let startLeft;
-let startTop;
-
-if (isHeroImage) {
-startWidth = Math.min(pageWidth, 600);
-startHeight = 320;
-startLeft = Math.max(0, Math.floor((pageWidth - startWidth) / 2));
-startTop = 90;
-} else {
-if (!naturalWidth || !naturalHeight) {
-naturalWidth = rect.width || 220;
-naturalHeight = rect.height || 160;
-}
-
-const maxWidth = 220;
-
-startWidth = naturalWidth;
-startHeight = naturalHeight;
+let startWidth = naturalWidth;
+let startHeight = naturalHeight;
 
 if (naturalWidth > maxWidth) {
 const ratio = maxWidth / naturalWidth;
@@ -731,9 +710,8 @@ startWidth = maxWidth;
 startHeight = naturalHeight * ratio;
 }
 
-startLeft = 40;
-startTop = 40 + (pageInner.querySelectorAll(".editorImageWrapper").length * 20);
-}
+const startLeft = 40;
+const startTop = 40 + (pageInner.querySelectorAll(".editorImageWrapper").length * 20);
 
 wrapper = document.createElement("div");
 wrapper.className = "editorImageWrapper";
@@ -1331,7 +1309,7 @@ if (child.classList.contains("flowImageItem")) return;
 if (child.classList.contains("expose-media")) return;
 if (child.classList.contains("imageRow")) return;
 
-if (!["P", "H1", "H2", "H3", "UL", "OL"].includes(child.tagName)) {
+if (!["P", "H1", "H2", "H3", "UL", "OL", "IMG"].includes(child.tagName)) {
 const p = document.createElement("p");
 p.innerHTML = child.innerHTML;
 pageInner.replaceChild(p, child);
