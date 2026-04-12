@@ -756,7 +756,6 @@ background: transparent;
 }
 
 .editorImageWrapper img,
-.editorImageWrapper img.heroImage,
 .editorImageWrapper img.portrait,
 .editorImageWrapper img.logo {
 width: 100% !important;
