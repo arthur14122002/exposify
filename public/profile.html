@@ -27,7 +27,7 @@ Abo kündigen
 </button>
 </div>
 
-<div class="profileSection">
+<div class="profileSection" id="usageSection">
 <h3>Nutzung</h3>
 <p id="tokenInfo">wird geladen...</p>
 </div>
@@ -76,6 +76,7 @@ document.getElementById("userEmail").textContent = data.user?.email || "-";
 if (data.plan === "pro" && data.payment_status === "active") {
 document.getElementById("planStatus").textContent = "Pro Abo aktiv";
 document.getElementById("cancelBtn").classList.remove("hidden");
+document.getElementById("usageSection").classList.add("hidden");
 
 if (data.next_payment) {
 document.getElementById("nextPayment").textContent =
@@ -84,8 +85,10 @@ document.getElementById("nextPayment").textContent =
 
 } else if (data.plan === "single") {
 document.getElementById("planStatus").textContent = "Einzel Exposé Paket";
+document.getElementById("usageSection").classList.remove("hidden");
 } else {
 document.getElementById("planStatus").textContent = "Kein aktives Abo";
+document.getElementById("usageSection").classList.remove("hidden");
 }
 
 document.getElementById("tokenInfo").textContent =
