@@ -859,7 +859,7 @@ background: white;
 box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
 border-radius: 10px;
 position: relative;
-overflow: visible;
+overflow: hidden;
 }
 
 .viewerPageInner {
@@ -909,7 +909,7 @@ background: transparent;
 .viewerPage .editorImageWrapper img {
 width: 100% !important;
 height: 100% !important;
-object-fit: fill !important; /* 🔥 KEY CHANGE */
+object-fit: contain !important; /* 🔥 KEY CHANGE */
 display: block !important;
 border-radius: 0 !important;
 background: transparent !important;

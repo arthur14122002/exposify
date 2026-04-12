@@ -111,6 +111,30 @@ pages.forEach((page) => {
 page.classList.add("normalizedExpose");
 });
 
+const heroImages = [...container.querySelectorAll(".viewerPageInner > img.heroImage")];
+
+heroImages.forEach((img) => {
+const pageInner = img.closest(".viewerPageInner");
+if (!pageInner) return;
+
+const wrapper = document.createElement("div");
+wrapper.className = "editorImageWrapper";
+wrapper.style.width = "560px";
+wrapper.style.height = "315px";
+wrapper.style.left = "45px";
+wrapper.style.top = "110px";
+
+img.style.width = "100%";
+img.style.height = "100%";
+img.style.maxWidth = "none";
+img.style.maxHeight = "none";
+img.style.objectFit = "contain";
+img.style.background = "transparent";
+img.style.borderRadius = "0";
+
+pageInner.appendChild(wrapper);
+wrapper.appendChild(img);
+});
 }
 
 async function loadProject() {
