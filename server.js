@@ -721,7 +721,7 @@ flexibel bearbeiten und direkt als PDF exportieren.
 </p>
 
 <a
-href="https://exposifyapp.com/"
+href="https://exposifyapp.com/login.html?verified=success"
 style="
 display:inline-block;
 padding:14px 28px;
