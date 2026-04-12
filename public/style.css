@@ -859,7 +859,7 @@ background: white;
 box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
 border-radius: 10px;
 position: relative;
-overflow: hidden;
+overflow: visible;
 }
 
 .viewerPageInner {
