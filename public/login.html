@@ -153,7 +153,7 @@ const hasPlan = selectedPlan === "pro" || selectedPlan === "single";
 if (shouldShowAfterLogin) {
 sessionStorage.removeItem("showWelcomeAfterLogin");
 
-if (!forceNormalLogin && pendingCheckout && hasPlan) {
+if (pendingCheckout && hasPlan) {
 sessionStorage.setItem("showWelcomeAfterLogin", "true");
 await startCheckout(selectedPlan);
 return;
