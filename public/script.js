@@ -203,21 +203,57 @@ if (!images.length) return "";
 
 const blocks = [];
 
+const startX = 40;
+const startY = 40;
+const gapX = 24;
+const gapY = 24;
+const maxRowWidth = 720; // ungefähr nutzbare Breite innerhalb der Seite
+
+let currentX = startX;
+let currentY = startY;
+let currentRowHeight = 0;
+
 for (let i = 0; i < images.length; i++) {
 const src = images[i];
-const size = await getImageSize(src, 300);
+const size = await getImageSize(src, 220); // bewusst etwas kleiner für sauberen Start
+
+// Wenn das Bild nicht mehr in die aktuelle Reihe passt -> neue Reihe
+if (currentX + size.width > startX + maxRowWidth) {
+currentX = startX;
+currentY += currentRowHeight + gapY;
+currentRowHeight = 0;
+}
 
 blocks.push(`
-<div class="editorImageWrapper" style="width:${size.width}px; height:${size.height}px; left:${40 + (i * 30)}px; top:${40 + (i * 30)}px;">
+<div
+class="editorImageWrapper"
+style="
+width:${size.width}px;
+height:${size.height}px;
+left:${currentX}px;
+top:${currentY}px;
+"
+>
 <img
 src="${src}"
 alt="Objektbild"
 draggable="false"
 contenteditable="false"
-style="width:100%; height:100%; max-width:none; max-height:none; object-fit:contain; background:transparent; border-radius:0;"
+style="
+width:100%;
+height:100%;
+max-width:none;
+max-height:none;
+object-fit:contain;
+background:transparent;
+border-radius:0;
+"
 >
 </div>
 `);
+
+currentX += size.width + gapX;
+currentRowHeight = Math.max(currentRowHeight, size.height);
 }
 
 return blocks.join("");
