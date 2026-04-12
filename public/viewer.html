@@ -117,12 +117,29 @@ heroImages.forEach((img) => {
 const pageInner = img.closest(".viewerPageInner");
 if (!pageInner) return;
 
+const naturalWidth = img.naturalWidth || 220;
+const naturalHeight = img.naturalHeight || 160;
+
+const maxWidth = 560;
+
+let startWidth = naturalWidth;
+let startHeight = naturalHeight;
+
+if (naturalWidth > maxWidth) {
+const ratio = maxWidth / naturalWidth;
+startWidth = maxWidth;
+startHeight = naturalHeight * ratio;
+}
+
+const startLeft = Math.max(0, Math.floor((pageInner.clientWidth - startWidth) / 2));
+const startTop = 110;
+
 const wrapper = document.createElement("div");
 wrapper.className = "editorImageWrapper";
-wrapper.style.width = "560px";
-wrapper.style.height = "315px";
-wrapper.style.left = "45px";
-wrapper.style.top = "110px";
+wrapper.style.width = `${startWidth}px`;
+wrapper.style.height = `${startHeight}px`;
+wrapper.style.left = `${startLeft}px`;
+wrapper.style.top = `${startTop}px`;
 
 img.style.width = "100%";
 img.style.height = "100%";
