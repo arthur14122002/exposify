@@ -2,6 +2,11 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
+
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=21">
+<link rel="shortcut icon" href="/favicon.png?v=21">
+<link rel="apple-touch-icon" href="/favicon.png?v=21">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mein Profil – Exposify</title>
 <link rel="stylesheet" href="/style.css">
@@ -121,6 +126,21 @@ modal.classList.add("hidden");
 modal.style.display = "none";
 }
 
+<div id="subscriptionModal" class="modalOverlay hidden">
+<div class="modalBox" style="max-width:460px; text-align:center;">
+<h3 id="subscriptionModalTitle" style="margin-bottom:12px;">Hinweis</h3>
+
+<p id="subscriptionModalText" style="margin:0 0 22px 0; font-size:14px; line-height:1.7;">
+Nachricht
+</p>
+
+<div id="subscriptionModalActions" style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+<button type="button" class="secondaryBtn" id="subscriptionCancelBtn">Abbrechen</button>
+<button type="button" class="primaryBtn" id="subscriptionConfirmBtn">OK</button>
+</div>
+</div>
+</div>
+
 async function confirmDeleteAccount() {
 try {
 const res = await fetch("/delete-account", {
@@ -142,11 +162,86 @@ alert("Fehler beim Löschen des Accounts.");
 }
 
 async function cancelSubscription() {
-if (!confirm("Abo wirklich kündigen?")) return;
+openSubscriptionModal({
+title: "Abo kündigen",
+message: "Möchtest du dein Abo wirklich kündigen?",
+confirmText: "Ja, kündigen",
+cancelText: "Abbrechen",
+showCancel: true,
+onConfirm: async () => {
+try {
+const res = await fetch("/cancel-subscription", {
+method: "POST"
+});
 
-await fetch("/cancel-subscription", { method: "POST" });
-alert("Abo wurde gekündigt.");
+const data = await res.json();
+
+if (!res.ok || !data.success) {
+openSubscriptionModal({
+title: "Fehler",
+message: data.message || "Abo konnte nicht gekündigt werden.",
+confirmText: "OK",
+showCancel: false
+});
+return;
+}
+
+openSubscriptionModal({
+title: "Erfolgreich",
+message: data.message || "Abo wurde erfolgreich gekündigt.",
+confirmText: "OK",
+showCancel: false,
+onConfirm: () => {
 location.reload();
+}
+});
+} catch (error) {
+console.error(error);
+openSubscriptionModal({
+title: "Fehler",
+message: "Fehler beim Kündigen des Abos.",
+confirmText: "OK",
+showCancel: false
+});
+}
+}
+});
+}
+
+function openSubscriptionModal({ title = "Hinweis", message = "", confirmText = "OK", cancelText = "Abbrechen", showCancel = false, onConfirm = null }) {
+const modal = document.getElementById("subscriptionModal");
+const titleEl = document.getElementById("subscriptionModalTitle");
+const textEl = document.getElementById("subscriptionModalText");
+const confirmBtn = document.getElementById("subscriptionConfirmBtn");
+const cancelBtn = document.getElementById("subscriptionCancelBtn");
+
+if (!modal || !titleEl || !textEl || !confirmBtn || !cancelBtn) return;
+
+titleEl.textContent = title;
+textEl.textContent = message;
+confirmBtn.textContent = confirmText;
+cancelBtn.textContent = cancelText;
+
+cancelBtn.style.display = showCancel ? "inline-block" : "none";
+
+const close = () => {
+modal.classList.add("hidden");
+modal.style.display = "none";
+confirmBtn.onclick = null;
+cancelBtn.onclick = null;
+};
+
+confirmBtn.onclick = () => {
+close();
+if (onConfirm) onConfirm();
+};
+
+cancelBtn.onclick = () => {
+close();
+};
+
+modal.classList.remove("hidden");
+modal.style.display = "flex";
 }
 
 loadProfile();

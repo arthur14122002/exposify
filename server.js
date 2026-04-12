@@ -1350,6 +1350,63 @@ message: "Checkout konnte nicht gestartet werden."
 }
 });
 
+app.post("/cancel-subscription", requireAuth, async (req, res) => {
+try {
+const userId = req.session.user.id;
+
+const { data: user, error: fetchError } = await supabase
+.from("users")
+.select("stripe_subscription_id")
+.eq("id", userId)
+.single();
+
+if (fetchError || !user) {
+console.error("Cancel subscription fetch user error:", fetchError);
+return res.status(404).json({
+success: false,
+message: "Benutzer nicht gefunden."
+});
+}
+
+if (!user.stripe_subscription_id) {
+return res.status(400).json({
+success: false,
+message: "Kein aktives Abo gefunden."
+});
+}
+
+await stripe.subscriptions.cancel(user.stripe_subscription_id);
+
+const { error: updateError } = await supabase
+.from("users")
+.update({
+plan: "free",
+payment_status: "inactive",
+stripe_subscription_id: null
+})
+.eq("id", userId);
+
+if (updateError) {
+console.error("Cancel subscription update user error:", updateError);
+return res.status(500).json({
+success: false,
+message: "Abo wurde bei Stripe beendet, aber der Benutzerstatus konnte nicht aktualisiert werden."
+});
+}
+
+return res.json({
+success: true,
+message: "Abo wurde erfolgreich gekündigt."
+});
+} catch (error) {
+console.error("Cancel subscription crash:", error);
+return res.status(500).json({
+success: false,
+message: "Abo konnte nicht gekündigt werden."
+});
+}
+});
+
 app.get("/projects", requireAuth, async (req, res) => {
 try {
 const { data, error } = await supabase
