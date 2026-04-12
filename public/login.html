@@ -163,7 +163,7 @@ window.location.href = "/app?welcome=1";
 return;
 }
 
-if (pendingCheckout && hasPlan) {
+if (!forceNormalLogin && pendingCheckout && hasPlan) {
 await startCheckout(selectedPlan);
 return;
 }
