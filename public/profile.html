@@ -119,28 +119,6 @@ modal.classList.remove("hidden");
 modal.style.display = "flex";
 }
 
-function closeDeleteModal() {
-const modal = document.getElementById("deleteAccountModal");
-if (!modal) return;
-modal.classList.add("hidden");
-modal.style.display = "none";
-}
-
-<div id="subscriptionModal" class="modalOverlay hidden">
-<div class="modalBox" style="max-width:460px; text-align:center;">
-<h3 id="subscriptionModalTitle" style="margin-bottom:12px;">Hinweis</h3>
-
-<p id="subscriptionModalText" style="margin:0 0 22px 0; font-size:14px; line-height:1.7;">
-Nachricht
-</p>
-
-<div id="subscriptionModalActions" style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-<button type="button" class="secondaryBtn" id="subscriptionCancelBtn">Abbrechen</button>
-<button type="button" class="primaryBtn" id="subscriptionConfirmBtn">OK</button>
-</div>
-</div>
-</div>
-
 async function confirmDeleteAccount() {
 try {
 const res = await fetch("/delete-account", {
@@ -246,6 +224,29 @@ modal.style.display = "flex";
 
 loadProfile();
 </script>
+
+function closeDeleteModal() {
+const modal = document.getElementById("deleteAccountModal");
+if (!modal) return;
+modal.classList.add("hidden");
+modal.style.display = "none";
+}
+
+
+<div id="subscriptionModal" class="modalOverlay hidden">
+<div class="modalBox" style="max-width:460px; text-align:center;">
+<h3 id="subscriptionModalTitle" style="margin-bottom:12px;">Hinweis</h3>
+
+<p id="subscriptionModalText" style="margin:0 0 22px 0; font-size:14px; line-height:1.7;">
+Nachricht
+</p>
+
+<div id="subscriptionModalActions" style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+<button type="button" class="secondaryBtn" id="subscriptionCancelBtn">Abbrechen</button>
+<button type="button" class="primaryBtn" id="subscriptionConfirmBtn">OK</button>
+</div>
+</div>
+</div>
 
 </body>
 </html>
