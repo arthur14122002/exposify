@@ -224,7 +224,7 @@ method: "POST"
 
 const data = await res.json();
 
-if (!res.ok || !data.success) {
+if (!data.success) {
 openSubscriptionModal({
 title: "Fehler",
 message: data.message || "Abo konnte nicht gekündigt werden.",
@@ -271,7 +271,7 @@ method: "POST"
 
 const data = await res.json();
 
-if (!res.ok || !data.success) {
+if (!data.success) {
 openSubscriptionModal({
 title: "Fehler",
 message: data.message || "Abo konnte nicht reaktiviert werden.",

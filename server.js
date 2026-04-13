@@ -1454,7 +1454,7 @@ console.error("Cancel update error:", updateError);
 }
 
 // 4. Antwort
-return res.json({
+return res.status(200).json({
 success: true,
 message: "Abo wurde zum Laufzeitende gekündigt."
 });
