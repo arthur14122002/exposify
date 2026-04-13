@@ -1391,7 +1391,11 @@ plan
 }
 };
 
-const hasUsedTrial = !!currentUser.trial_used || !!historyEntry?.trial_used;
+const enforceTrialHistory = process.env.ENFORCE_TRIAL_HISTORY === "true";
+
+const hasUsedTrial =
+!!currentUser.trial_used ||
+(enforceTrialHistory && !!historyEntry?.trial_used);
 
 if (plan === "pro" && !hasUsedTrial) {
 sessionConfig.subscription_data = {

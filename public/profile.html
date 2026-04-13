@@ -97,7 +97,33 @@ const usageSection = document.getElementById("usageSection");
 usageSection.classList.remove("hidden");
 document.getElementById("nextPayment").textContent = "";
 
-if (data.plan === "pro" && data.payment_status === "active" && data.cancel_at_period_end === false) {
+if (data.plan === "pro" && data.payment_status === "trialing" && data.cancel_at_period_end === false) {
+document.getElementById("planStatus").textContent = "Pro Testphase aktiv";
+usageSection.classList.add("hidden");
+billingActionBtn.textContent = "Abo kündigen";
+
+if (data.current_period_end) {
+const endDate = new Date(data.current_period_end).toLocaleDateString("de-DE");
+document.getElementById("nextPayment").textContent =
+"Kostenloser Testzeitraum endet am " + endDate;
+} else {
+document.getElementById("nextPayment").textContent = "";
+}
+
+} else if (data.plan === "pro" && data.payment_status === "trialing" && data.cancel_at_period_end === true) {
+document.getElementById("planStatus").textContent = "Pro Testphase gekündigt";
+usageSection.classList.add("hidden");
+billingActionBtn.textContent = "Abo reaktivieren";
+
+if (data.current_period_end) {
+const endDate = new Date(data.current_period_end).toLocaleDateString("de-DE");
+document.getElementById("nextPayment").textContent =
+"Testphase läuft am " + endDate + " aus";
+} else {
+document.getElementById("nextPayment").textContent = "";
+}
+
+} else if (data.plan === "pro" && data.payment_status === "active" && data.cancel_at_period_end === false) {
 document.getElementById("planStatus").textContent = "Pro Abo aktiv";
 usageSection.classList.add("hidden");
 billingActionBtn.textContent = "Abo kündigen";
@@ -120,6 +146,17 @@ const endDate = new Date(data.current_period_end).toLocaleDateString("de-DE");
 document.getElementById("nextPayment").textContent =
 "Abo läuft am " + endDate + " aus";
 } else {
+document.getElementById("nextPayment").textContent = "";
+}
+
+} else if (data.plan === "single") {
+document.getElementById("planStatus").textContent = "Einzel Exposé Paket";
+billingActionBtn.textContent = "Pro abonnieren / Exposé kaufen";
+document.getElementById("nextPayment").textContent = "";
+
+} else {
+document.getElementById("planStatus").textContent = "Kein aktives Abo";
+billingActionBtn.textContent = "Pro abonnieren / Exposé kaufen";
 document.getElementById("nextPayment").textContent = "";
 }
 
