@@ -103,8 +103,11 @@ usageSection.classList.add("hidden");
 billingActionBtn.textContent = "Abo kündigen";
 
 if (data.current_period_end) {
+const endDate = new Date(data.current_period_end).toLocaleDateString("de-DE");
 document.getElementById("nextPayment").textContent =
-"Läuft bis: " + new Date(data.current_period_end).toLocaleDateString("de-DE");
+"Nächste Zahlung am " + endDate;
+} else {
+document.getElementById("nextPayment").textContent = "";
 }
 
 } else if (data.plan === "pro" && data.payment_status === "active" && data.cancel_at_period_end === true) {
@@ -113,8 +116,11 @@ usageSection.classList.add("hidden");
 billingActionBtn.textContent = "Abo reaktivieren";
 
 if (data.current_period_end) {
+const endDate = new Date(data.current_period_end).toLocaleDateString("de-DE");
 document.getElementById("nextPayment").textContent =
-"Läuft noch bis: " + new Date(data.current_period_end).toLocaleDateString("de-DE");
+"Abo läuft am " + endDate + " aus";
+} else {
+document.getElementById("nextPayment").textContent = "";
 }
 
 } else if (data.plan === "single") {
