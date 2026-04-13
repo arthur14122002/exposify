@@ -65,6 +65,8 @@ break;
 }
 
 if (plan === "pro") {
+const trialStartedAt = new Date().toISOString();
+
 const { error } = await supabase
 .from("users")
 .update({
@@ -74,7 +76,8 @@ stripe_customer_id: stripeCustomerId,
 stripe_subscription_id: stripeSubscriptionId,
 single_credits: 0,
 trial_used: true,
-trial_started_at: new Date().toISOString(),
+trial_started_at: trialStartedAt,
+cancel_at_period_end: false
 })
 .eq("id", userId);
 
@@ -86,7 +89,7 @@ console.error("Webhook update pro error:", error);
 if (plan === "single") {
 const { data: existingUser, error: fetchError } = await supabase
 .from("users")
-.select("single_credits")
+.select("single_credits, plan, payment_status")
 .eq("id", userId)
 .single();
 
@@ -95,14 +98,22 @@ console.error("Webhook fetch single user error:", fetchError);
 } else {
 const newCredits = Number(existingUser.single_credits || 0) + 1;
 
-const { error } = await supabase
-.from("users")
-.update({
-plan: "single",
-payment_status: "active",
+const updatePayload = {
 stripe_customer_id: stripeCustomerId,
 single_credits: newCredits
-})
+};
+
+const hasActivePro =
+existingUser.plan === "pro" && existingUser.payment_status === "active";
+
+if (!hasActivePro) {
+updatePayload.plan = "single";
+updatePayload.payment_status = "active";
+}
+
+const { error } = await supabase
+.from("users")
+.update(updatePayload)
 .eq("id", userId);
 
 if (error) {
@@ -115,12 +126,24 @@ break;
 
 case "customer.subscription.updated": {
 const subscription = event.data.object;
+const isCanceledAtPeriodEnd = !!subscription.cancel_at_period_end;
+const currentPeriodEnd = subscription.current_period_end
+? new Date(subscription.current_period_end * 1000).toISOString()
+: null;
+
+const updatePayload = {
+payment_status: subscription.status === "active" ? "active" : subscription.status,
+cancel_at_period_end: isCanceledAtPeriodEnd,
+current_period_end: currentPeriodEnd
+};
+
+if (subscription.status === "active") {
+updatePayload.plan = "pro";
+}
 
 const { error } = await supabase
 .from("users")
-.update({
-payment_status: subscription.status === "active" ? "active" : subscription.status
-})
+.update(updatePayload)
 .eq("stripe_subscription_id", subscription.id);
 
 if (error) {
@@ -132,14 +155,31 @@ break;
 case "customer.subscription.deleted": {
 const subscription = event.data.object;
 
+const { data: existingUser, error: fetchUserError } = await supabase
+.from("users")
+.select("id, single_credits")
+.eq("stripe_subscription_id", subscription.id)
+.single();
+
+if (fetchUserError || !existingUser) {
+console.error("Webhook subscription deleted fetch user error:", fetchUserError);
+break;
+}
+
+const hasSingleCredits = Number(existingUser.single_credits || 0) > 0;
+
+const updatePayload = {
+plan: hasSingleCredits ? "single" : "free",
+payment_status: hasSingleCredits ? "active" : "inactive",
+stripe_subscription_id: null,
+cancel_at_period_end: false,
+current_period_end: null
+};
+
 const { error } = await supabase
 .from("users")
-.update({
-plan: "free",
-payment_status: "inactive",
-stripe_subscription_id: null
-})
-.eq("stripe_subscription_id", subscription.id);
+.update(updatePayload)
+.eq("id", existingUser.id);
 
 if (error) {
 console.error("Webhook subscription deleted error:", error);
@@ -1212,12 +1252,14 @@ plan: "free",
 single_credits: 0,
 payment_status: "inactive",
 single_used: false,
+cancel_at_period_end: false,
+current_period_end: null
 });
 }
 
 const { data: user, error } = await supabase
 .from("users")
-.select("id, email, plan, single_credits, single_used, payment_status")
+.select("id, email, plan, single_credits, single_used, payment_status, cancel_at_period_end, current_period_end")
 .eq("id", req.session.user.id)
 .single();
 
@@ -1227,7 +1269,10 @@ loggedIn: false,
 user: null,
 plan: "free",
 single_credits: 0,
-payment_status: "inactive"
+payment_status: "inactive",
+single_used: false,
+cancel_at_period_end: false,
+current_period_end: null
 });
 }
 
@@ -1240,7 +1285,9 @@ email: user.email
 plan: user.plan || "free",
 single_credits: Number(user.single_credits || 0),
 single_used: !!user.single_used,
-payment_status: user.payment_status || "inactive"
+payment_status: user.payment_status || "inactive",
+cancel_at_period_end: !!user.cancel_at_period_end,
+current_period_end: user.current_period_end || null
 });
 } catch (error) {
 console.error("Auth status error:", error);
@@ -1249,7 +1296,10 @@ loggedIn: false,
 user: null,
 plan: "free",
 single_credits: 0,
-payment_status: "inactive"
+payment_status: "inactive",
+single_used: false,
+cancel_at_period_end: false,
+current_period_end: null
 });
 }
 });
@@ -1260,7 +1310,7 @@ const { plan } = req.body;
 
 const { data: currentUser, error: userError } = await supabase
 .from("users")
-.select("trial_used")
+.select("trial_used, plan, payment_status, cancel_at_period_end")
 .eq("id", req.session.user.id)
 .single();
 
@@ -1309,6 +1359,20 @@ message: "Stripe Preis-ID fehlt."
 });
 }
 
+// Aktives oder noch laufendes Pro soll nicht einfach nochmal neu gekauft werden
+const hasActiveOrRunningPro =
+currentUser.plan === "pro" &&
+currentUser.payment_status === "active";
+
+if (plan === "pro" && hasActiveOrRunningPro) {
+return res.status(400).json({
+success: false,
+message: currentUser.cancel_at_period_end
+? "Dein Abo ist bereits gekündigt, läuft aber noch. Bitte nutze stattdessen die Reaktivieren-Funktion im Profil."
+: "Du hast bereits ein aktives Pro-Abo."
+});
+}
+
 const sessionConfig = {
 mode,
 line_items: [
@@ -1354,55 +1418,113 @@ app.post("/cancel-subscription", requireAuth, async (req, res) => {
 try {
 const userId = req.session.user.id;
 
-const { data: user, error: fetchError } = await supabase
+// 1. User laden
+const { data: user, error } = await supabase
 .from("users")
 .select("stripe_subscription_id")
 .eq("id", userId)
 .single();
 
-if (fetchError || !user) {
-console.error("Cancel subscription fetch user error:", fetchError);
-return res.status(404).json({
-success: false,
-message: "Benutzer nicht gefunden."
-});
-}
-
-if (!user.stripe_subscription_id) {
+if (error || !user || !user.stripe_subscription_id) {
 return res.status(400).json({
 success: false,
 message: "Kein aktives Abo gefunden."
 });
 }
 
-await stripe.subscriptions.cancel(user.stripe_subscription_id);
+// 2. Stripe: Kündigung zum Periodenende
+const updatedSub = await stripe.subscriptions.update(
+user.stripe_subscription_id,
+{
+cancel_at_period_end: true
+}
+);
 
+// 3. Supabase updaten
 const { error: updateError } = await supabase
 .from("users")
 .update({
-plan: "free",
-payment_status: "inactive",
-stripe_subscription_id: null
+cancel_at_period_end: true,
+current_period_end: new Date(updatedSub.current_period_end * 1000).toISOString()
 })
 .eq("id", userId);
 
 if (updateError) {
-console.error("Cancel subscription update user error:", updateError);
+console.error("Cancel update error:", updateError);
+}
+
+// 4. Antwort
+return res.json({
+success: true,
+message: "Abo wurde zum Laufzeitende gekündigt."
+});
+
+} catch (err) {
+console.error("Cancel subscription error:", err);
 return res.status(500).json({
 success: false,
-message: "Abo wurde bei Stripe beendet, aber der Benutzerstatus konnte nicht aktualisiert werden."
+message: "Abo konnte nicht gekündigt werden."
+});
+}
+});
+
+app.post("/reactivate-subscription", requireAuth, async (req, res) => {
+try {
+const userId = req.session.user.id;
+
+// 1. User laden
+const { data: user, error } = await supabase
+.from("users")
+.select("stripe_subscription_id")
+.eq("id", userId)
+.single();
+
+if (error || !user || !user.stripe_subscription_id) {
+return res.status(400).json({
+success: false,
+message: "Kein reaktivierbares Abo gefunden."
+});
+}
+
+// 2. Stripe: Kündigung zurücknehmen
+const updatedSub = await stripe.subscriptions.update(
+user.stripe_subscription_id,
+{
+cancel_at_period_end: false
+}
+);
+
+// 3. Supabase aktualisieren
+const { error: updateError } = await supabase
+.from("users")
+.update({
+plan: "pro",
+payment_status: updatedSub.status === "active" ? "active" : updatedSub.status,
+cancel_at_period_end: false,
+current_period_end: updatedSub.current_period_end
+? new Date(updatedSub.current_period_end * 1000).toISOString()
+: null
+})
+.eq("id", userId);
+
+if (updateError) {
+console.error("Reactivate update error:", updateError);
+return res.status(500).json({
+success: false,
+message: "Abo wurde bei Stripe reaktiviert, aber der Benutzerstatus konnte nicht aktualisiert werden."
 });
 }
 
 return res.json({
 success: true,
-message: "Abo wurde erfolgreich gekündigt."
+message: "Abo wurde erfolgreich reaktiviert."
 });
-} catch (error) {
-console.error("Cancel subscription crash:", error);
+
+} catch (err) {
+console.error("Reactivate subscription error:", err);
 return res.status(500).json({
 success: false,
-message: "Abo konnte nicht gekündigt werden."
+message: "Abo konnte nicht reaktiviert werden."
 });
 }
 });

@@ -27,9 +27,6 @@
 <p id="planStatus">wird geladen...</p>
 <p id="nextPayment"></p>
 
-<button id="cancelBtn" class="secondaryBtn hidden" type="button" onclick="cancelSubscription()">
-Abo kündigen
-</button>
 </div>
 
 <div class="profileSection" id="usageSection">
@@ -45,11 +42,12 @@ Abo kündigen
 
 <div class="profileActions">
 <button type="button" class="secondaryBtn" onclick="goBack()">Zurück</button>
-<button type="button" class="primaryBtn" onclick="goToPricing()">Upgrade / Exposé kaufen</button>
+<button type="button" class="primaryBtn" id="billingActionBtn" onclick="handleBillingAction()">Pro abonnieren / Exposé kaufen</button>
 <button type="button" class="dangerBtn" onclick="openDeleteModal()">Account löschen</button>
 </div>
 
 <div id="deleteAccountModal" class="modalOverlay hidden">
+
 <div class="modalBox" style="max-width:460px; text-align:center;">
 <h3 style="margin-bottom:12px;">Account wirklich löschen?</h3>
 
@@ -68,6 +66,21 @@ Diese Aktion kann nicht rückgängig gemacht werden.
 </div>
 </div>
 
+<div id="subscriptionModal" class="modalOverlay hidden">
+<div class="modalBox" style="max-width:460px; text-align:center;">
+<h3 id="subscriptionModalTitle" style="margin-bottom:12px;">Hinweis</h3>
+
+<p id="subscriptionModalText" style="margin:0 0 22px 0; font-size:14px; line-height:1.7;">
+Nachricht
+</p>
+
+<div id="subscriptionModalActions" style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+<button type="button" class="secondaryBtn" id="subscriptionCancelBtn">Abbrechen</button>
+<button type="button" class="primaryBtn" id="subscriptionConfirmBtn">OK</button>
+</div>
+</div>
+</div>
+
 </div>
 
 <script>
@@ -78,22 +91,39 @@ const data = await res.json();
 
 document.getElementById("userEmail").textContent = data.user?.email || "-";
 
-if (data.plan === "pro" && data.payment_status === "active") {
-document.getElementById("planStatus").textContent = "Pro Abo aktiv";
-document.getElementById("cancelBtn").classList.remove("hidden");
-document.getElementById("usageSection").classList.add("hidden");
+const billingActionBtn = document.getElementById("billingActionBtn");
+const usageSection = document.getElementById("usageSection");
 
-if (data.next_payment) {
+usageSection.classList.remove("hidden");
+document.getElementById("nextPayment").textContent = "";
+
+if (data.plan === "pro" && data.payment_status === "active" && data.cancel_at_period_end === false) {
+document.getElementById("planStatus").textContent = "Pro Abo aktiv";
+usageSection.classList.add("hidden");
+billingActionBtn.textContent = "Abo kündigen";
+
+if (data.current_period_end) {
 document.getElementById("nextPayment").textContent =
-"Nächste Zahlung: " + data.next_payment;
+"Läuft bis: " + new Date(data.current_period_end).toLocaleDateString("de-DE");
+}
+
+} else if (data.plan === "pro" && data.payment_status === "active" && data.cancel_at_period_end === true) {
+document.getElementById("planStatus").textContent = "Pro Abo gekündigt, aber noch aktiv";
+usageSection.classList.add("hidden");
+billingActionBtn.textContent = "Abo reaktivieren";
+
+if (data.current_period_end) {
+document.getElementById("nextPayment").textContent =
+"Läuft noch bis: " + new Date(data.current_period_end).toLocaleDateString("de-DE");
 }
 
 } else if (data.plan === "single") {
 document.getElementById("planStatus").textContent = "Einzel Exposé Paket";
-document.getElementById("usageSection").classList.remove("hidden");
+billingActionBtn.textContent = "Pro abonnieren / Exposé kaufen";
+
 } else {
 document.getElementById("planStatus").textContent = "Kein aktives Abo";
-document.getElementById("usageSection").classList.remove("hidden");
+billingActionBtn.textContent = "Pro abonnieren / Exposé kaufen";
 }
 
 document.getElementById("tokenInfo").textContent =
@@ -112,6 +142,28 @@ function goToPricing() {
 window.location.href = "/pricing.html";
 }
 
+async function handleBillingAction() {
+try {
+const res = await fetch("/auth/status");
+const data = await res.json();
+
+if (data.plan === "pro" && data.payment_status === "active" && data.cancel_at_period_end === false) {
+cancelSubscription();
+return;
+}
+
+if (data.plan === "pro" && data.payment_status === "active" && data.cancel_at_period_end === true) {
+reactivateSubscription();
+return;
+}
+
+goToPricing();
+} catch (error) {
+console.error(error);
+goToPricing();
+}
+}
+
 function openDeleteModal() {
 const modal = document.getElementById("deleteAccountModal");
 if (!modal) return;
@@ -128,14 +180,32 @@ method: "POST"
 const data = await res.json();
 
 if (data.success) {
+openSubscriptionModal({
+title: "Erfolgreich",
+message: "Dein Account wurde gelöscht.",
+confirmText: "OK",
+showCancel: false,
+onConfirm: () => {
 window.location.href = "/";
+}
+});
 return;
 }
 
-alert(data.message || "Account konnte nicht gelöscht werden.");
+openSubscriptionModal({
+title: "Fehler",
+message: data.message || "Account konnte nicht gelöscht werden.",
+confirmText: "OK",
+showCancel: false
+});
 } catch (error) {
 console.error(error);
-alert("Fehler beim Löschen des Accounts.");
+openSubscriptionModal({
+title: "Fehler",
+message: "Fehler beim Löschen des Accounts.",
+confirmText: "OK",
+showCancel: false
+});
 }
 }
 
@@ -186,6 +256,71 @@ showCancel: false
 });
 }
 
+async function reactivateSubscription() {
+openSubscriptionModal({
+title: "Abo reaktivieren",
+message: "Möchtest du dein Abo wieder aktiv weiterlaufen lassen?",
+confirmText: "Ja, reaktivieren",
+cancelText: "Abbrechen",
+showCancel: true,
+onConfirm: async () => {
+try {
+const res = await fetch("/reactivate-subscription", {
+method: "POST"
+});
+
+const data = await res.json();
+
+if (!res.ok || !data.success) {
+openSubscriptionModal({
+title: "Fehler",
+message: data.message || "Abo konnte nicht reaktiviert werden.",
+confirmText: "OK",
+showCancel: false
+});
+return;
+}
+
+openSubscriptionModal({
+title: "Erfolgreich",
+message: data.message || "Abo wurde erfolgreich reaktiviert.",
+confirmText: "OK",
+showCancel: false,
+onConfirm: () => {
+location.reload();
+}
+});
+} catch (error) {
+console.error(error);
+openSubscriptionModal({
+title: "Fehler",
+message: "Fehler beim Reaktivieren des Abos.",
+confirmText: "OK",
+showCancel: false
+});
+}
+}
+});
+}
+
+function closeDeleteModal() {
+const modal = document.getElementById("deleteAccountModal");
+if (!modal) return;
+modal.classList.add("hidden");
+modal.style.display = "none";
+}
+
+
+document.addEventListener("keydown", (e) => {
+if (e.key !== "Enter") return;
+
+const deleteModal = document.getElementById("deleteAccountModal");
+if (deleteModal && !deleteModal.classList.contains("hidden")) {
+e.preventDefault();
+closeDeleteModal();
+}
+});
+
 function openSubscriptionModal({ title = "Hinweis", message = "", confirmText = "OK", cancelText = "Abbrechen", showCancel = false, onConfirm = null }) {
 const modal = document.getElementById("subscriptionModal");
 const titleEl = document.getElementById("subscriptionModalTitle");
@@ -225,28 +360,7 @@ modal.style.display = "flex";
 loadProfile();
 </script>
 
-function closeDeleteModal() {
-const modal = document.getElementById("deleteAccountModal");
-if (!modal) return;
-modal.classList.add("hidden");
-modal.style.display = "none";
-}
 
-
-<div id="subscriptionModal" class="modalOverlay hidden">
-<div class="modalBox" style="max-width:460px; text-align:center;">
-<h3 id="subscriptionModalTitle" style="margin-bottom:12px;">Hinweis</h3>
-
-<p id="subscriptionModalText" style="margin:0 0 22px 0; font-size:14px; line-height:1.7;">
-Nachricht
-</p>
-
-<div id="subscriptionModalActions" style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-<button type="button" class="secondaryBtn" id="subscriptionCancelBtn">Abbrechen</button>
-<button type="button" class="primaryBtn" id="subscriptionConfirmBtn">OK</button>
-</div>
-</div>
-</div>
 
 </body>
 </html>
