@@ -1441,11 +1441,15 @@ cancel_at_period_end: true
 );
 
 // 3. Supabase updaten
+const currentPeriodEnd = updatedSub.current_period_end
+? new Date(updatedSub.current_period_end * 1000).toISOString()
+: null;
+
 const { error: updateError } = await supabase
 .from("users")
 .update({
 cancel_at_period_end: true,
-current_period_end: new Date(updatedSub.current_period_end * 1000).toISOString()
+current_period_end: currentPeriodEnd
 })
 .eq("id", userId);
 
