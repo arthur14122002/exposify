@@ -1740,6 +1740,68 @@ return res.status(500).json({ success: false });
 res.json({ success: true });
 });
 
+app.post("/backfill-subscription-dates", requireAuth, async (req, res) => {
+try {
+const userId = req.session.user.id;
+
+const { data: user, error } = await supabase
+.from("users")
+.select("stripe_subscription_id")
+.eq("id", userId)
+.single();
+
+if (error || !user || !user.stripe_subscription_id) {
+return res.status(400).json({
+success: false,
+message: "Kein Stripe-Abo gefunden."
+});
+}
+
+const subscription = await stripe.subscriptions.retrieve(user.stripe_subscription_id);
+
+const currentPeriodEnd = subscription.current_period_end
+? new Date(subscription.current_period_end * 1000).toISOString()
+: null;
+
+const cancelAtPeriodEnd = !!subscription.cancel_at_period_end;
+
+const paymentStatus =
+subscription.status === "active" ? "active" : subscription.status;
+
+const { error: updateError } = await supabase
+.from("users")
+.update({
+plan: paymentStatus === "active" ? "pro" : "free",
+payment_status: paymentStatus,
+cancel_at_period_end: cancelAtPeriodEnd,
+current_period_end: currentPeriodEnd
+})
+.eq("id", userId);
+
+if (updateError) {
+console.error("Backfill update error:", updateError);
+return res.status(500).json({
+success: false,
+message: "Daten konnten nicht aktualisiert werden."
+});
+}
+
+return res.json({
+success: true,
+message: "Abo-Daten wurden erfolgreich nachgezogen.",
+current_period_end: currentPeriodEnd,
+cancel_at_period_end: cancelAtPeriodEnd,
+payment_status: paymentStatus
+});
+} catch (error) {
+console.error("Backfill subscription dates error:", error);
+return res.status(500).json({
+success: false,
+message: "Abo-Daten konnten nicht nachgezogen werden."
+});
+}
+});
+
 app.post("/generate", requireAuth, async (req, res) => {
 try {
 const data = req.body || {};
