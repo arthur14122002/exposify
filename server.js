@@ -67,17 +67,34 @@ break;
 if (plan === "pro") {
 const trialStartedAt = new Date().toISOString();
 
+let paymentStatus = "active";
+let currentPeriodEnd = null;
+
+if (stripeSubscriptionId) {
+try {
+const subscription = await stripe.subscriptions.retrieve(stripeSubscriptionId);
+
+paymentStatus = subscription.status || "active";
+currentPeriodEnd = subscription.current_period_end
+? new Date(subscription.current_period_end * 1000).toISOString()
+: null;
+} catch (subscriptionError) {
+console.error("Webhook retrieve subscription error:", subscriptionError);
+}
+}
+
 const { error } = await supabase
 .from("users")
 .update({
 plan: "pro",
-payment_status: "active",
+payment_status: paymentStatus,
 stripe_customer_id: stripeCustomerId,
 stripe_subscription_id: stripeSubscriptionId,
 single_credits: 0,
 trial_used: true,
 trial_started_at: trialStartedAt,
-cancel_at_period_end: false
+cancel_at_period_end: false,
+current_period_end: currentPeriodEnd
 })
 .eq("id", userId);
 
@@ -104,7 +121,8 @@ single_credits: newCredits
 };
 
 const hasActivePro =
-existingUser.plan === "pro" && existingUser.payment_status === "active";
+existingUser.plan === "pro" &&
+(existingUser.payment_status === "active" || existingUser.payment_status === "trialing");
 
 if (!hasActivePro) {
 updatePayload.plan = "single";

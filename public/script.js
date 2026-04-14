@@ -408,7 +408,9 @@ if (generateHint) generateHint.style.display = "block";
 
 async function generateExpose() {
 try {
-const hasProAccess = userPlan === "pro" && paymentStatus === "active";
+const hasProAccess =
+userPlan === "pro" &&
+(paymentStatus === "active" || paymentStatus === "trialing");
 
 if (!hasProAccess && userCredits <= 0) {
 showCreditModal();
