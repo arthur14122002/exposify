@@ -1864,6 +1864,9 @@ message: "Vorlage konnte nicht gelöscht werden."
 });
 
 app.post("/generate", requireAuth, async (req, res) => {
+
+console.log("📦 TEMPLATE EMPFANGEN:", req.body.template);
+
 try {
 const data = req.body || {};
 
