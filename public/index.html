@@ -147,8 +147,43 @@ Rechtliches <span id="sidebarArrow">▾</span>
 </div>
 </div>
 
-<div class="toolbar">
-<button id="generateBtn" type="button" onclick="generateExpose()" disabled>Exposé erstellen</button>
+<div class="toolbar" style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap;">
+<div class="templatePickerWrap" style="position:relative;">
+<button
+id="templatePickerBtn"
+type="button"
+class="secondaryBtn"
+onclick="toggleTemplateMenu()"
+>
+Vorlage wählen <span id="templatePickerArrow">▴</span>
+</button>
+
+<div
+id="templatePickerMenu"
+class="hidden"
+style="
+position:absolute;
+left:50%;
+bottom:calc(100% + 10px);
+transform:translateX(-50%);
+min-width:240px;
+background:#ffffff;
+border:1px solid #dbe3f0;
+border-radius:14px;
+box-shadow:0 14px 30px rgba(15, 23, 42, 0.14);
+padding:10px;
+z-index:30;
+"
+>
+<div id="templateList" style="display:flex; flex-direction:column; gap:8px;">
+<button type="button" class="secondaryBtn" style="width:100%;">Keine Vorlage</button>
+</div>
+</div>
+</div>
+
+<button id="generateBtn" type="button" onclick="generateExpose()" disabled>
+Exposé erstellen
+</button>
 </div>
 
 <p id="generateHint" class="generateHint">Bitte mindestens 3 Angaben ausfüllen.</p>
@@ -220,6 +255,31 @@ Feedback: arthur@exposifyapp.com
 </div>
 
 <script src="/script.js?v=24"></script>
+
+<script>
+function toggleTemplateMenu() {
+const menu = document.getElementById("templatePickerMenu");
+const arrow = document.getElementById("templatePickerArrow");
+
+if (!menu || !arrow) return;
+
+menu.classList.toggle("hidden");
+arrow.textContent = menu.classList.contains("hidden") ? "▴" : "▾";
+}
+
+document.addEventListener("click", function (e) {
+const wrap = document.querySelector(".templatePickerWrap");
+const menu = document.getElementById("templatePickerMenu");
+const arrow = document.getElementById("templatePickerArrow");
+
+if (!wrap || !menu || !arrow) return;
+
+if (!wrap.contains(e.target)) {
+menu.classList.add("hidden");
+arrow.textContent = "▴";
+}
+});
+</script>
 
 <script>
 function toggleSidebarLegal() {
