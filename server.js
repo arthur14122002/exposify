@@ -1646,7 +1646,9 @@ const plan = currentUser.plan || "free";
 const paymentStatus = currentUser.payment_status || "inactive";
 const singleCredits = Number(currentUser.single_credits || 0);
 
-const hasProAccess = plan === "pro" && paymentStatus === "active";
+const hasProAccess =
+plan === "pro" &&
+(paymentStatus === "active" || paymentStatus === "trialing");
 const hasSingleAccess = paymentStatus === "active" && singleCredits > 0;
 
 if (!hasProAccess && !hasSingleAccess) {
