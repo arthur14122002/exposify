@@ -1300,7 +1300,7 @@ templateModalCancel.addEventListener("click", closeTemplateModal);
 }
 
 if (templateModalSave) {
-templateModalSave.addEventListener("click", () => {
+templateModalSave.addEventListener("click", async () => {
 const templateName = (templateNameInput.value || "").trim();
 
 if (!templateName) {
