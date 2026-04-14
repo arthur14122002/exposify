@@ -1309,11 +1309,32 @@ return;
 }
 
 const templateData = extractTemplateData();
-console.log("TEMPLATE NAME:", templateName);
-console.log("TEMPLATE DATA:", templateData);
+
+try {
+const res = await fetch("/templates", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({
+name: templateName,
+templateData
+})
+});
+
+const result = await res.json();
+
+if (!res.ok) {
+showNotice(result?.message || "Fehler beim Speichern der Vorlage.");
+return;
+}
 
 closeTemplateModal();
-showNotice("Vorlage wird vorbereitet.");
+showNotice("Vorlage wurde gespeichert.");
+
+} catch (err) {
+console.error(err);
+showNotice("Fehler beim Speichern der Vorlage.");
+}
+
 });
 }
 

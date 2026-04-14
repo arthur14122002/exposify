@@ -1900,6 +1900,47 @@ message: "Vorlage konnte nicht gelöscht werden."
 }
 });
 
+app.post("/templates", requireAuth, async (req, res) => {
+try {
+const { name, templateData } = req.body;
+const userId = req.session.user.id;
+
+if (!name || !templateData) {
+return res.status(400).json({ message: "Ungültige Daten." });
+}
+
+if (!Array.isArray(templateData.slots)) {
+return res.status(400).json({ message: "Template-Slots fehlen." });
+}
+
+const { data, error } = await supabase
+.from("templates")
+.insert([
+{
+user_id: userId,
+name: name.trim(),
+slots: templateData.slots,
+page_count: Number(templateData.pageCount || 1)
+}
+])
+.select()
+.single();
+
+if (error) {
+console.error("Template save error:", error);
+return res.status(500).json({ message: "Fehler beim Speichern der Vorlage." });
+}
+
+return res.json({
+success: true,
+template: data
+});
+} catch (err) {
+console.error("Template route error:", err);
+return res.status(500).json({ message: "Serverfehler beim Speichern der Vorlage." });
+}
+});
+
 app.post("/generate", requireAuth, async (req, res) => {
 try {
 const data = req.body || {};
