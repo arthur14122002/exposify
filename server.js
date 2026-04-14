@@ -1795,42 +1795,79 @@ message: "Vorlagen konnten nicht geladen werden."
 
 app.post("/templates", requireAuth, async (req, res) => {
 try {
-const { name, templateData } = req.body;
-const userId = req.session.user.id;
+const { name, slots, page_count } = req.body;
 
-if (!name || !templateData) {
-return res.status(400).json({ message: "Ungültige Daten." });
+const trimmedName = String(name || "").trim();
+
+if (!trimmedName) {
+return res.status(400).json({
+success: false,
+message: "Bitte einen Vorlagennamen eingeben."
+});
 }
 
-if (!Array.isArray(templateData.slots)) {
-return res.status(400).json({ message: "Template-Slots fehlen." });
+if (!Array.isArray(slots) || slots.length === 0) {
+return res.status(400).json({
+success: false,
+message: "Vorlage enthält keine Slots."
+});
+}
+
+const safePageCount = Number(page_count || 1);
+
+const { count, error: countError } = await supabase
+.from("templates")
+.select("*", { count: "exact", head: true })
+.eq("user_id", req.session.user.id);
+
+if (countError) {
+console.error("POST /templates count error:", countError);
+return res.status(500).json({
+success: false,
+message: "Vorlagenanzahl konnte nicht geprüft werden."
+});
+}
+
+if ((count || 0) >= 5) {
+return res.status(400).json({
+success: false,
+message: "Du kannst maximal 5 Vorlagen speichern."
+});
 }
 
 const { data, error } = await supabase
 .from("templates")
 .insert([
 {
-user_id: userId,
-name: name.trim(),
-slots: templateData.slots,
-page_count: Number(templateData.pageCount || 1)
+user_id: req.session.user.id,
+name: trimmedName,
+slots,
+page_count: safePageCount,
+updated_at: new Date().toISOString()
 }
 ])
 .select()
 .single();
 
-if (error) {
-console.error("Template save error:", error);
-return res.status(500).json({ message: "Fehler beim Speichern der Vorlage." });
+if (error || !data) {
+console.error("POST /templates insert error:", error);
+return res.status(500).json({
+success: false,
+message: "Vorlage konnte nicht gespeichert werden."
+});
 }
 
 return res.json({
 success: true,
+message: "Vorlage wurde gespeichert.",
 template: data
 });
-} catch (err) {
-console.error("Template route error:", err);
-return res.status(500).json({ message: "Serverfehler beim Speichern der Vorlage." });
+} catch (error) {
+console.error("POST /templates crash:", error);
+return res.status(500).json({
+success: false,
+message: "Vorlage konnte nicht gespeichert werden."
+});
 }
 });
 
