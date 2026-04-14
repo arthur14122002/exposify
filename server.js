@@ -1793,35 +1793,6 @@ message: "Vorlagen konnten nicht geladen werden."
 }
 });
 
-app.delete("/templates/:id", requireAuth, async (req, res) => {
-try {
-const { error } = await supabase
-.from("templates")
-.delete()
-.eq("id", req.params.id)
-.eq("user_id", req.session.user.id);
-
-if (error) {
-console.error("DELETE /templates/:id error:", error);
-return res.status(500).json({
-success: false,
-message: "Vorlage konnte nicht gelöscht werden."
-});
-}
-
-return res.json({
-success: true,
-message: "Vorlage wurde gelöscht."
-});
-} catch (error) {
-console.error("DELETE /templates/:id crash:", error);
-return res.status(500).json({
-success: false,
-message: "Vorlage konnte nicht gelöscht werden."
-});
-}
-});
-
 app.post("/templates", requireAuth, async (req, res) => {
 try {
 const { name, templateData } = req.body;
@@ -1860,6 +1831,35 @@ template: data
 } catch (err) {
 console.error("Template route error:", err);
 return res.status(500).json({ message: "Serverfehler beim Speichern der Vorlage." });
+}
+});
+
+app.delete("/templates/:id", requireAuth, async (req, res) => {
+try {
+const { error } = await supabase
+.from("templates")
+.delete()
+.eq("id", req.params.id)
+.eq("user_id", req.session.user.id);
+
+if (error) {
+console.error("DELETE /templates/:id error:", error);
+return res.status(500).json({
+success: false,
+message: "Vorlage konnte nicht gelöscht werden."
+});
+}
+
+return res.json({
+success: true,
+message: "Vorlage wurde gelöscht."
+});
+} catch (error) {
+console.error("DELETE /templates/:id crash:", error);
+return res.status(500).json({
+success: false,
+message: "Vorlage konnte nicht gelöscht werden."
+});
 }
 });
 
