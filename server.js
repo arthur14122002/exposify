@@ -1867,6 +1867,16 @@ app.post("/generate", requireAuth, async (req, res) => {
 try {
 const data = req.body || {};
 
+const template = data.template || null;
+
+if (template) {
+console.log("📦 TEMPLATE EMPFANGEN:", {
+name: template.name,
+slots: template.slots?.length,
+pageCount: template.page_count
+});
+}
+
 if (!process.env.OPENAI_API_KEY) {
 const fallback = fallbackExposeTexts(data);
 return res.json(fallback);

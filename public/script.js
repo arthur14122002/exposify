@@ -447,6 +447,11 @@ telefon: getValue("maklerTelefon"),
 email: getValue("maklerMail")
 };
 
+if (window.selectedTemplate) {
+data.template = window.selectedTemplate;
+}
+
+
 const res = await fetch("/generate", {
 method: "POST",
 headers: { "Content-Type": "application/json" },
