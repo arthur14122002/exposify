@@ -1744,6 +1744,142 @@ return res.status(500).json({ success: false });
 res.json({ success: true });
 });
 
+app.get("/templates", requireAuth, async (req, res) => {
+try {
+const { data, error } = await supabase
+.from("templates")
+.select("id, name, slots, page_count, created_at, updated_at")
+.eq("user_id", req.session.user.id)
+.order("created_at", { ascending: false });
+
+if (error) {
+console.error("GET /templates error:", error);
+return res.status(500).json({
+success: false,
+message: "Vorlagen konnten nicht geladen werden."
+});
+}
+
+return res.json({
+success: true,
+templates: data || []
+});
+} catch (error) {
+console.error("GET /templates crash:", error);
+return res.status(500).json({
+success: false,
+message: "Vorlagen konnten nicht geladen werden."
+});
+}
+});
+
+app.post("/templates", requireAuth, async (req, res) => {
+try {
+const { name, slots, page_count } = req.body;
+
+const trimmedName = String(name || "").trim();
+
+if (!trimmedName) {
+return res.status(400).json({
+success: false,
+message: "Bitte einen Vorlagennamen eingeben."
+});
+}
+
+if (!Array.isArray(slots) || slots.length === 0) {
+return res.status(400).json({
+success: false,
+message: "Vorlage enthält keine Slots."
+});
+}
+
+const safePageCount = Number(page_count || 1);
+
+const { count, error: countError } = await supabase
+.from("templates")
+.select("*", { count: "exact", head: true })
+.eq("user_id", req.session.user.id);
+
+if (countError) {
+console.error("POST /templates count error:", countError);
+return res.status(500).json({
+success: false,
+message: "Vorlagenanzahl konnte nicht geprüft werden."
+});
+}
+
+if ((count || 0) >= 5) {
+return res.status(400).json({
+success: false,
+message: "Du kannst maximal 5 Vorlagen speichern."
+});
+}
+
+const { data, error } = await supabase
+.from("templates")
+.insert([
+{
+user_id: req.session.user.id,
+name: trimmedName,
+slots,
+page_count: safePageCount,
+updated_at: new Date().toISOString()
+}
+])
+.select()
+.single();
+
+if (error || !data) {
+console.error("POST /templates insert error:", error);
+return res.status(500).json({
+success: false,
+message: "Vorlage konnte nicht gespeichert werden."
+});
+}
+
+return res.json({
+success: true,
+message: "Vorlage wurde gespeichert.",
+template: data
+});
+} catch (error) {
+console.error("POST /templates crash:", error);
+return res.status(500).json({
+success: false,
+message: "Vorlage konnte nicht gespeichert werden."
+});
+}
+});
+
+app.delete("/templates/:id", requireAuth, async (req, res) => {
+try {
+const { error } = await supabase
+.from("templates")
+.delete()
+.eq("id", req.params.id)
+.eq("user_id", req.session.user.id);
+
+if (error) {
+console.error("DELETE /templates/:id error:", error);
+return res.status(500).json({
+success: false,
+message: "Vorlage konnte nicht gelöscht werden."
+});
+}
+
+return res.json({
+success: true,
+message: "Vorlage wurde gelöscht."
+});
+} catch (error) {
+console.error("DELETE /templates/:id crash:", error);
+return res.status(500).json({
+success: false,
+message: "Vorlage konnte nicht gelöscht werden."
+});
+}
+});
+
 app.post("/generate", requireAuth, async (req, res) => {
 try {
 const data = req.body || {};
