@@ -1513,6 +1513,10 @@ container.querySelectorAll(".editorPageInner").forEach((pageInner) => {
 if (child.classList.contains("editorImageWrapper")) return;
 if (child.tagName === "HR") return;
 
+if (child.dataset.slotType === "main_text") return;
+if (child.dataset.slotType === "agent_text") return;
+if (child.dataset.slotType === "title_heading") return;
+
 if (child.classList.contains("flowImageGrid")) return;
 if (child.classList.contains("flowImageItem")) return;
 if (child.classList.contains("expose-media")) return;
