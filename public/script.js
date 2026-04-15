@@ -259,12 +259,17 @@ currentRowHeight = Math.max(currentRowHeight, size.height);
 return blocks.join("");
 }
 
-async function buildTemplateLayout(images, template, ai, textAndMaklerHtml) {
+async function buildTemplateLayout(images, template, ai, mainTextHtml, maklerTextHtml) {
 if (!template?.slots?.length) return "";
 
 const pages = {};
 
-template.slots.forEach((slot) => {
+const sortedSlots = [...template.slots].sort((a, b) => {
+if (a.page !== b.page) return a.page - b.page;
+return a.top - b.top;
+});
+
+sortedSlots.forEach((slot) => {
 if (!pages[slot.page]) {
 pages[slot.page] = [];
 }
@@ -277,44 +282,55 @@ position:absolute;
 left:${slot.left}px;
 top:${slot.top}px;
 width:${slot.width}px;
-height:${slot.height}px;
+min-height:${slot.height}px;
+margin:0;
+z-index:2;
 "
 >
 ${ai.title || "Immobilien-Exposé"}
 </h1>
 `);
+return;
 }
 
 if (slot.type === "main_text") {
 pages[slot.page].push(`
 <div
+data-slot-type="main_text"
 style="
 position:absolute;
 left:${slot.left}px;
 top:${slot.top}px;
 width:${slot.width}px;
-height:${slot.height}px;
+min-height:${slot.height}px;
+z-index:2;
 "
 >
-${textAndMaklerHtml}
+${mainTextHtml}
 </div>
 `);
+return;
 }
 
 if (slot.type === "agent_text") {
+if (!maklerTextHtml.trim()) return;
+
 pages[slot.page].push(`
 <div
+data-slot-type="agent_text"
 style="
 position:absolute;
 left:${slot.left}px;
 top:${slot.top}px;
 width:${slot.width}px;
-height:${slot.height}px;
+min-height:${slot.height}px;
+z-index:2;
 "
 >
-${textAndMaklerHtml}
+${maklerTextHtml}
 </div>
 `);
+return;
 }
 
 if (slot.type === "object_image") {
@@ -332,16 +348,19 @@ width:${slot.width}px;
 height:${slot.height}px;
 "
 >
-<img src="${img}" style="width:100%; height:100%; object-fit:contain;" />
+<img
+src="${img}"
+alt="Objektbild"
+style="width:100%; height:100%; object-fit:contain;"
+>
 </div>
 `);
 }
-
 });
 
-const result = Object.keys(pages).map((pageNumber) => {
-return createEditorPage(pages[pageNumber].join(""));
-});
+const result = Object.keys(pages)
+.sort((a, b) => Number(a) - Number(b))
+.map((pageNumber) => createEditorPage(pages[pageNumber].join("")));
 
 return result.join("");
 }
@@ -605,7 +624,7 @@ ${data.email ? `<p>${data.email}</p>` : ""}
 `
 : "";
 
-const textAndMaklerHtml = `
+const mainTextHtml = `
 <div data-slot-type="main_text">
 <h3>Beschreibung</h3>
 <p>${ai.description || ""}</p>
@@ -616,7 +635,10 @@ const textAndMaklerHtml = `
 <h3>Lage</h3>
 <p>${ai.location || ""}</p>
 </div>
+`;
 
+const textAndMaklerHtml = `
+${mainTextHtml}
 ${maklerTextHtml}
 `;
 
@@ -633,7 +655,8 @@ const templateHtml = await buildTemplateLayout(
 allImageDataUrls,
 selectedTemplate,
 ai,
-textAndMaklerHtml
+mainTextHtml,
+maklerTextHtml
 );
 
 if (templateHtml) {
