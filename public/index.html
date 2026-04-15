@@ -259,7 +259,7 @@ Feedback: arthur@exposifyapp.com
 
 <script>
 let availableTemplates = [];
-let selectedTemplate = null;
+window.selectedTemplate = null;
 
 function renderTemplateList() {
 const templateList = document.getElementById("templateList");
@@ -277,7 +277,7 @@ noTemplateBtn.className = "secondaryBtn";
 noTemplateBtn.style.width = "100%";
 noTemplateBtn.textContent = "Keine Vorlage";
 noTemplateBtn.addEventListener("click", () => {
-selectedTemplate = null;
+window.selectedTemplate = null;
 templatePickerBtn.innerHTML = `Vorlage wählen <span id="templatePickerArrow">▴</span>`;
 if (templatePickerMenu) templatePickerMenu.classList.add("hidden");
 if (templatePickerArrow) templatePickerArrow.textContent = "▴";
@@ -303,7 +303,10 @@ btn.style.width = "100%";
 btn.textContent = template.name || "Unbenannte Vorlage";
 
 btn.addEventListener("click", () => {
-selectedTemplate = template;
+
+window.selectedTemplate = template;
+console.log("✅ TEMPLATE GESETZT:", window.selectedTemplate);
+
 templatePickerBtn.innerHTML = `${template.name} <span id="templatePickerArrow">▴</span>`;
 
 const menu = document.getElementById("templatePickerMenu");
