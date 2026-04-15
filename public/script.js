@@ -617,17 +617,14 @@ const pageFourImages = allImageDataUrls.slice(6, 12);
 const maklerTextHtml =
 data.firma || data.maklerName || data.telefon || data.email
 ? `
-<div data-slot-type="agent_text">
 ${data.firma ? `<p>${data.firma}</p>` : ""}
 ${data.maklerName ? `<p>${data.maklerName}</p>` : ""}
 ${data.telefon ? `<p>${data.telefon}</p>` : ""}
 ${data.email ? `<p>${data.email}</p>` : ""}
-</div>
 `
 : "";
 
 const mainTextHtml = `
-<div data-slot-type="main_text">
 <h3>Beschreibung</h3>
 <p>${ai.description || ""}</p>
 
@@ -636,7 +633,6 @@ const mainTextHtml = `
 
 <h3>Lage</h3>
 <p>${ai.location || ""}</p>
-</div>
 `;
 
 const textAndMaklerHtml = `
