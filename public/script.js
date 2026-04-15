@@ -628,6 +628,7 @@ window.__lastMaklerTextHtml = maklerTextHtml;
 const pages = [];
 const selectedTemplate = window.selectedTemplate || null;
 
+if (selectedTemplate) {
 const templateHtml = await buildTemplateLayout(
 allImageDataUrls,
 selectedTemplate,
