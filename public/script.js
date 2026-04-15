@@ -259,6 +259,75 @@ currentRowHeight = Math.max(currentRowHeight, size.height);
 return blocks.join("");
 }
 
+async function buildTemplateImageGrid(images, template) {
+if (!images.length || !template || !Array.isArray(template.slots)) return "";
+
+const objectSlots = template.slots
+.filter((slot) => slot.type === "object_image")
+.sort((a, b) => {
+const pageDiff = (a.page || 1) - (b.page || 1);
+if (pageDiff !== 0) return pageDiff;
+return (a.slotIndex || 0) - (b.slotIndex || 0);
+});
+
+if (!objectSlots.length) {
+return await buildFlowImageGrid(images);
+}
+
+const pagesMap = new Map();
+
+for (let i = 0; i < images.length; i++) {
+const src = images[i];
+const slot = objectSlots[i];
+
+if (!slot) {
+break;
+}
+
+const pageNumber = Number(slot.page || 1);
+
+if (!pagesMap.has(pageNumber)) {
+pagesMap.set(pageNumber, []);
+}
+
+pagesMap.get(pageNumber).push(`
+<div
+class="editorImageWrapper"
+data-slot-type="object_image"
+data-slot-index="${slot.slotIndex || i + 1}"
+style="
+width:${slot.width}px;
+height:${slot.height}px;
+left:${slot.left}px;
+top:${slot.top}px;
+"
+>
+<img
+src="${src}"
+alt="Objektbild"
+draggable="false"
+contenteditable="false"
+style="
+width:100%;
+height:100%;
+max-width:none;
+max-height:none;
+object-fit:contain;
+background:transparent;
+border-radius:0;
+"
+>
+</div>
+`);
+}
+
+const sortedPages = [...pagesMap.keys()].sort((a, b) => a - b);
+
+return sortedPages.map((pageNumber) => {
+return createEditorPage(pagesMap.get(pageNumber).join(""));
+}).join("");
+}
+
 async function handleImageUpload(e) {
 const files = Array.from(e.target.files || []);
 const remaining = 11 - imageFiles.length;
@@ -533,6 +602,15 @@ ${textAndMaklerHtml}
 `));
 }
 
+const selectedTemplate = window.selectedTemplate || null;
+
+if (selectedTemplate) {
+const templateImageHtml = await buildTemplateImageGrid(allImageDataUrls, selectedTemplate);
+
+if (templateImageHtml) {
+pages.push(templateImageHtml);
+}
+} else {
 if (pageThreeImages.length) {
 pages.push(createEditorPage(`
 ${await buildFlowImageGrid(pageThreeImages)}
@@ -544,7 +622,7 @@ pages.push(createEditorPage(`
 ${await buildFlowImageGrid(pageFourImages)}
 `));
 }
-
+}
 const exposeHtml = pages.join("");
 
 const save = await fetch("/projects", {
