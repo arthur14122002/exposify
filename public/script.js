@@ -259,73 +259,91 @@ currentRowHeight = Math.max(currentRowHeight, size.height);
 return blocks.join("");
 }
 
-async function buildTemplateImageGrid(images, template) {
-if (!images.length || !template || !Array.isArray(template.slots)) return "";
+async function buildTemplateLayout(images, template, ai, textAndMaklerHtml) {
+if (!template?.slots?.length) return "";
 
-const objectSlots = template.slots
-.filter((slot) => slot.type === "object_image")
-.sort((a, b) => {
-const pageDiff = (a.page || 1) - (b.page || 1);
-if (pageDiff !== 0) return pageDiff;
-return (a.slotIndex || 0) - (b.slotIndex || 0);
-});
+const pages = {};
 
-if (!objectSlots.length) {
-return await buildFlowImageGrid(images);
+template.slots.forEach((slot) => {
+if (!pages[slot.page]) {
+pages[slot.page] = [];
 }
 
-const pagesMap = new Map();
-
-for (let i = 0; i < images.length; i++) {
-const src = images[i];
-const slot = objectSlots[i];
-
-if (!slot) {
-break;
-}
-
-const pageNumber = Number(slot.page || 1);
-
-if (!pagesMap.has(pageNumber)) {
-pagesMap.set(pageNumber, []);
-}
-
-pagesMap.get(pageNumber).push(`
-<div
-class="editorImageWrapper"
-data-slot-type="object_image"
-data-slot-index="${slot.slotIndex || i + 1}"
+if (slot.type === "title_heading") {
+pages[slot.page].push(`
+<h1
 style="
-width:${slot.width}px;
-height:${slot.height}px;
+position:absolute;
 left:${slot.left}px;
 top:${slot.top}px;
+width:${slot.width}px;
+height:${slot.height}px;
 "
 >
-<img
-src="${src}"
-alt="Objektbild"
-draggable="false"
-contenteditable="false"
+${ai.title || "Immobilien-Exposé"}
+</h1>
+`);
+}
+
+if (slot.type === "main_text") {
+pages[slot.page].push(`
+<div
 style="
-width:100%;
-height:100%;
-max-width:none;
-max-height:none;
-object-fit:contain;
-background:transparent;
-border-radius:0;
+position:absolute;
+left:${slot.left}px;
+top:${slot.top}px;
+width:${slot.width}px;
+height:${slot.height}px;
 "
 >
+${textAndMaklerHtml}
 </div>
 `);
 }
 
-const sortedPages = [...pagesMap.keys()].sort((a, b) => a - b);
+if (slot.type === "agent_text") {
+pages[slot.page].push(`
+<div
+style="
+position:absolute;
+left:${slot.left}px;
+top:${slot.top}px;
+width:${slot.width}px;
+height:${slot.height}px;
+"
+>
+${textAndMaklerHtml}
+</div>
+`);
+}
 
-return sortedPages.map((pageNumber) => {
-return createEditorPage(pagesMap.get(pageNumber).join(""));
-}).join("");
+if (slot.type === "object_image") {
+const img = images[slot.slotIndex - 1];
+if (!img) return;
+
+pages[slot.page].push(`
+<div
+class="editorImageWrapper"
+style="
+position:absolute;
+left:${slot.left}px;
+top:${slot.top}px;
+width:${slot.width}px;
+height:${slot.height}px;
+"
+>
+<img src="${img}" style="width:100%; height:100%; object-fit:contain;" />
+</div>
+`);
+}
+
+});
+
+const result = Object.keys(pages).map((pageNumber) => {
+return createEditorPage(pages[pageNumber].join(""));
+});
+
+return result.join("");
 }
 
 function buildTemplateTextBlocks(textAndMaklerHtml) {
@@ -610,16 +628,15 @@ window.__lastMaklerTextHtml = maklerTextHtml;
 const pages = [];
 const selectedTemplate = window.selectedTemplate || null;
 
-if (selectedTemplate) {
-pages.push(createEditorPage(`
-<h1>${ai.title || "Immobilien-Exposé"}</h1>
-${textAndMaklerHtml}
-`));
+const templateHtml = await buildTemplateLayout(
+allImageDataUrls,
+selectedTemplate,
+ai,
+textAndMaklerHtml
+);
 
-const templateImageHtml = await buildTemplateImageGrid(allImageDataUrls, selectedTemplate);
-
-if (templateImageHtml) {
-pages.push(templateImageHtml);
+if (templateHtml) {
+pages.push(templateHtml);
 }
 } else {
 if (titleImageDataUrl) {
