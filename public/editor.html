@@ -296,6 +296,45 @@ mediaWrapper.appendChild(row);
 gallery.replaceWith(mediaWrapper);
 });
 
+const pageInners = [...container.querySelectorAll(".editorPageInner")];
+
+pageInners.forEach((pageInner) => {
+const hasTitleSlot = !!pageInner.querySelector('[data-slot-type="title_heading"]');
+const hasMainTextSlot = !!pageInner.querySelector('[data-slot-type="main_text"]');
+
+if (!hasTitleSlot) {
+const firstH1 = pageInner.querySelector("h1");
+if (firstH1) {
+firstH1.dataset.slotType = "title_heading";
+}
+}
+
+if (!hasMainTextSlot) {
+const children = [...pageInner.children];
+const mainTextNodes = [];
+
+children.forEach((child) => {
+if (child.classList.contains("editorImageWrapper")) return;
+if (child.tagName === "HR") return;
+if (child.dataset.slotType === "title_heading") return;
+if (child.dataset.slotType === "agent_text") return;
+if (child.dataset.slotType === "main_text") return;
+
+if (["P", "H2", "H3", "UL", "OL"].includes(child.tagName)) {
+mainTextNodes.push(child);
+}
+});
+
+if (mainTextNodes.length) {
+const wrapper = document.createElement("div");
+wrapper.dataset.slotType = "main_text";
+
+mainTextNodes[0].insertAdjacentElement("beforebegin", wrapper);
+mainTextNodes.forEach((node) => wrapper.appendChild(node));
+}
+}
+});
+
 }
 
 function openTemplateModal() {
@@ -1501,45 +1540,6 @@ p.textContent = node.textContent;
 pageInner.replaceChild(p, node);
 }
 });
-});
-
-const pageInners = [...container.querySelectorAll(".editorPageInner")];
-
-pageInners.forEach((pageInner) => {
-const hasTitleSlot = !!pageInner.querySelector('[data-slot-type="title_heading"]');
-const hasMainTextSlot = !!pageInner.querySelector('[data-slot-type="main_text"]');
-
-if (!hasTitleSlot) {
-const firstH1 = pageInner.querySelector("h1");
-if (firstH1) {
-firstH1.dataset.slotType = "title_heading";
-}
-}
-
-if (!hasMainTextSlot) {
-const children = [...pageInner.children];
-const mainTextNodes = [];
-
-children.forEach((child) => {
-if (child.classList.contains("editorImageWrapper")) return;
-if (child.tagName === "HR") return;
-if (child.dataset.slotType === "title_heading") return;
-if (child.dataset.slotType === "agent_text") return;
-if (child.dataset.slotType === "main_text") return;
-
-if (["P", "H2", "H3", "UL", "OL"].includes(child.tagName)) {
-mainTextNodes.push(child);
-}
-});
-
-if (mainTextNodes.length) {
-const wrapper = document.createElement("div");
-wrapper.dataset.slotType = "main_text";
-
-mainTextNodes[0].insertAdjacentElement("beforebegin", wrapper);
-mainTextNodes.forEach((node) => wrapper.appendChild(node));
-}
-}
 });
 
 }
