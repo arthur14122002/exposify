@@ -840,11 +840,12 @@ if (!pageInner) return;
 
 const wrappers = [...pageInner.querySelectorAll(".editorImageWrapper")];
 
-const textSlots = [
-...pageInner.querySelectorAll('[data-slot-type="main_text"], [data-slot-type="agent_text"]')
-];
+const mainTextSlot = pageInner.querySelector('[data-slot-type="main_text"]');
+const agentTextSlot = pageInner.querySelector('[data-slot-type="agent_text"]');
+const headingSlot = pageInner.querySelector('[data-slot-type="title_heading"]') || pageInner.querySelector("h1");
 
-const headingSlots = [...pageInner.querySelectorAll("h1")];
+const textSlots = [mainTextSlot, agentTextSlot].filter(Boolean);
+const headingSlots = headingSlot ? [headingSlot] : [];
 
 wrappers.forEach((wrapper) => {
 const slotType = wrapper.dataset.slotType;
