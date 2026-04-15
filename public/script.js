@@ -297,6 +297,7 @@ if (slot.type === "main_text") {
 pages[slot.page].push(`
 <div
 data-slot-type="main_text"
+data-fixed="true"
 style="
 position:absolute;
 left:${slot.left}px;
@@ -318,6 +319,7 @@ if (!maklerTextHtml.trim()) return;
 pages[slot.page].push(`
 <div
 data-slot-type="agent_text"
+data-fixed="true"
 style="
 position:absolute;
 left:${slot.left}px;
