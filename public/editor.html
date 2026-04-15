@@ -840,7 +840,11 @@ if (!pageInner) return;
 
 const wrappers = [...pageInner.querySelectorAll(".editorImageWrapper")];
 
-const textSlots = [...pageInner.querySelectorAll('[data-slot-type="main_text"], [data-slot-type="agent_text"]')];
+const textSlots = [
+...pageInner.querySelectorAll('[data-slot-type="main_text"], [data-slot-type="agent_text"]')
+];
+
+const headingSlots = [...pageInner.querySelectorAll("h1")];
 
 wrappers.forEach((wrapper) => {
 const slotType = wrapper.dataset.slotType;
@@ -873,6 +877,19 @@ left: Math.round(textEl.offsetLeft || 0),
 top: Math.round(textEl.offsetTop || 0),
 width: Math.round(textEl.offsetWidth || 0),
 height: Math.round(textEl.offsetHeight || 0)
+};
+
+slots.push(slot);
+});
+
+headingSlots.forEach((headingEl) => {
+const slot = {
+type: "title_heading",
+page: pageIndex + 1,
+left: Math.round(headingEl.offsetLeft || 0),
+top: Math.round(headingEl.offsetTop || 0),
+width: Math.round(headingEl.offsetWidth || 0),
+height: Math.round(headingEl.offsetHeight || 0)
 };
 
 slots.push(slot);
