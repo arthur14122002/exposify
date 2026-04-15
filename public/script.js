@@ -328,6 +328,23 @@ return createEditorPage(pagesMap.get(pageNumber).join(""));
 }).join("");
 }
 
+function buildTemplateTextBlocks(textAndMaklerHtml) {
+return `
+<div data-slot-type="main_text">
+<h3>Beschreibung</h3>
+<p>${window.__lastAiDescription || ""}</p>
+
+<h3>Ausstattung</h3>
+<p>${window.__lastAiFeatures || ""}</p>
+
+<h3>Lage</h3>
+<p>${window.__lastAiLocation || ""}</p>
+</div>
+
+${window.__lastMaklerTextHtml || ""}
+`;
+}
+
 async function handleImageUpload(e) {
 const files = Array.from(e.target.files || []);
 const remaining = 11 - imageFiles.length;
@@ -584,8 +601,27 @@ const textAndMaklerHtml = `
 
 ${maklerTextHtml}
 `;
-const pages = [];
 
+window.__lastAiDescription = ai.description || "";
+window.__lastAiFeatures = ai.features || "";
+window.__lastAiLocation = ai.location || "";
+window.__lastMaklerTextHtml = maklerTextHtml;
+
+const pages = [];
+const selectedTemplate = window.selectedTemplate || null;
+
+if (selectedTemplate) {
+pages.push(createEditorPage(`
+<h1>${ai.title || "Immobilien-Exposé"}</h1>
+${textAndMaklerHtml}
+`));
+
+const templateImageHtml = await buildTemplateImageGrid(allImageDataUrls, selectedTemplate);
+
+if (templateImageHtml) {
+pages.push(templateImageHtml);
+}
+} else {
 if (titleImageDataUrl) {
 pages.push(createEditorPage(`
 <h1>${ai.title || "Immobilien-Exposé"}</h1>
@@ -602,15 +638,6 @@ ${textAndMaklerHtml}
 `));
 }
 
-const selectedTemplate = window.selectedTemplate || null;
-
-if (selectedTemplate) {
-const templateImageHtml = await buildTemplateImageGrid(allImageDataUrls, selectedTemplate);
-
-if (templateImageHtml) {
-pages.push(templateImageHtml);
-}
-} else {
 if (pageThreeImages.length) {
 pages.push(createEditorPage(`
 ${await buildFlowImageGrid(pageThreeImages)}
