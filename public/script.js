@@ -551,8 +551,6 @@ ${await buildFlowImageGrid(pageFourImages)}
 
 const exposeHtml = pages.join("");
 
-const exposeHtml = pages.join("");
-
 const save = await fetch("/projects", {
 method: "POST",
 headers: { "Content-Type": "application/json" },
