@@ -524,12 +524,7 @@ const pages = [];
 if (titleImageDataUrl) {
 pages.push(createEditorPage(`
 <h1>${ai.title || "Immobilien-Exposé"}</h1>
-<img
-class="heroImage"
-src="${titleImageDataUrl}"
-alt="Titelbild"
-style="display:block; margin-top:30px;"
->
+<img class="heroImage" src="${titleImageDataUrl}" alt="Titelbild">
 `));
 
 pages.push(createEditorPage(`
