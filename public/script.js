@@ -525,7 +525,6 @@ pages.push(createEditorPage(`
 <h1>${ai.title || "Immobilien-Exposé"}</h1>
 ${textAndMaklerHtml}
 `));
-}
 
 if (pageThreeImages.length) {
 pages.push(createEditorPage(`
@@ -538,7 +537,7 @@ pages.push(createEditorPage(`
 ${await buildFlowImageGrid(pageFourImages)}
 `));
 }
-}
+
 const exposeHtml = pages.join("");
 
 const save = await fetch("/projects", {
