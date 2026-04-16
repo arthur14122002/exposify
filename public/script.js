@@ -572,11 +572,6 @@ telefon: getValue("maklerTelefon"),
 email: getValue("maklerMail")
 };
 
-if (window.selectedTemplate) {
-data.template = window.selectedTemplate;
-}
-
-
 const res = await fetch("/generate", {
 method: "POST",
 headers: { "Content-Type": "application/json" },
@@ -650,26 +645,6 @@ window.__lastAiLocation = ai.location || "";
 window.__lastMaklerTextHtml = maklerTextHtml;
 
 const pages = [];
-const selectedTemplate = window.selectedTemplate || null;
-
-if (selectedTemplate) {
-const templateHtml = await buildTemplateLayout(
-allImageDataUrls,
-selectedTemplate,
-ai,
-mainTextHtml,
-maklerTextHtml
-);
-
-if (templateHtml) {
-pages.push(templateHtml);
-}
-} else {
-if (titleImageDataUrl) {
-pages.push(createEditorPage(`
-<h1>${ai.title || "Immobilien-Exposé"}</h1>
-<img class="heroImage" src="${titleImageDataUrl}" alt="Titelbild">
-`));
 
 pages.push(createEditorPage(`
 ${textAndMaklerHtml}

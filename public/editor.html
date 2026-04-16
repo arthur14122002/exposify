@@ -60,7 +60,6 @@ Rechtliches <span id="sidebarArrow">▾</span>
 <div class="editorActionsMain">
 <button type="button" onclick="goDashboard()">Zurück zu Meine Projekte</button>
 <button id="saveBtn" type="button">Änderungen speichern</button>
-<button id="saveTemplateBtn" type="button">Als Vorlage speichern</button>
 <input id="editorImageUpload" type="file" accept="image/*" multiple hidden>
 <span id="imageLimitHint" class="pageLimitHint">Noch 11 Bilder verfügbar</span>
 <span id="pageLimitHint" class="pageLimitHint">1 / 5 Seiten</span>
@@ -142,7 +141,6 @@ Projekt wird geladen...
 </div>
 </div>
 
-<div id="templateModal" class="modalOverlay hidden">
 <div class="modalBox" style="max-width:420px; text-align:center;">
 <h3 style="margin-bottom:12px;">Vorlage speichern</h3>
 
@@ -296,23 +294,6 @@ mediaWrapper.appendChild(row);
 gallery.replaceWith(mediaWrapper);
 });
 
-}
-
-function openTemplateModal() {
-if (!templateModal) return;
-templateNameInput.value = "";
-templateModal.classList.remove("hidden");
-templateModal.style.display = "flex";
-
-setTimeout(() => {
-templateNameInput.focus();
-}, 30);
-}
-
-function closeTemplateModal() {
-if (!templateModal) return;
-templateModal.classList.add("hidden");
-templateModal.style.display = "none";
 }
 
 function placeCaretAtEndOfElement(element) {
@@ -830,80 +811,6 @@ if (!editor) return [];
 return [...editor.querySelectorAll(".editorPage")];
 }
 
-function extractTemplateData() {
-const pages = getEditorPages();
-const slots = [];
-
-pages.forEach((page, pageIndex) => {
-const pageInner = page.querySelector(".editorPageInner");
-if (!pageInner) return;
-
-const wrappers = [...pageInner.querySelectorAll(".editorImageWrapper")];
-
-const mainTextSlot = pageInner.querySelector('[data-slot-type="main_text"]');
-const agentTextSlot = pageInner.querySelector('[data-slot-type="agent_text"]');
-const headingSlot = pageInner.querySelector('[data-slot-type="title_heading"]') || pageInner.querySelector("h1");
-
-const textSlots = [mainTextSlot, agentTextSlot].filter(Boolean);
-const headingSlots = headingSlot ? [headingSlot] : [];
-
-wrappers.forEach((wrapper) => {
-const slotType = wrapper.dataset.slotType;
-if (!slotType) return;
-
-const slot = {
-type: slotType,
-page: pageIndex + 1,
-left: Math.round(parseFloat(wrapper.style.left) || 0),
-top: Math.round(parseFloat(wrapper.style.top) || 0),
-width: Math.round(wrapper.offsetWidth || 0),
-height: Math.round(wrapper.offsetHeight || 0)
-};
-
-if (slotType === "object_image") {
-slot.slotIndex = Number(wrapper.dataset.slotIndex || 0);
-}
-
-slots.push(slot);
-});
-
-textSlots.forEach((textEl) => {
-const slotType = textEl.dataset.slotType;
-if (!slotType) return;
-
-const slot = {
-type: slotType,
-page: pageIndex + 1,
-left: Math.round(textEl.offsetLeft || 0),
-top: Math.round(textEl.offsetTop || 0),
-width: Math.round(textEl.offsetWidth || 0),
-height: Math.round(textEl.offsetHeight || 0)
-};
-
-slots.push(slot);
-});
-
-headingSlots.forEach((headingEl) => {
-const slot = {
-type: "title_heading",
-page: pageIndex + 1,
-left: Math.round(headingEl.offsetLeft || 0),
-top: Math.round(headingEl.offsetTop || 0),
-width: Math.round(headingEl.offsetWidth || 0),
-height: Math.round(headingEl.offsetHeight || 0)
-};
-
-slots.push(slot);
-});
-
-});
-
-return {
-pageCount: pages.length,
-slots
-};
-}
-
 function getEditorImageCount() {
 const editor = document.getElementById("editorArea");
 if (!editor) return 0;
@@ -1306,55 +1213,6 @@ document.getElementById("removePageBtn").addEventListener("click", removeLastPag
 document.getElementById("addImageBtn").addEventListener("click", () => {
 document.getElementById("editorImageUpload").click();
 });
-
-const saveTemplateBtn = document.getElementById("saveTemplateBtn");
-
-if (saveTemplateBtn) {
-saveTemplateBtn.addEventListener("click", openTemplateModal);
-}
-
-if (templateModalCancel) {
-templateModalCancel.addEventListener("click", closeTemplateModal);
-}
-
-if (templateModalSave) {
-templateModalSave.addEventListener("click", async () => {
-const templateName = (templateNameInput.value || "").trim();
-
-if (!templateName) {
-showNotice("Bitte gib einen Vorlagennamen ein.");
-return;
-}
-
-const templateData = extractTemplateData();
-
-try {
-const res = await fetch("/templates", {
-method: "POST",
-headers: { "Content-Type": "application/json" },
-body: JSON.stringify({
-name: templateName,
-templateData
-})
-});
-
-const result = await res.json();
-
-if (!res.ok) {
-showNotice(result?.message || "Fehler beim Speichern der Vorlage.");
-return;
-}
-
-closeTemplateModal();
-showNotice("Vorlage wurde gespeichert.");
-
-} catch (err) {
-console.error(err);
-showNotice("Fehler beim Speichern der Vorlage.");
-}
-
-});
-}
 
 document.getElementById("editorImageUpload").addEventListener("change", handleEditorImageUpload);
 
