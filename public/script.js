@@ -521,10 +521,21 @@ window.__lastMaklerTextHtml = maklerTextHtml;
 
 const pages = [];
 
+if (titleImageDataUrl) {
+pages.push(createEditorPage(`
+<h1>${ai.title || "Immobilien-Exposé"}</h1>
+<img class="heroImage" src="${titleImageDataUrl}" alt="Titelbild">
+`));
+
+pages.push(createEditorPage(`
+${textAndMaklerHtml}
+`));
+} else {
 pages.push(createEditorPage(`
 <h1>${ai.title || "Immobilien-Exposé"}</h1>
 ${textAndMaklerHtml}
 `));
+}
 
 if (pageThreeImages.length) {
 pages.push(createEditorPage(`
@@ -537,6 +548,8 @@ pages.push(createEditorPage(`
 ${await buildFlowImageGrid(pageFourImages)}
 `));
 }
+
+const exposeHtml = pages.join("");
 
 const exposeHtml = pages.join("");
 
