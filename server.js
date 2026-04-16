@@ -6,7 +6,6 @@ process.env.SUPABASE_URL,
 process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-
 console.log("SUPABASE URL:", process.env.SUPABASE_URL);
 console.log("SUPABASE KEY da:", !!process.env.SUPABASE_SERVICE_ROLE_KEY);
 
@@ -1764,105 +1763,6 @@ return res.status(500).json({ success: false });
 res.json({ success: true });
 });
 
-app.get("/templates", requireAuth, async (req, res) => {
-try {
-const { data, error } = await supabase
-.from("templates")
-.select("id, name, slots, page_count, created_at, updated_at")
-.eq("user_id", req.session.user.id)
-.order("created_at", { ascending: false });
-
-if (error) {
-console.error("GET /templates error:", error);
-return res.status(500).json({
-success: false,
-message: "Vorlagen konnten nicht geladen werden."
-});
-}
-
-return res.json({
-success: true,
-templates: data || []
-});
-} catch (error) {
-console.error("GET /templates crash:", error);
-return res.status(500).json({
-success: false,
-message: "Vorlagen konnten nicht geladen werden."
-});
-}
-});
-
-app.post("/templates", requireAuth, async (req, res) => {
-try {
-const { name, templateData } = req.body;
-const userId = req.session.user.id;
-
-if (!name || !templateData) {
-return res.status(400).json({ message: "Ungültige Daten." });
-}
-
-if (!Array.isArray(templateData.slots)) {
-return res.status(400).json({ message: "Template-Slots fehlen." });
-}
-
-const { data, error } = await supabase
-.from("templates")
-.insert([
-{
-user_id: userId,
-name: name.trim(),
-slots: templateData.slots,
-page_count: Number(templateData.pageCount || 1)
-}
-])
-.select()
-.single();
-
-if (error) {
-console.error("Template save error:", error);
-return res.status(500).json({ message: "Fehler beim Speichern der Vorlage." });
-}
-
-return res.json({
-success: true,
-template: data
-});
-} catch (err) {
-console.error("Template route error:", err);
-return res.status(500).json({ message: "Serverfehler beim Speichern der Vorlage." });
-}
-});
-
-app.delete("/templates/:id", requireAuth, async (req, res) => {
-try {
-const { error } = await supabase
-.from("templates")
-.delete()
-.eq("id", req.params.id)
-.eq("user_id", req.session.user.id);
-
-if (error) {
-console.error("DELETE /templates/:id error:", error);
-return res.status(500).json({
-success: false,
-message: "Vorlage konnte nicht gelöscht werden."
-});
-}
-
-return res.json({
-success: true,
-message: "Vorlage wurde gelöscht."
-});
-} catch (error) {
-console.error("DELETE /templates/:id crash:", error);
-return res.status(500).json({
-success: false,
-message: "Vorlage konnte nicht gelöscht werden."
-});
-}
-});
-
 app.post("/generate", requireAuth, async (req, res) => {
 
 console.log("📦 TEMPLATE EMPFANGEN:", req.body.template);
@@ -1958,6 +1858,56 @@ console.error("Generate Fehler:", error);
 
 const fallback = fallbackExposeTexts(req.body || {});
 res.json(fallback);
+}
+});
+
+app.post("/upload-image", requireAuth, async (req, res) => {
+try {
+const { fileName, fileData, contentType } = req.body || {};
+
+if (!fileName || !fileData || !contentType) {
+return res.status(400).json({ message: "Bilddaten fehlen." });
+}
+
+// base64 extrahieren
+const matches = fileData.match(/^data:(.+);base64,(.+)$/);
+if (!matches) {
+return res.status(400).json({ message: "Ungültige Bilddaten." });
+}
+
+const base64 = matches[2];
+const buffer = Buffer.from(base64, "base64");
+
+// eindeutiger Name (wichtig!)
+const cleanFileName = String(fileName)
+.toLowerCase()
+.replace(/[^a-z0-9.\-_]/g, "-");
+
+const safeName = `uploads/${Date.now()}-${Math.random().toString(36).slice(2)}-${cleanFileName}`;
+
+// Upload zu Supabase
+const { error } = await supabase.storage
+.from("project-images") // dein Bucket Name!
+.upload(safeName, buffer, {
+contentType,
+upsert: false
+});
+
+if (error) {
+console.error("Storage Fehler:", error);
+return res.status(500).json({ message: "Upload fehlgeschlagen" });
+}
+
+// Public URL holen
+const { data } = supabase.storage
+.from("project-images")
+.getPublicUrl(safeName);
+
+return res.json({ url: data.publicUrl });
+
+} catch (err) {
+console.error("Upload Crash:", err);
+return res.status(500).json({ message: "Serverfehler beim Upload" });
 }
 });
 

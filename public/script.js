@@ -261,7 +261,7 @@ return blocks.join("");
 
 async function handleImageUpload(e) {
 const files = Array.from(e.target.files || []);
-const remaining = 11 - imageFiles.length;
+const remaining = 10 - imageFiles.length;
 const toAdd = files.slice(0, remaining);
 
 imageFiles = [...imageFiles, ...toAdd];
@@ -416,6 +416,28 @@ chunks.push(arr.slice(i, i + size));
 return chunks;
 }
 
+async function uploadImageAndGetUrl(file) {
+const fileData = await fileToDataUrl(file);
+
+const res = await fetch("/upload-image", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({
+fileName: file.name,
+fileData,
+contentType: file.type || "image/jpeg"
+})
+});
+
+const result = await res.json();
+
+if (!res.ok || !result?.url) {
+throw new Error(result?.message || "Bild-Upload fehlgeschlagen.");
+}
+
+return result.url;
+}
+
 async function generateExpose() {
 try {
 const hasProAccess =
@@ -476,17 +498,17 @@ showNotice(ai?.message || "Fehler beim Erstellen.");
 return;
 }
 
-const titleImageDataUrl = titleImageFile ? await fileToDataUrl(titleImageFile) : "";
+const titleImageUrl = titleImageFile ? await uploadImageAndGetUrl(titleImageFile) : "";
 
-const objectImageDataUrls = [];
+const objectImageUrls = [];
 for (const file of imageFiles) {
-objectImageDataUrls.push(await fileToDataUrl(file));
+objectImageUrls.push(await uploadImageAndGetUrl(file));
 }
 
-const logoDataUrl = logoFile ? await fileToDataUrl(logoFile) : "";
-const fotoDataUrl = fotoFile ? await fileToDataUrl(fotoFile) : "";
+const logoUrl = logoFile ? await uploadImageAndGetUrl(logoFile) : "";
+const fotoUrl = fotoFile ? await uploadImageAndGetUrl(fotoFile) : "";
 
-const imagePages = chunkArray(objectImageDataUrls, 5);
+const imagePages = chunkArray(objectImageUrls, 5);
 
 const maklerTextHtml =
 data.firma || data.maklerName || data.telefon || data.email
@@ -526,10 +548,10 @@ window.__lastMaklerTextHtml = maklerTextHtml;
 const pages = [];
 
 // Seite 1: Titelbild + Überschrift
-if (titleImageDataUrl) {
+if (titleImageUrl) {
 pages.push(createEditorPage(`
 <h1>${ai.title || "Immobilien-Exposé"}</h1>
-<img class="heroImage" src="${titleImageDataUrl}" alt="Titelbild">
+<img class="heroImage" src="${titleImageUrl}" alt="Titelbild">
 `));
 
 // Seite 2: Text
@@ -552,10 +574,10 @@ ${await buildFlowImageGrid(pageImages)}
 }
 
 // Optional: Maklerfoto + Firmenlogo auf extra Seite, falls vorhanden
-if (fotoDataUrl || logoDataUrl) {
+if (fotoUrl || logoUrl) {
 let extraImagesHtml = "";
 
-if (fotoDataUrl) {
+if (fotoUrl) {
 extraImagesHtml += `
 <div
 class="editorImageWrapper"
@@ -567,7 +589,7 @@ top:120px;
 "
 >
 <img
-src="${fotoDataUrl}"
+src="${fotoUrl}"
 alt="Maklerfoto"
 draggable="false"
 contenteditable="false"
@@ -585,7 +607,7 @@ border-radius:0;
 `;
 }
 
-if (logoDataUrl) {
+if (logoUrl) {
 extraImagesHtml += `
 <div
 class="editorImageWrapper"
@@ -597,7 +619,7 @@ top:160px;
 "
 >
 <img
-src="${logoDataUrl}"
+src="${logoUrl}"
 alt="Firmenlogo"
 draggable="false"
 contenteditable="false"
