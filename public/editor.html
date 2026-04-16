@@ -141,26 +141,6 @@ Projekt wird geladen...
 </div>
 </div>
 
-<div class="modalBox" style="max-width:420px; text-align:center;">
-<h3 style="margin-bottom:12px;">Vorlage speichern</h3>
-
-<p style="margin:0 0 14px 0; font-size:14px; line-height:1.6;">
-Gib deiner Vorlage einen Namen.
-</p>
-
-<input
-id="templateNameInput"
-type="text"
-placeholder="Zum Beispiel: Makler Standard 1"
-style="width:100%; padding:12px; border:1px solid #d1d5db; border-radius:10px; margin-bottom:16px; box-sizing:border-box;"
->
-
-<div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-<button type="button" id="templateModalCancel">Abbrechen</button>
-<button type="button" id="templateModalSave">Speichern</button>
-</div>
-</div>
-</div>
 
 <div id="helpModal" class="modalOverlay hidden">
 <div class="modalBox" style="max-width:400px; text-align:left;">
@@ -196,11 +176,6 @@ let pageFlowTimeout = null;
 const noticeModal = document.getElementById("noticeModal");
 const noticeModalText = document.getElementById("noticeModalText");
 const noticeModalOk = document.getElementById("noticeModalOk");
-
-const templateModal = document.getElementById("templateModal");
-const templateNameInput = document.getElementById("templateNameInput");
-const templateModalCancel = document.getElementById("templateModalCancel");
-const templateModalSave = document.getElementById("templateModalSave");
 
 function resetEditorState() {
 if (pageFlowTimeout) {
@@ -604,10 +579,10 @@ newTop = startTopPos + (startH - newH);
 }
 
 if (direction === "topLeft") {
-    newW = startW - dx;
-    newH = newW / ratio;
-    newLeft = startLeftPos + dx;
-    newTop
+newW = startW - dx;
+newH = newW / ratio;
+newLeft = startLeftPos + dx;
+newTop = startTopPos + (startH - newH);
 }
 
 if (newW < 80) {
