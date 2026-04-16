@@ -406,6 +406,16 @@ if (generateHint) generateHint.style.display = "block";
 }
 }
 
+function chunkArray(arr, size) {
+const chunks = [];
+
+for (let i = 0; i < arr.length; i += size) {
+chunks.push(arr.slice(i, i + size));
+}
+
+return chunks;
+}
+
 async function generateExpose() {
 try {
 const hasProAccess =
@@ -468,21 +478,15 @@ return;
 
 const titleImageDataUrl = titleImageFile ? await fileToDataUrl(titleImageFile) : "";
 
-const imageDataUrls = [];
+const objectImageDataUrls = [];
 for (const file of imageFiles) {
-imageDataUrls.push(await fileToDataUrl(file));
+objectImageDataUrls.push(await fileToDataUrl(file));
 }
 
 const logoDataUrl = logoFile ? await fileToDataUrl(logoFile) : "";
 const fotoDataUrl = fotoFile ? await fileToDataUrl(fotoFile) : "";
 
-const allImageDataUrls = [...imageDataUrls];
-
-if (fotoDataUrl) allImageDataUrls.push(fotoDataUrl);
-if (logoDataUrl) allImageDataUrls.push(logoDataUrl);
-
-const pageThreeImages = allImageDataUrls.slice(0, 6);
-const pageFourImages = allImageDataUrls.slice(6, 12);
+const imagePages = chunkArray(objectImageDataUrls, 5);
 
 const maklerTextHtml =
 data.firma || data.maklerName || data.telefon || data.email
@@ -521,31 +525,98 @@ window.__lastMaklerTextHtml = maklerTextHtml;
 
 const pages = [];
 
+// Seite 1: Titelbild + Überschrift
 if (titleImageDataUrl) {
 pages.push(createEditorPage(`
 <h1>${ai.title || "Immobilien-Exposé"}</h1>
 <img class="heroImage" src="${titleImageDataUrl}" alt="Titelbild">
 `));
 
+// Seite 2: Text
 pages.push(createEditorPage(`
 ${textAndMaklerHtml}
 `));
 } else {
+// Ohne Titelbild: Überschrift + Text zusammen
 pages.push(createEditorPage(`
 <h1>${ai.title || "Immobilien-Exposé"}</h1>
 ${textAndMaklerHtml}
 `));
 }
 
-if (pageThreeImages.length) {
+// Objektbilder dynamisch aufteilen: 5 pro Seite
+for (const pageImages of imagePages) {
 pages.push(createEditorPage(`
-${await buildFlowImageGrid(pageThreeImages)}
+${await buildFlowImageGrid(pageImages)}
 `));
 }
 
-if (pageFourImages.length) {
+// Optional: Maklerfoto + Firmenlogo auf extra Seite, falls vorhanden
+if (fotoDataUrl || logoDataUrl) {
+let extraImagesHtml = "";
+
+if (fotoDataUrl) {
+extraImagesHtml += `
+<div
+class="editorImageWrapper"
+style="
+width:220px;
+height:260px;
+left:60px;
+top:120px;
+"
+>
+<img
+src="${fotoDataUrl}"
+alt="Maklerfoto"
+draggable="false"
+contenteditable="false"
+style="
+width:100%;
+height:100%;
+max-width:none;
+max-height:none;
+object-fit:contain;
+background:transparent;
+border-radius:0;
+"
+>
+</div>
+`;
+}
+
+if (logoDataUrl) {
+extraImagesHtml += `
+<div
+class="editorImageWrapper"
+style="
+width:220px;
+height:160px;
+left:340px;
+top:160px;
+"
+>
+<img
+src="${logoDataUrl}"
+alt="Firmenlogo"
+draggable="false"
+contenteditable="false"
+style="
+width:100%;
+height:100%;
+max-width:none;
+max-height:none;
+object-fit:contain;
+background:white;
+border-radius:0;
+"
+>
+</div>
+`;
+}
+
 pages.push(createEditorPage(`
-${await buildFlowImageGrid(pageFourImages)}
+${extraImagesHtml}
 `));
 }
 
@@ -569,6 +640,7 @@ return;
 }
 
 window.location.href = `/viewer.html?id=${saved.id}`;
+
 } catch (err) {
 console.error(err);
 showNotice("Fehler beim Erstellen");
