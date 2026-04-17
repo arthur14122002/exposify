@@ -1573,8 +1573,11 @@ message: "Keine Stripe-Subscription gefunden."
 
 const subscription = await stripe.subscriptions.retrieve(user.stripe_subscription_id);
 
-const currentPeriodEnd = subscription.current_period_end
-? new Date(subscription.current_period_end * 1000).toISOString()
+const periodEndTimestamp =
+subscription.current_period_end || subscription.trial_end;
+
+const currentPeriodEnd = periodEndTimestamp
+? new Date(periodEndTimestamp * 1000).toISOString()
 : null;
 
 const paymentStatus = subscription.status || "inactive";
