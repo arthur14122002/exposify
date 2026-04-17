@@ -1554,68 +1554,6 @@ message: "Abo konnte nicht reaktiviert werden."
 }
 });
 
-app.post("/sync-current-period-end", requireAuth, async (req, res) => {
-try {
-const userId = req.session.user.id;
-
-const { data: user, error: userError } = await supabase
-.from("users")
-.select("stripe_subscription_id")
-.eq("id", userId)
-.single();
-
-if (userError || !user || !user.stripe_subscription_id) {
-return res.status(400).json({
-success: false,
-message: "Keine Stripe-Subscription gefunden."
-});
-}
-
-const subscription = await stripe.subscriptions.retrieve(user.stripe_subscription_id);
-
-const periodEndTimestamp =
-subscription.current_period_end || subscription.trial_end;
-
-const currentPeriodEnd = periodEndTimestamp
-? new Date(periodEndTimestamp * 1000).toISOString()
-: null;
-
-const paymentStatus = subscription.status || "inactive";
-const cancelAtPeriodEnd = !!subscription.cancel_at_period_end;
-
-const { error: updateError } = await supabase
-.from("users")
-.update({
-payment_status: paymentStatus,
-cancel_at_period_end: cancelAtPeriodEnd,
-current_period_end: currentPeriodEnd
-})
-.eq("id", userId);
-
-if (updateError) {
-console.error("Sync current_period_end update error:", updateError);
-return res.status(500).json({
-success: false,
-message: "Supabase konnte nicht aktualisiert werden."
-});
-}
-
-return res.json({
-success: true,
-current_period_end: currentPeriodEnd,
-payment_status: paymentStatus,
-cancel_at_period_end: cancelAtPeriodEnd
-});
-
-} catch (error) {
-console.error("Sync current_period_end crash:", error);
-return res.status(500).json({
-success: false,
-message: "Sync fehlgeschlagen."
-});
-}
-});
-
 app.get("/projects", requireAuth, async (req, res) => {
 try {
 const { data, error } = await supabase

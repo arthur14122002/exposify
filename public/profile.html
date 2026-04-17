@@ -123,9 +123,7 @@ document.getElementById("nextPayment").textContent =
 document.getElementById("nextPayment").textContent = "";
 }
 
-} else
-
-if (data.plan === "pro" && data.payment_status === "active" && data.cancel_at_period_end === false) {
+} else if (data.plan === "pro" && data.payment_status === "active" && data.cancel_at_period_end === false) {
 document.getElementById("planStatus").textContent = "Pro Abo aktiv";
 usageSection.classList.add("hidden");
 billingActionBtn.textContent = "Abo kündigen";
@@ -165,8 +163,18 @@ document.getElementById("nextPayment").textContent = "";
 document.getElementById("tokenInfo").textContent =
 "Verbleibende Exposés: " + (data.single_credits || 0);
 
+const profileCard = document.getElementById("profileCard");
+if (profileCard) {
+profileCard.style.visibility = "visible";
+}
+
 } catch (err) {
 console.error(err);
+
+const profileCard = document.getElementById("profileCard");
+if (profileCard) {
+profileCard.style.visibility = "visible";
+}
 }
 }
 
@@ -183,12 +191,12 @@ try {
 const res = await fetch("/auth/status");
 const data = await res.json();
 
-if (data.plan === "pro" && data.payment_status === "active" || data.cancel_at_period_end === false) {
+if (data.plan === "pro" && data.cancel_at_period_end === false) {
 cancelSubscription();
 return;
 }
 
-if (data.plan === "pro" && data.payment_status === "active" || data.cancel_at_period_end === true) {
+if (data.plan === "pro" && data.cancel_at_period_end === true) {
 reactivateSubscription();
 return;
 }
@@ -346,7 +354,6 @@ modal.classList.add("hidden");
 modal.style.display = "none";
 }
 
-
 document.addEventListener("keydown", (e) => {
 if (e.key !== "Enter") return;
 
@@ -395,8 +402,6 @@ modal.style.display = "flex";
 
 loadProfile();
 </script>
-
-
 
 </body>
 </html>
