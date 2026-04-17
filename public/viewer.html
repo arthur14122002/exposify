@@ -183,7 +183,7 @@ showNotice("Projektansicht nicht gefunden.");
 return;
 }
 
-const pageNodes = [...viewerContent.querySelectorAll(".viewerPage")];
+const pageNodes = [...viewerContent.querySelectorAll(".editorPage, .viewerPage")];
 
 if (!pageNodes.length) {
 showNotice("Keine Seiten gefunden.");
