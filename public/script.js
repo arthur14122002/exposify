@@ -577,9 +577,6 @@ ${await buildFlowImageGrid(pageImages)}
 if (fotoUrl || logoUrl) {
 let extraImagesHtml = "";
 
-if (fotoUrl || logoUrl) {
-let extraImagesHtml = "";
-
 if (fotoUrl) {
 extraImagesHtml += `
 <img
