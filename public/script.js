@@ -551,15 +551,41 @@ const pages = [];
 if (titleImageUrl) {
 pages.push(createEditorPage(`
 <h1>${ai.title || "Immobilien-Exposé"}</h1>
-<img class="heroImage" src="${titleImageUrl}" alt="Titelbild">
+
+<div
+class="editorImageWrapper"
+data-slot-type="title_image"
+style="
+width:560px;
+height:420px;
+left:120px;
+top:180px;
+"
+>
+<img
+class="heroImage"
+src="${titleImageUrl}"
+alt="Titelbild"
+draggable="false"
+contenteditable="false"
+style="
+width:100%;
+height:100%;
+max-width:none;
+max-height:none;
+object-fit:contain;
+background:transparent;
+border-radius:0;
+display:block;
+"
+>
+</div>
 `));
 
-// Seite 2: Text
 pages.push(createEditorPage(`
 ${textAndMaklerHtml}
 `));
 } else {
-// Ohne Titelbild: Überschrift + Text zusammen
 pages.push(createEditorPage(`
 <h1>${ai.title || "Immobilien-Exposé"}</h1>
 ${textAndMaklerHtml}
