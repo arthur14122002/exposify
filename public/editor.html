@@ -775,15 +775,26 @@ slotType = "agent_photo";
 const naturalWidth = img.naturalWidth || 220;
 const naturalHeight = img.naturalHeight || 160;
 
-const maxWidth = isHeroImage ? 560 : 220;
+let maxWidth = 220;
+
+if (isHeroImage) {
+maxWidth = 560;
+} else if ((img.alt || "").trim() === "Maklerfoto") {
+maxWidth = 220;
+} else if ((img.alt || "").trim() === "Firmenlogo") {
+maxWidth = 220;
+} else {
+maxWidth = 220;
+}
+
+const ratio = naturalWidth / naturalHeight;
 
 let startWidth = naturalWidth;
 let startHeight = naturalHeight;
 
 if (naturalWidth > maxWidth) {
-const ratio = maxWidth / naturalWidth;
 startWidth = maxWidth;
-startHeight = naturalHeight * ratio;
+startHeight = startWidth / ratio;
 }
 
 const startLeft = isHeroImage
@@ -928,6 +939,11 @@ const src = await uploadImageAndGetUrl(file);
 const img = document.createElement("img");
 img.src = src;
 img.alt = "Objektbild";
+
+await new Promise((resolve) => {
+img.onload = resolve;
+img.onerror = resolve;
+});
 
 lastInner.appendChild(img);
 }
