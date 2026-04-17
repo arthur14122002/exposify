@@ -577,63 +577,28 @@ ${await buildFlowImageGrid(pageImages)}
 if (fotoUrl || logoUrl) {
 let extraImagesHtml = "";
 
+if (fotoUrl || logoUrl) {
+let extraImagesHtml = "";
+
 if (fotoUrl) {
 extraImagesHtml += `
-<div
-class="editorImageWrapper"
-style="
-width:220px;
-height:260px;
-left:60px;
-top:120px;
-"
->
 <img
 src="${fotoUrl}"
 alt="Maklerfoto"
 draggable="false"
 contenteditable="false"
-style="
-width:100%;
-height:100%;
-max-width:none;
-max-height:none;
-object-fit:contain;
-background:transparent;
-border-radius:0;
-"
 >
-</div>
 `;
 }
 
 if (logoUrl) {
 extraImagesHtml += `
-<div
-class="editorImageWrapper"
-style="
-width:220px;
-height:160px;
-left:340px;
-top:160px;
-"
->
 <img
 src="${logoUrl}"
 alt="Firmenlogo"
 draggable="false"
 contenteditable="false"
-style="
-width:100%;
-height:100%;
-max-width:none;
-max-height:none;
-object-fit:contain;
-background:white;
-border-radius:0;
-"
 >
-</div>
 `;
 }
 
