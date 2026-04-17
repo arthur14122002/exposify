@@ -499,6 +499,7 @@ img.style.maxHeight = "none";
 img.style.objectFit = "contain";
 img.style.background = img.alt === "Firmenlogo" ? "white" : "transparent";
 img.style.borderRadius = "0";
+img.style.display = "block";
 
 if (!wrapper.dataset.slotType) {
 if (img.classList.contains("heroImage")) {
@@ -552,15 +553,19 @@ const startLeftPos = parseFloat(wrapper.style.left) || 0;
 const startTopPos = parseFloat(wrapper.style.top) || 0;
 const direction = handle.dataset.direction;
 
+const minW = 80;
+const minH = 60;
+
 const onMouseMove = (ev) => {
-let dx = ev.clientX - startX;
-let dy = ev.clientY - startY;
+const dx = ev.clientX - startX;
+const dy = ev.clientY - startY;
 
 let newW = startW;
 let newH = startH;
 let newLeft = startLeftPos;
 let newTop = startTopPos;
 
+// 1) Erst neue Größe/Position berechnen
 if (direction === "bottomRight") {
 newW = startW + dx;
 newH = newW / ratio;
@@ -569,7 +574,7 @@ newH = newW / ratio;
 if (direction === "bottomLeft") {
 newW = startW - dx;
 newH = newW / ratio;
-newLeft = startLeftPos + dx;
+newLeft = startLeftPos + (startW - newW);
 }
 
 if (direction === "topRight") {
@@ -581,45 +586,87 @@ newTop = startTopPos + (startH - newH);
 if (direction === "topLeft") {
 newW = startW - dx;
 newH = newW / ratio;
-newLeft = startLeftPos + dx;
+newLeft = startLeftPos + (startW - newW);
 newTop = startTopPos + (startH - newH);
 }
 
-if (newW < 80) {
+// 2) Mindestgrößen sauber begrenzen
+if (newW < minW) {
+newW = minW;
+newH = newW / ratio;
+
 if (direction === "bottomLeft" || direction === "topLeft") {
-newLeft -= (80 - newW);
+newLeft = startLeftPos + (startW - newW);
 }
-newW = 80;
-}
-
-if (newH < 60) {
 if (direction === "topLeft" || direction === "topRight") {
-newTop -= (60 - newH);
+newTop = startTopPos + (startH - newH);
 }
-newH = 60;
 }
 
+if (newH < minH) {
+newH = minH;
+newW = newH * ratio;
+
+if (direction === "bottomLeft" || direction === "topLeft") {
+newLeft = startLeftPos + (startW - newW);
+}
+if (direction === "topLeft" || direction === "topRight") {
+newTop = startTopPos + (startH - newH);
+}
+}
+
+// 3) Linke/obere Grenze sauber begrenzen
 if (newLeft < 0) {
-newW += newLeft;
 newLeft = 0;
+newW = startLeftPos + startW - newLeft;
+newH = newW / ratio;
+
+if (direction === "topLeft" || direction === "topRight") {
+newTop = startTopPos + (startH - newH);
+}
 }
 
 if (newTop < 0) {
-newH += newTop;
 newTop = 0;
+newH = startTopPos + startH - newTop;
+newW = newH * ratio;
+
+if (direction === "bottomLeft" || direction === "topLeft") {
+newLeft = startLeftPos + (startW - newW);
+}
 }
 
+// 4) Rechte/untere Grenze sauber begrenzen
 const maxW = activePageInner.clientWidth - newLeft;
-const maxH = activePageInner.clientHeight - newTop;
+if (newW > maxW) {
+newW = maxW;
+newH = newW / ratio;
 
-if (newW > maxW) newW = maxW;
-if (newH > maxH) newH = maxH;
+if (direction === "topLeft" || direction === "topRight") {
+newTop = startTopPos + (startH - newH);
+}
+}
+
+const maxH = activePageInner.clientHeight - newTop;
+if (newH > maxH) {
+newH = maxH;
+newW = newH * ratio;
+
+if (direction === "bottomLeft" || direction === "topLeft") {
+newLeft = startLeftPos + (startW - newW);
+}
+}
+
+// 5) Nachkorrektur falls durch Verhältnis wieder minimal rausgerutscht
+if (newLeft < 0) newLeft = 0;
+if (newTop < 0) newTop = 0;
+if (newW < minW) newW = minW;
+if (newH < minH) newH = minH;
 
 wrapper.style.width = `${newW}px`;
 wrapper.style.height = `${newH}px`;
 wrapper.style.left = `${newLeft}px`;
 wrapper.style.top = `${newTop}px`;
-
 };
 
 const onMouseUp = () => {
@@ -688,7 +735,6 @@ document.body.style.userSelect = "";
 
 document.addEventListener("mousemove", onDragMove);
 document.addEventListener("mouseup", onDragUp);
-
 });
 }
 
