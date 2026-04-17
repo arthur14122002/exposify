@@ -836,12 +836,7 @@ function getEditorImageCount() {
 const editor = document.getElementById("editorArea");
 if (!editor) return 0;
 
-const imgs = [...editor.querySelectorAll(".editorImageWrapper img")];
-
-return imgs.filter((img) => {
-const alt = (img.alt || "").trim().toLowerCase();
-return alt !== "firmenlogo" && alt !== "maklerfoto";
-}).length;
+return editor.querySelectorAll(".editorImageWrapper img").length;
 }
 
 function updateImageButtons() {
@@ -849,7 +844,7 @@ const addImageBtn = document.getElementById("addImageBtn");
 const imageHint = document.getElementById("imageLimitHint");
 
 const count = getEditorImageCount();
-const remaining = Math.max(0, 11 - count);
+const remaining = Math.max(0, 15 - count);
 
 if (imageHint) {
 imageHint.textContent = `Noch ${remaining} Bilder verfügbar`;
@@ -890,6 +885,28 @@ reader.readAsDataURL(file);
 });
 }
 
+async function uploadImageAndGetUrl(file) {
+const fileData = await fileToDataUrl(file);
+
+const res = await fetch("/upload-image", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({
+fileName: file.name,
+fileData,
+contentType: file.type || "image/jpeg"
+})
+});
+
+const result = await res.json();
+
+if (!res.ok || !result?.url) {
+throw new Error(result?.message || "Bild-Upload fehlgeschlagen.");
+}
+
+return result.url;
+}
+
 async function handleEditorImageUpload(event) {
 const files = Array.from(event.target.files || []);
 if (!files.length) return;
@@ -902,11 +919,11 @@ const lastInner = lastPage?.querySelector(".editorPageInner");
 if (!editor || !lastInner) return;
 
 const currentCount = getEditorImageCount();
-const remaining = Math.max(0, 11 - currentCount);
+const remaining = Math.max(0, 15 - currentCount);
 const toAdd = files.slice(0, remaining);
 
 for (const file of toAdd) {
-const src = await fileToDataUrl(file);
+const src = await uploadImageAndGetUrl(file);
 
 const img = document.createElement("img");
 img.src = src;
@@ -947,7 +964,11 @@ const pages = getEditorPages();
 if (pages.length <= 1) return;
 
 pages[pages.length - 1].remove();
+
+clearSelectedImage();
+clearSelectedDivider();
 updatePageButtons();
+updateImageButtons();
 }
 
 document.addEventListener("focusin", (e) => {
@@ -1585,6 +1606,7 @@ break;
 }
 
 updatePageButtons();
+updateImageButtons();
 }
 
 function schedulePageFlow(fromPage = null) {
