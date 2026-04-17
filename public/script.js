@@ -505,10 +505,15 @@ for (const file of imageFiles) {
 objectImageUrls.push(await uploadImageAndGetUrl(file));
 }
 
-const logoUrl = logoFile ? await uploadImageAndGetUrl(logoFile) : "";
-const fotoUrl = fotoFile ? await uploadImageAndGetUrl(fotoFile) : "";
+if (fotoFile) {
+objectImageUrls.push(await uploadImageAndGetUrl(fotoFile));
+}
 
-const imagePages = chunkArray(objectImageUrls, 5);
+if (logoFile) {
+objectImageUrls.push(await uploadImageAndGetUrl(logoFile));
+}
+
+const imagePages = chunkArray(objectImageUrls, 6);
 
 const maklerTextHtml =
 data.firma || data.maklerName || data.telefon || data.email
@@ -570,37 +575,6 @@ ${textAndMaklerHtml}
 for (const pageImages of imagePages) {
 pages.push(createEditorPage(`
 ${await buildFlowImageGrid(pageImages)}
-`));
-}
-
-// Optional: Maklerfoto + Firmenlogo auf extra Seite, falls vorhanden
-if (fotoUrl || logoUrl) {
-let extraImagesHtml = "";
-
-if (fotoUrl) {
-extraImagesHtml += `
-<img
-src="${fotoUrl}"
-alt="Maklerfoto"
-draggable="false"
-contenteditable="false"
->
-`;
-}
-
-if (logoUrl) {
-extraImagesHtml += `
-<img
-src="${logoUrl}"
-alt="Firmenlogo"
-draggable="false"
-contenteditable="false"
->
-`;
-}
-
-pages.push(createEditorPage(`
-${extraImagesHtml}
 `));
 }
 
