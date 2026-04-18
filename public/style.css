@@ -979,14 +979,6 @@ width: 100%;
 justify-content: center;
 }
 
-.sidebar {
-width: 100%;
-height: auto;
-position: relative;
-border-right: none;
-border-bottom: 1px solid #d9dee7;
-}
-
 .content {
 padding: 22px 16px 30px;
 }
@@ -1341,31 +1333,6 @@ line-height: 1.6;
 color: #4b5563;
 }
 
-.sidebarBottom {
-display: flex;
-flex-direction: column;
-gap: 8px;
-}
-
-.sidebarBottomLinks {
-margin-top: 10px;
-display: flex;
-justify-content: center;
-gap: 14px;
-font-size: 12.5px;
-opacity: 0.8;
-}
-
-.sidebarBottomLinks a {
-color: #6b7280;
-text-decoration: none;
-transition: all 0.2s ease;
-}
-
-.sidebarBottomLinks a:hover {
-color: #2563eb;
-}
-
 .authPage {
 display: flex;
 flex-direction: column;
@@ -1477,85 +1444,6 @@ background: #f9fafb;
 
 .hidden {
 display: none !important;
-}
-
-.sidebarLegalRow {
-margin-top: 18px;
-padding-top: 16px;
-border-top: 1px solid #e5e7eb;
-display: flex;
-align-items: center;
-justify-content: space-between;
-gap: 14px;
-position: relative;
-}
-
-.sidebarLegalRow a,
-.sidebarLegalRow button {
-all: unset;
-font-size: 14px;
-color: #6b7280;
-cursor: pointer;
-font-family: inherit;
-background: transparent !important;
-border: none !important;
-box-shadow: none !important;
-outline: none !important;
--webkit-appearance: none;
-appearance: none;
-}
-
-.sidebarLegalRow button:focus,
-.sidebarLegalRow button:focus-visible,
-.sidebarLegalRow a:focus,
-.sidebarLegalRow a:focus-visible {
-outline: none !important;
-box-shadow: none !important;
-background: transparent !important;
-}
-
-.sidebarLegalRow button::selection,
-.sidebarLegalRow a::selection {
-background: transparent;
-}
-
-.sidebarLegalRow a:hover,
-.sidebarLegalRow button:hover {
-color: #111827;
-}
-
-.sidebarDropdownInline {
-position: relative;
-}
-
-.sidebarDropdownInline button {
-display: flex;
-align-items: center;
-gap: 6px;
-}
-
-.sidebarLegalMenu {
-position: absolute;
-bottom: 26px;
-right: 0;
-min-width: 150px;
-background: #ffffff;
-border: 1px solid #e5e7eb;
-border-radius: 12px;
-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-padding: 8px 0;
-display: flex;
-flex-direction: column;
-z-index: 100;
-}
-
-.sidebarLegalMenu a {
-padding: 10px 14px;
-white-space: nowrap;
-}
-
-.sidebarLegalMenu a:hover {
-background: #f9fafb;
 }
 
 .hidden {
@@ -1692,3 +1580,68 @@ cursor: pointer;
 background: #dc2626;
 }
 
+.sidebarTop,
+.sidebarBottom {
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+
+.sidebarNavBtn {
+width: 100%;
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 14px 16px;
+border: 1px solid transparent;
+border-radius: 16px;
+background: transparent;
+color: #5aa9ff;
+font-family: inherit;
+font-size: 18px;
+font-weight: 700;
+text-align: left;
+cursor: pointer;
+transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+box-shadow: none;
+outline: none;
+-webkit-appearance: none;
+appearance: none;
+}
+
+.sidebarNavBtn:hover {
+background: rgba(90, 169, 255, 0.08);
+border-color: rgba(90, 169, 255, 0.28);
+color: #3d8fff;
+}
+
+.sidebarNavBtn:focus,
+.sidebarNavBtn:focus-visible {
+outline: none;
+background: rgba(90, 169, 255, 0.10);
+border-color: rgba(90, 169, 255, 0.38);
+color: #2f7ff0;
+}
+
+.sidebarNavBtn:active {
+transform: translateY(1px);
+}
+
+.sidebarNavIcon {
+width: 22px;
+height: 22px;
+flex: 0 0 22px;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.sidebarNavIcon svg {
+width: 22px;
+height: 22px;
+display: block;
+}
+
+.sidebarNavText {
+line-height: 1.2;
+}
