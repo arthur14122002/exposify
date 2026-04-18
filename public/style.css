@@ -1575,27 +1575,31 @@ gap: 10px;
 width: 100%;
 display: flex;
 align-items: center;
-gap: 12px;
-padding: 14px 16px;
+gap: 10px;
+
+padding: 10px 12px; /* vorher 14px → kompakter */
+
 border: 1px solid transparent;
-border-radius: 16px;
+border-radius: 14px;
 background: transparent;
-color: #5aa9ff;
+
+color: #3b82f6; /* direkt angepasst */
+
 font-family: inherit;
-font-size: 18px;
-font-weight: 700;
+font-size: 15px; /* 🔥 kleiner */
+font-weight: 600; /* etwas weniger bold */
+
 text-align: left;
 cursor: pointer;
-transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
-box-shadow: none;
-outline: none;
--webkit-appearance: none;
-appearance: none;
+
+white-space: nowrap; /* 🔥 verhindert Zeilenumbruch */
+
+transition: all 0.18s ease;
 }
 
 .sidebarNavBtn:hover {
-background: rgba(90, 169, 255, 0.08);
-border-color: rgba(90, 169, 255, 0.28);
+background: rgba(59, 130, 246, 0.08);
+border-color: rgba(59, 130, 246, 0.25);
 color: #3d8fff;
 }
 
@@ -1612,20 +1616,21 @@ transform: translateY(1px);
 }
 
 .sidebarNavIcon {
-width: 22px;
-height: 22px;
-flex: 0 0 22px;
+width: 18px;
+height: 18px;
+flex: 0 0 18px;
 display: flex;
 align-items: center;
 justify-content: center;
 }
 
 .sidebarNavIcon svg {
-width: 22px;
-height: 22px;
+width: 18px;
+height: 18px;
 display: block;
 }
 
 .sidebarNavText {
 line-height: 1.2;
 }
+
