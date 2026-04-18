@@ -57,6 +57,7 @@ Rechtliches <span id="sidebarArrow">▾</span>
 
 <div class="viewerActions">
 <button type="button" onclick="goDashboard()">Zurück zu Meine Projekte</button>
+<button type="button" onclick="goEdit()">Bearbeiten</button>
 <button id="pdfBtn" type="button">PDF erstellen</button>
 </div>
 
@@ -293,6 +294,15 @@ window.location.href = "/app";
 
 function goDashboard() {
 window.location.href = "/dashboard.html";
+}
+
+function goEdit() {
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+if (!id) return;
+
+window.location.href = `/editor.html?id=${id}`;
 }
 
 function goLogin() {
