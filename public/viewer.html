@@ -119,205 +119,92 @@ Projekt wird geladen...
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
-let currentProject = null;
+let deleteProjectId = null;
 
-const noticeModal = document.getElementById("noticeModal");
-const noticeModalText = document.getElementById("noticeModalText");
-const noticeModalOk = document.getElementById("noticeModalOk");
-
-if (noticeModalOk) {
-noticeModalOk.addEventListener("click", () => {
-noticeModal.classList.add("hidden");
-});
-}
-
-function showNotice(message) {
-if (!noticeModal || !noticeModalText) return;
-noticeModalText.textContent = message;
-noticeModal.classList.remove("hidden");
-}
-
-
-async function normalizeProjectContent(container) {
+async function loadProjects() {
+const container = document.getElementById("projectsList");
 if (!container) return;
 
-// Seiten nur markieren
-const pages = [
-...container.querySelectorAll(".editorPageInner, .viewerPageInner, .expose-page, .normalizedExpose")
-];
-
-pages.forEach((page) => {
-page.classList.add("normalizedExpose");
-});
-
-// Nur rohe Titelbilder anfassen, die NOCH NICHT in einem Wrapper liegen
-const heroImages = [
-...container.querySelectorAll(".editorPageInner > img.heroImage, .viewerPageInner > img.heroImage")
-];
-
-for (const img of heroImages) {
-if (img.closest(".editorImageWrapper")) continue;
-
-const pageInner = img.closest(".editorPageInner, .viewerPageInner");
-if (!pageInner) continue;
-
-await new Promise((resolve) => {
-const apply = () => {
-const naturalWidth = img.naturalWidth || img.width || 220;
-const naturalHeight = img.naturalHeight || img.height || 160;
-
-const maxWidth = 560;
-
-let width = naturalWidth;
-let height = naturalHeight;
-
-if (width > maxWidth) {
-const ratio = maxWidth / width;
-width = Math.round(width * ratio);
-height = Math.round(height * ratio);
-}
-
-const pageWidth = pageInner.clientWidth || 800;
-const left = Math.max(0, Math.round((pageWidth - width) / 2));
-const top = 180;
-
-const wrapper = document.createElement("div");
-wrapper.className = "editorImageWrapper";
-wrapper.dataset.slotType = "title_image";
-wrapper.style.width = `${width}px`;
-wrapper.style.height = `${height}px`;
-wrapper.style.left = `${left}px`;
-wrapper.style.top = `${top}px`;
-
-img.style.width = "100%";
-img.style.height = "100%";
-img.style.maxWidth = "none";
-img.style.maxHeight = "none";
-img.style.objectFit = "contain";
-img.style.background = "transparent";
-img.style.borderRadius = "0";
-img.style.display = "block";
-
-pageInner.appendChild(wrapper);
-wrapper.appendChild(img);
-
-resolve();
-};
-
-if (img.complete) {
-apply();
-} else {
-img.onload = apply;
-img.onerror = () => resolve();
-}
-});
-}
-}
-
-async function loadProject() {
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
-const container = document.getElementById("viewerContent");
-
-if (!id) {
-container.innerHTML = "Keine Projekt-ID gefunden.";
-return;
-}
+container.innerHTML = "<div class='card'>Projekte werden geladen...</div>";
 
 try {
-const res = await fetch(`/projects/${id}`);
+const res = await fetch("/projects");
 const data = await res.json();
 
 if (!res.ok) {
-container.innerHTML = data. message || "Projekt konnte nicht geladen werden.";
+container.innerHTML = `<div class="card">${data.message || "Bitte zuerst anmelden."}</div>`;
 return;
 }
 
-currentProject = data;
+if (!data.length) {
+container.innerHTML = "<div class='card'>Noch keine Projekte vorhanden.</div>";
+return;
+}
 
-const rawHtml = data.html || "Kein Inhalt vorhanden.";
+container.innerHTML = "";
 
-let finalHtml = rawHtml;
+data.forEach((project) => {
+const card = document.createElement("div");
+card.className = "projectCard";
 
-// Falls noch kein Editor-Layout vorhanden ist → erzwingen
-if (!rawHtml.includes("editorPage")) {
-finalHtml = `
-<div class="editorPage">
-<div class="editorPageInner">
-${rawHtml}
-</div>
+card.innerHTML = `
+<h3>${project.title || "Unbenanntes Exposé"}</h3>
+<p>Erstellt: ${new Date(project.createdAt).toLocaleString("de-DE")}</p>
+<div class="projectActions">
+<button type="button" onclick="viewProject('${project.id}')">Ansehen</button>
+<button type="button" onclick="editProject('${project.id}')">Bearbeiten</button>
+<button type="button" onclick="openDeleteModal('${project.id}')">Löschen</button>
 </div>
 `;
-}
 
-// Immer in Viewer umwandeln
-container.innerHTML = finalHtml
-
-normalizeProjectContent(container);
+container.appendChild(card);
+});
 } catch (error) {
 console.error(error);
-container.innerHTML = "Fehler beim Laden des Projekts.";
+container.innerHTML = "<div class='card'>Fehler beim Laden der Projekte.</div>";
 }
 }
 
-function showPdfLoading(show) {
-const overlay = document.getElementById("pdfLoadingOverlay");
-overlay.classList.toggle("hidden", !show);
-overlay.style.display = show ? "flex" : "none";
+function viewProject(id) {
+window.location.href = `/viewer.html?id=${id}`;
 }
 
-async function createPdf() {
-if (!currentProject) {
-showNotice("Kein Projekt geladen.");
-return;
+function editProject(id) {
+window.location.href = `/editor.html?id=${id}`;
 }
 
-showPdfLoading(true);
+function openDeleteModal(id) {
+deleteProjectId = id;
+const modal = document.getElementById("deleteModal");
+if (!modal) return;
+modal.classList.remove("hidden");
+}
+
+function closeDeleteModal() {
+deleteProjectId = null;
+const modal = document.getElementById("deleteModal");
+if (!modal) return;
+modal.classList.add("hidden");
+}
+
+async function confirmDeleteProject() {
+if (!deleteProjectId) return;
 
 try {
-const viewerContent = document.getElementById("viewerContent");
-if (!viewerContent) {
-showNotice("Projektansicht nicht gefunden.");
-return;
-}
-
-const pageNodes = [...viewerContent.querySelectorAll(".editorPage, .viewerPage")];
-
-if (!pageNodes.length) {
-showNotice("Keine Seiten gefunden.");
-return;
-}
-
-const { jsPDF } = window.jspdf;
-const pdf = new jsPDF("p", "mm", "a4");
-
-const pdfWidth = pdf.internal.pageSize.getWidth();
-const pdfHeight = pdf.internal.pageSize.getHeight();
-
-for (let i = 0; i < pageNodes.length; i++) {
-
-const canvas = await html2canvas(pageNodes[i], {
-scale: 2,
-useCORS: true,
-backgroundColor: "#ffffff",
-logging: false
+const res = await fetch(`/projects/${deleteProjectId}`, {
+method: "DELETE"
 });
 
-const imgData = canvas.toDataURL("image/png");
-
-if (i > 0) {
-pdf.addPage();
+if (!res.ok) {
+alert("Löschen fehlgeschlagen.");
+return;
 }
 
-pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-}
-
-pdf.save("expose.pdf");
+closeDeleteModal();
+loadProjects();
 } catch (error) {
 console.error(error);
-showNotice("PDF konnte nicht erstellt werden.");
-} finally {
-showPdfLoading(false);
+alert("Löschen fehlgeschlagen.");
 }
 }
 
@@ -325,29 +212,8 @@ function newProject() {
 window.location.href = "/app";
 }
 
-function loadProjects() {
-window.location.href = "/dashboard.html";
-}
-
 function goToProfile() {
 window.location.href = "/profile.html";
-}
-
-function goNew() {
-window.location.href = "/app";
-}
-
-function goDashboard() {
-window.location.href = "/dashboard.html";
-}
-
-function goEdit() {
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
-
-if (!id) return;
-
-window.location.href = `/editor.html?id=${id}`;
 }
 
 function goLogin() {
@@ -359,9 +225,17 @@ await fetch("/logout", { method: "POST" });
 window.location.href = "/login.html";
 }
 
-document.getElementById("pdfBtn").addEventListener("click", createPdf);
+function toggleSidebarLegal() {
+const menu = document.getElementById("sidebarLegalMenu");
+const arrow = document.getElementById("sidebarArrow");
 
-loadProject();
+if (!menu || !arrow) return;
+
+menu.classList.toggle("hidden");
+arrow.textContent = menu.classList.contains("hidden") ? "▾" : "▴";
+}
+
+loadProjects();
 </script>
 
 <script>
