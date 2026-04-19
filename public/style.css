@@ -1244,11 +1244,11 @@ font-weight: 700;
 cursor: pointer;
 transition: all 0.18s ease;
 box-shadow: none;
+background: transparent;
 }
 
 .primaryBtn {
-background: rgba(59, 130, 246, 0.08);
-border: 1px solid rgba(59, 130, 246, 0.24);
+border: 1px solid rgba(59, 130, 246, 0.28);
 color: #3b82f6;
 }
 
@@ -1259,8 +1259,7 @@ color: #2563eb;
 }
 
 .secondaryBtn {
-background: rgba(59, 130, 246, 0.05);
-border: 1px solid rgba(59, 130, 246, 0.20);
+border: 1px solid rgba(59, 130, 246, 0.24);
 color: #3b82f6;
 }
 
@@ -1620,8 +1619,8 @@ flex: 1;
 }
 
 .dangerBtn {
-background: rgba(239, 68, 68, 0.08);
-border: 1px solid rgba(239, 68, 68, 0.24);
+background: transparent;
+border: 1px solid rgba(239, 68, 68, 0.28);
 color: #dc2626;
 padding: 11px 18px;
 border-radius: 14px;
@@ -1632,8 +1631,8 @@ transition: all 0.18s ease;
 }
 
 .dangerBtn:hover {
-background: rgba(239, 68, 68, 0.14);
-border-color: rgba(239, 68, 68, 0.34);
+background: rgba(239, 68, 68, 0.12);
+border-color: rgba(239, 68, 68, 0.36);
 color: #b91c1c;
 }
 
