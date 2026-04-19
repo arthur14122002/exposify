@@ -119,6 +119,8 @@ let deleteProjectId = null;
 
 async function loadProjects() {
 const container = document.getElementById("projectsList");
+if (!container) return;
+
 container.innerHTML = "<div class='card'>Projekte werden geladen...</div>";
 
 try {
@@ -169,21 +171,30 @@ window.location.href = `/editor.html?id=${id}`;
 
 function openDeleteModal(id) {
 deleteProjectId = id;
-document.getElementById("deleteModal").classList.remove("hidden");
+const modal = document.getElementById("deleteModal");
+if (!modal) return;
+modal.classList.remove("hidden");
 }
 
 function closeDeleteModal() {
 deleteProjectId = null;
-document.getElementById("deleteModal").classList.add("hidden");
+const modal = document.getElementById("deleteModal");
+if (!modal) return;
+modal.classList.add("hidden");
 }
 
 async function confirmDeleteProject() {
 if (!deleteProjectId) return;
 
 try {
-await fetch(`/projects/${deleteProjectId}`, {
+const res = await fetch(`/projects/${deleteProjectId}`, {
 method: "DELETE"
 });
+
+if (!res.ok) {
+alert("Löschen fehlgeschlagen.");
+return;
+}
 
 closeDeleteModal();
 loadProjects();
@@ -197,20 +208,8 @@ function newProject() {
 window.location.href = "/app";
 }
 
-function loadProjects() {
-window.location.href = "/dashboard.html";
-}
-
 function goToProfile() {
 window.location.href = "/profile.html";
-}
-
-function goNew() {
-window.location.href = "/app";
-}
-
-function goDashboard() {
-window.location.href = "/dashboard.html";
 }
 
 function goLogin() {
@@ -222,10 +221,6 @@ await fetch("/logout", { method: "POST" });
 window.location.href = "/login.html";
 }
 
-loadProjects();
-</script>
-
-<script>
 function toggleSidebarLegal() {
 const menu = document.getElementById("sidebarLegalMenu");
 const arrow = document.getElementById("sidebarArrow");
@@ -235,6 +230,8 @@ if (!menu || !arrow) return;
 menu.classList.toggle("hidden");
 arrow.textContent = menu.classList.contains("hidden") ? "▾" : "▴";
 }
+
+loadProjects();
 </script>
 
 <script>

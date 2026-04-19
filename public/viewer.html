@@ -360,17 +360,6 @@ document.getElementById("pdfBtn").addEventListener("click", createPdf);
 loadProject();
 </script>
 
-<script>
-function toggleSidebarLegal() {
-const menu = document.getElementById("sidebarLegalMenu");
-const arrow = document.getElementById("sidebarArrow");
-
-if (!menu || !arrow) return;
-
-menu.classList.toggle("hidden");
-arrow.textContent = menu.classList.contains("hidden") ? "▾" : "▴";
-}
-</script>
 
 </body>
 </html>
