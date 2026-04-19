@@ -1634,3 +1634,22 @@ display: block;
 line-height: 1.2;
 }
 
+.sidebarFooter {
+margin-top: 12px;
+display: flex;
+flex-direction: column;
+gap: 6px;
+font-size: 13px;
+}
+
+.sidebarFooterLink {
+all: unset;
+cursor: pointer;
+color: #6b7280;
+font-family: inherit;
+transition: color 0.18s ease;
+}
+
+.sidebarFooterLink:hover {
+color: #3b82f6;
+}
