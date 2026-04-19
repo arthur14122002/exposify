@@ -1635,11 +1635,16 @@ line-height: 1.2;
 }
 
 .sidebarFooter {
-margin-top: 12px;
+margin-top: 14px;
+padding-top: 12px;
+border-top: 1px solid #e5e7eb;
+}
+
+.sidebarFooterRow {
 display: flex;
-flex-direction: column;
-gap: 6px;
-font-size: 13px;
+align-items: center;
+gap: 18px;
+flex-wrap: wrap;
 }
 
 .sidebarFooterLink {
@@ -1647,9 +1652,48 @@ all: unset;
 cursor: pointer;
 color: #6b7280;
 font-family: inherit;
+font-size: 14px;
+line-height: 1;
 transition: color 0.18s ease;
 }
 
 .sidebarFooterLink:hover {
 color: #3b82f6;
+}
+
+.sidebarDropdownInline {
+position: relative;
+}
+
+.sidebarDropdownInline button {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+}
+
+.sidebarLegalMenu {
+position: absolute;
+bottom: 28px;
+left: 0;
+min-width: 170px;
+background: #ffffff;
+border: 1px solid #e5e7eb;
+border-radius: 14px;
+box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+padding: 8px 0;
+display: flex;
+flex-direction: column;
+z-index: 100;
+}
+
+.sidebarLegalMenu a {
+padding: 10px 14px;
+font-size: 14px;
+color: #374151;
+text-decoration: none;
+white-space: nowrap;
+}
+
+.sidebarLegalMenu a:hover {
+background: #f9fafb;
 }
