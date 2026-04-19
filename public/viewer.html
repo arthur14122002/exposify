@@ -137,11 +137,9 @@ noticeModalText.textContent = message;
 noticeModal.classList.remove("hidden");
 }
 
-
 async function normalizeProjectContent(container) {
 if (!container) return;
 
-// Seiten nur markieren
 const pages = [
 ...container.querySelectorAll(".editorPageInner, .viewerPageInner, .expose-page, .normalizedExpose")
 ];
@@ -150,7 +148,6 @@ pages.forEach((page) => {
 page.classList.add("normalizedExpose");
 });
 
-// Nur rohe Titelbilder anfassen, die NOCH NICHT in einem Wrapper liegen
 const heroImages = [
 ...container.querySelectorAll(".editorPageInner > img.heroImage, .viewerPageInner > img.heroImage")
 ];
@@ -229,17 +226,15 @@ const res = await fetch(`/projects/${id}`);
 const data = await res.json();
 
 if (!res.ok) {
-container.innerHTML = data. message || "Projekt konnte nicht geladen werden.";
+container.innerHTML = data.message || "Projekt konnte nicht geladen werden.";
 return;
 }
 
 currentProject = data;
 
 const rawHtml = data.html || "Kein Inhalt vorhanden.";
-
 let finalHtml = rawHtml;
 
-// Falls noch kein Editor-Layout vorhanden ist → erzwingen
 if (!rawHtml.includes("editorPage")) {
 finalHtml = `
 <div class="editorPage">
@@ -250,10 +245,8 @@ ${rawHtml}
 `;
 }
 
-// Immer in Viewer umwandeln
-container.innerHTML = finalHtml
-
-normalizeProjectContent(container);
+container.innerHTML = finalHtml;
+await normalizeProjectContent(container);
 } catch (error) {
 console.error(error);
 container.innerHTML = "Fehler beim Laden des Projekts.";
@@ -295,7 +288,6 @@ const pdfWidth = pdf.internal.pageSize.getWidth();
 const pdfHeight = pdf.internal.pageSize.getHeight();
 
 for (let i = 0; i < pageNodes.length; i++) {
-
 const canvas = await html2canvas(pageNodes[i], {
 scale: 2,
 useCORS: true,
@@ -321,16 +313,16 @@ showPdfLoading(false);
 }
 }
 
-function goToProfile() {
-window.location.href = "/profile.html";
-}
-
 function newProject() {
 window.location.href = "/app";
 }
 
-function goNew() {
-window.location.href = "/app";
+function loadProjects() {
+window.location.href = "/dashboard.html";
+}
+
+function goToProfile() {
+window.location.href = "/profile.html";
 }
 
 function goDashboard() {
@@ -355,11 +347,20 @@ await fetch("/logout", { method: "POST" });
 window.location.href = "/login.html";
 }
 
+function toggleSidebarLegal() {
+const menu = document.getElementById("sidebarLegalMenu");
+const arrow = document.getElementById("sidebarArrow");
+
+if (!menu || !arrow) return;
+
+menu.classList.toggle("hidden");
+arrow.textContent = menu.classList.contains("hidden") ? "▾" : "▴";
+}
+
 document.getElementById("pdfBtn").addEventListener("click", createPdf);
 
 loadProject();
 </script>
-
 
 </body>
 </html>
