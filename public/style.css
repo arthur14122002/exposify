@@ -240,6 +240,25 @@ font-weight: 700;
 cursor: pointer;
 }
 
+#generateBtn {
+border: 1px solid rgba(59, 130, 246, 0.24);
+border-radius: 14px;
+padding: 11px 18px;
+background: rgba(59, 130, 246, 0.08);
+color: #3b82f6;
+font-size: 15px;
+font-weight: 700;
+cursor: pointer;
+box-shadow: none;
+transition: all 0.18s ease;
+}
+
+#generateBtn:hover:not(:disabled) {
+background: rgba(59, 130, 246, 0.14);
+border-color: rgba(59, 130, 246, 0.34);
+color: #2563eb;
+}
+
 .toolbar button:hover {
 background: #1d4ed8;
 }
@@ -247,6 +266,8 @@ background: #1d4ed8;
 .toolbar button:disabled,
 #generateBtn:disabled {
 background: #9ca3af;
+border-color: #9ca3af;
+color: white;
 cursor: not-allowed;
 }
 
@@ -416,15 +437,17 @@ justify-content: center;
 }
 
 .projectActions button {
-border: none;
-border-radius: 12px;
-padding: 12px 20px;
-background: #2563eb;
-color: white;
+border: 1px solid rgba(59, 130, 246, 0.24);
+border-radius: 14px;
+padding: 11px 18px;
+background: rgba(59, 130, 246, 0.08);
+color: #3b82f6;
 margin-bottom: 0;
 font-size: 15px;
 font-weight: 700;
 cursor: pointer;
+box-shadow: none;
+transition: all 0.18s ease;
 }
 
 .viewerActions button {
@@ -495,9 +518,10 @@ border-color: rgba(59, 130, 246, 0.42);
 color: #1d4ed8;
 }
 
-.projectActions button:hover,
-.editorActions button:hover {
-background: #1d4ed8;
+.projectActions button:hover {
+background: rgba(59, 130, 246, 0.14);
+border-color: rgba(59, 130, 246, 0.34);
+color: #2563eb;
 }
 
 .viewerActions button:hover {
@@ -1211,29 +1235,39 @@ justify-content: center;
 flex-wrap: wrap;
 }
 
-.primaryBtn {
-background: linear-gradient(135deg, #2563eb, #1d4ed8);
-border: none;
+.primaryBtn,
+.secondaryBtn {
 border-radius: 14px;
-padding: 14px 28px;
-color: white;
+padding: 11px 18px;
+font-size: 15px;
 font-weight: 700;
-font-size: 16px;
 cursor: pointer;
+transition: all 0.18s ease;
+box-shadow: none;
+}
+
+.primaryBtn {
+background: rgba(59, 130, 246, 0.08);
+border: 1px solid rgba(59, 130, 246, 0.24);
+color: #3b82f6;
 }
 
 .primaryBtn:hover {
-opacity: 0.9;
+background: rgba(59, 130, 246, 0.14);
+border-color: rgba(59, 130, 246, 0.34);
+color: #2563eb;
 }
 
 .secondaryBtn {
-background: transparent;
-border: 2px solid #2563eb;
-border-radius: 14px;
-padding: 12px 24px;
+background: rgba(59, 130, 246, 0.05);
+border: 1px solid rgba(59, 130, 246, 0.20);
+color: #3b82f6;
+}
+
+.secondaryBtn:hover {
+background: rgba(59, 130, 246, 0.10);
+border-color: rgba(59, 130, 246, 0.30);
 color: #2563eb;
-font-weight: 600;
-cursor: pointer;
 }
 
 .heroTrust {
@@ -1562,20 +1596,6 @@ border-bottom: 1px solid #e5e7eb;
 margin-bottom: 10px;
 }
 
-.dangerBtn {
-margin-top: 12px;
-background: #ef4444;
-color: white;
-border: none;
-padding: 10px 16px;
-border-radius: 8px;
-cursor: pointer;
-}
-
-.dangerBtn:hover {
-background: #dc2626;
-}
-
 .profileSection {
 margin-bottom: 28px;
 padding-bottom: 18px;
@@ -1600,16 +1620,21 @@ flex: 1;
 }
 
 .dangerBtn {
-background: #ef4444;
-color: white;
-border: none;
-padding: 10px 16px;
-border-radius: 999px;
+background: rgba(239, 68, 68, 0.08);
+border: 1px solid rgba(239, 68, 68, 0.24);
+color: #dc2626;
+padding: 11px 18px;
+border-radius: 14px;
+font-size: 15px;
+font-weight: 700;
 cursor: pointer;
+transition: all 0.18s ease;
 }
 
 .dangerBtn:hover {
-background: #dc2626;
+background: rgba(239, 68, 68, 0.14);
+border-color: rgba(239, 68, 68, 0.34);
+color: #b91c1c;
 }
 
 .sidebarTop,
