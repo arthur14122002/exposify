@@ -437,10 +437,10 @@ justify-content: center;
 }
 
 .projectActions button {
-border: 1px solid rgba(59, 130, 246, 0.24);
+border: 1px solid rgba(59, 130, 246, 0.28);
 border-radius: 14px;
 padding: 11px 18px;
-background: rgba(59, 130, 246, 0.08);
+background: transparent;
 color: #3b82f6;
 margin-bottom: 0;
 font-size: 15px;
