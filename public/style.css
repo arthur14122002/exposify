@@ -416,7 +416,6 @@ justify-content: center;
 }
 
 .projectActions button,
-.viewerActions button,
 .editorActions button {
 border: none;
 border-radius: 12px;
@@ -427,6 +426,20 @@ margin-bottom: 0;
 font-size: 15px;
 font-weight: 700;
 cursor: pointer;
+}
+
+.viewerActions button {
+border: 1px solid rgba(59, 130, 246, 0.24);
+border-radius: 14px;
+padding: 11px 18px;
+background: rgba(59, 130, 246, 0.08);
+color: #3b82f6;
+margin-bottom: 0;
+font-size: 15px;
+font-weight: 700;
+cursor: pointer;
+box-shadow: none;
+transition: all 0.18s ease;
 }
 
 .editorActions {
@@ -453,9 +466,14 @@ border-radius: 10px;
 }
 
 .projectActions button:hover,
-.viewerActions button:hover,
 .editorActions button:hover {
 background: #1d4ed8;
+}
+
+.viewerActions button:hover {
+background: rgba(59, 130, 246, 0.14);
+border-color: rgba(59, 130, 246, 0.34);
+color: #2563eb;
 }
 
 .editorActions button:disabled {
