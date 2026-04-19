@@ -14,27 +14,58 @@
 
 <div class="layout">
 
-<div class="sidebar">
+<aside class="sidebar">
 <div>
 <div class="logoWrap">
 <img src="/assets/logo.svg" alt="Exposify Logo">
 </div>
 
 <div class="sidebarTop">
-<button type="button" onclick="goNew()">Neues Projekt</button>
-<button type="button" onclick="goDashboard()">Meine Projekte</button>
-</div>
-</div>
+<button type="button" class="sidebarNavBtn" onclick="newProject()">
+<span class="sidebarNavIcon" aria-hidden="true">
+<svg viewBox="0 0 24 24" fill="none">
+<path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+</svg>
+</span>
+<span class="sidebarNavText">Neues Projekt</span>
+</button>
+
+<button type="button" class="sidebarNavBtn" onclick="loadProjects()">
+<span class="sidebarNavIcon" aria-hidden="true">
+<svg viewBox="0 0 24 24" fill="none">
+<path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H9l2 2h7.5A2.5 2.5 0 0 1 21 9.5v7A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5v-9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+</svg>
+</span>
+<span class="sidebarNavText">Meine Projekte</span>
+</button>
 
 <div class="sidebarBottom">
-<button id="loginBtn" type="button" onclick="goLogin()">Anmelden</button>
-<button type="button" onclick="logout()">Logout</button>
+<button type="button" class="sidebarNavBtn" onclick="goLogin()">
+<span class="sidebarNavIcon" aria-hidden="true">
+<svg viewBox="0 0 24 24" fill="none">
+<path d="M10 7V5.8A2.8 2.8 0 0 1 12.8 3h4.4A2.8 2.8 0 0 1 20 5.8v12.4a2.8 2.8 0 0 1-2.8 2.8h-4.4A2.8 2.8 0 0 1 10 18.2V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+<path d="M4 12h10M10 8l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</span>
+<span class="sidebarNavText">Anmelden</span>
+</button>
 
-<div class="sidebarLegalRow">
-<a href="/impressum.html">Impressum</a>
+<button type="button" class="sidebarNavBtn" onclick="logout()">
+<span class="sidebarNavIcon" aria-hidden="true">
+<svg viewBox="0 0 24 24" fill="none">
+<path d="M10 7V5.8A2.8 2.8 0 0 0 7.2 3H4.8A2.8 2.8 0 0 0 2 5.8v12.4A2.8 2.8 0 0 0 4.8 21h2.4A2.8 2.8 0 0 0 10 18.2V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+<path d="M20 12H10M14 8l-4 4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</span>
+<span class="sidebarNavText">Logout</span>
+</button>
+
+<div class="sidebarFooter">
+<div class="sidebarFooterRow">
+<a href="/impressum.html" class="sidebarFooterLink">Impressum</a>
 
 <div class="sidebarDropdownInline">
-<button type="button" onclick="toggleSidebarLegal()">
+<button type="button" class="sidebarFooterLink" onclick="toggleSidebarLegal()">
 Rechtliches <span id="sidebarArrow">▾</span>
 </button>
 
@@ -45,7 +76,9 @@ Rechtliches <span id="sidebarArrow">▾</span>
 </div>
 </div>
 </div>
-
+</div>
+</div>
+</aside>
 </div>
 </div>
 
