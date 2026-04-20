@@ -781,10 +781,10 @@ rows.forEach((row) => {
 const pageInner = row.closest(".editorPageInner");
 if (!pageInner) return;
 
-const rowRect = row.getBoundingClientRect();
 const pageRect = pageInner.getBoundingClientRect();
-
 const images = [...row.querySelectorAll("img")];
+
+const preparedWrappers = [];
 
 images.forEach((img, index) => {
 const imgRect = img.getBoundingClientRect();
@@ -804,7 +804,11 @@ wrapper.style.top = `${top}px`;
 wrapper.style.width = `${width}px`;
 wrapper.style.height = `${height}px`;
 
-img.parentNode.insertBefore(wrapper, img);
+preparedWrappers.push({ wrapper, img });
+});
+
+preparedWrappers.forEach(({ wrapper, img }) => {
+pageInner.appendChild(wrapper);
 wrapper.appendChild(img);
 });
 
