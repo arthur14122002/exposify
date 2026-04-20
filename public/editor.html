@@ -772,6 +772,46 @@ document.addEventListener("mouseup", onDragUp);
 });
 }
 
+function prepareFlowLayoutForEditor(container) {
+if (!container) return;
+
+const rows = [...container.querySelectorAll(".imageRow")];
+
+rows.forEach((row) => {
+const pageInner = row.closest(".editorPageInner");
+if (!pageInner) return;
+
+const rowRect = row.getBoundingClientRect();
+const pageRect = pageInner.getBoundingClientRect();
+
+const images = [...row.querySelectorAll("img")];
+
+images.forEach((img, index) => {
+const imgRect = img.getBoundingClientRect();
+
+const left = imgRect.left - pageRect.left + pageInner.scrollLeft;
+const top = imgRect.top - pageRect.top + pageInner.scrollTop;
+const width = imgRect.width;
+const height = imgRect.height;
+
+const wrapper = document.createElement("div");
+wrapper.className = "editorImageWrapper";
+wrapper.dataset.slotType = "object_image";
+wrapper.dataset.slotIndex = String(index + 1);
+
+wrapper.style.left = `${left}px`;
+wrapper.style.top = `${top}px`;
+wrapper.style.width = `${width}px`;
+wrapper.style.height = `${height}px`;
+
+img.parentNode.insertBefore(wrapper, img);
+wrapper.appendChild(img);
+});
+
+row.remove();
+});
+}
+
 function enableFreeImageEditor(container) {
 if (!container) return;
 
@@ -1097,6 +1137,7 @@ ${rawHtml}
 normalizeProjectContent(editor);
 normalizeEditableStructure(editor);
 enforceParagraphStructure(editor);
+prepareFlowLayoutForEditor(editor);
 enableTextEditing(editor);
 enableFreeImageEditor(editor);
 updatePageButtons();
