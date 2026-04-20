@@ -117,18 +117,23 @@ Rechtliches <span id="sidebarArrow">▾</span>
 <button type="button" data-heading="h1">Titel</button>
 <button type="button" data-heading="h2">Abschnitt</button>
 <button type="button" data-heading="h3">Unterpunkt</button>
-<select id="fontSizeSelect">
-<option value="">Größe</option>
-<option value="10">10</option>
-<option value="12">12</option>
-<option value="14">14</option>
-<option value="16">16</option>
-<option value="18">18</option>
-<option value="20">20</option>
-<option value="24">24</option>
-<option value="28">28</option>
-<option value="32">32</option>
-</select>
+<div class="fontSizeWrapper">
+<button id="fontSizeBtn" class="editorBtn">
+Größe ▾
+</button>
+
+<div id="fontSizeDropdown" class="fontSizeDropdown hidden">
+<div data-size="10">10</div>
+<div data-size="12">12</div>
+<div data-size="14">14</div>
+<div data-size="16">16</div>
+<div data-size="18">18</div>
+<div data-size="20">20</div>
+<div data-size="24">24</div>
+<div data-size="28">28</div>
+<div data-size="32">32</div>
+</div>
+</div>
 </div>
 
 <span class="toolbarDivider"></span>
@@ -873,17 +878,30 @@ bindImageWrapper(wrapper, img, pageInner);
 });
 }
 
-const fontSizeSelect = document.getElementById("fontSizeSelect");
+const fontBtn = document.getElementById("fontSizeBtn");
+const fontDropdown = document.getElementById("fontSizeDropdown");
 
-if (fontSizeSelect) {
-fontSizeSelect.addEventListener("change", () => {
-const size = fontSizeSelect.value;
-if (!size) return;
+if (fontBtn && fontDropdown) {
 
-applyFontSize(size);
-
-fontSizeSelect.value = "";
+fontBtn.addEventListener("click", (e) => {
+e.stopPropagation();
+fontDropdown.classList.toggle("hidden");
 });
+
+// Auswahl klicken
+fontDropdown.querySelectorAll("div").forEach(item => {
+item.addEventListener("click", () => {
+const size = item.dataset.size;
+applyFontSize(size);
+fontDropdown.classList.add("hidden");
+});
+});
+
+// Klick außerhalb schließt Dropdown
+document.addEventListener("click", () => {
+fontDropdown.classList.add("hidden");
+});
+
 }
 
 function applyFontSize(size) {

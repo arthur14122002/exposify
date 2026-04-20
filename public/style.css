@@ -1946,3 +1946,34 @@ border-radius: 8px;
 border: 1px solid #ddd;
 font-size: 14px;
 }
+
+.fontSizeWrapper {
+position: relative;
+display: inline-block;
+}
+
+.fontSizeDropdown {
+position: absolute;
+top: 110%;
+left: 0;
+background: white;
+border-radius: 10px;
+box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+padding: 6px 0;
+z-index: 1000;
+min-width: 70px;
+}
+
+.fontSizeDropdown div {
+padding: 8px 12px;
+cursor: pointer;
+font-size: 14px;
+}
+
+.fontSizeDropdown div:hover {
+background: #f2f2f2;
+}
+
+.hidden {
+display: none;
+}
