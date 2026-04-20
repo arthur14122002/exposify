@@ -597,7 +597,7 @@ showNotice("Projekt konnte nicht gespeichert werden.");
 return;
 }
 
-window.location.href = `/viewer.html?id=${saved.id}`;
+window.location.href = `/editor.html?id=${saved.id}`;
 
 } catch (err) {
 console.error(err);
