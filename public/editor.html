@@ -1338,18 +1338,17 @@ const selection = window.getSelection();
 if (!selection || selection.rangeCount === 0) return;
 
 const range = selection.getRangeAt(0);
-
-// 🔥 Alle font-size spans entfernen
 const container = range.commonAncestorContainer;
 const parent = container.nodeType === 1 ? container : container.parentElement;
 
+if (parent) {
 parent.querySelectorAll("span").forEach(span => {
 if (span.style.fontSize) {
 span.style.fontSize = "";
 }
 });
+}
 
-// Fokus zurück
 const activeEditable = getActiveEditable();
 if (activeEditable) {
 activeEditable.focus();
