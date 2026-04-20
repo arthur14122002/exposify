@@ -1912,8 +1912,7 @@ color: white;
 }
 
 .landing .features > div,
-.landing .steps > div,
-.landing .howItWorks > div {
+.landing .steps > div {
 border: 1px solid #d9dee7;
 border-radius: 12px;
 padding: 18px;
