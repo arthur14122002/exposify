@@ -1939,3 +1939,10 @@ margin-top: 20px;
 text-align: center;
 margin-top: 8px;
 }
+
+#fontSizeSelect {
+padding: 6px 10px;
+border-radius: 8px;
+border: 1px solid #ddd;
+font-size: 14px;
+}
