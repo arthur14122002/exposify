@@ -198,65 +198,25 @@ img.src = src;
 });
 }
 
-async function buildFlowImageGrid(images) {
-if (!images.length) return "";
+async function buildStarterLayout(images, textHtml) {
+const firstImages = images.slice(0, 3);
 
-const blocks = [];
+let imageHtml = "";
 
-const startX = 40;
-const startY = 40;
-const gapX = 24;
-const gapY = 24;
-const maxRowWidth = 720; // ungefähr nutzbare Breite innerhalb der Seite
-
-let currentX = startX;
-let currentY = startY;
-let currentRowHeight = 0;
-
-for (let i = 0; i < images.length; i++) {
-const src = images[i];
-const size = await getImageSize(src, 220); // bewusst etwas kleiner für sauberen Start
-
-// Wenn das Bild nicht mehr in die aktuelle Reihe passt -> neue Reihe
-if (currentX + size.width > startX + maxRowWidth) {
-currentX = startX;
-currentY += currentRowHeight + gapY;
-currentRowHeight = 0;
-}
-
-blocks.push(`
-<div
-class="editorImageWrapper"
-style="
-width:${size.width}px;
-height:${size.height}px;
-left:${currentX}px;
-top:${currentY}px;
-"
->
-<img
-src="${src}"
-alt="Objektbild"
-draggable="false"
-contenteditable="false"
-style="
-width:100%;
-height:100%;
-max-width:none;
-max-height:none;
-object-fit:contain;
-background:transparent;
-border-radius:0;
-"
->
+if (firstImages.length) {
+imageHtml = `
+<div class="imageRow">
+${firstImages.map(src => `
+<img src="${src}" class="flowImage">
+`).join("")}
 </div>
-`);
-
-currentX += size.width + gapX;
-currentRowHeight = Math.max(currentRowHeight, size.height);
+`;
 }
 
-return blocks.join("");
+return `
+${imageHtml}
+${textHtml}
+`;
 }
 
 function splitStarterImages(images, maxStarterImages = 3) {
@@ -609,32 +569,22 @@ window.__lastMaklerTextHtml = maklerTextHtml;
 const pages = [];
 const starterImageRowHtml = await buildStarterImageRow(starterImages);
 
-// Seite 1: Soft-Layout
 if (titleImageUrl) {
 pages.push(createEditorPage(`
 <h1>${ai.title || "Immobilien-Exposé"}</h1>
-<img class="heroImage" src="${titleImageUrl}" alt="Titelbild">
-${starterImageRowHtml}
-<div style="margin-top: 560px;">
-${textAndMaklerHtml}
-</div>
+<img class="heroImage" src="${titleImageUrl}">
+`));
+
+pages.push(createEditorPage(`
+${starterLayout}
 `));
 } else {
 pages.push(createEditorPage(`
 <h1>${ai.title || "Immobilien-Exposé"}</h1>
-${starterImageRowHtml}
-<div style="margin-top: ${starterImages.length ? "240px" : "20px"};">
-${textAndMaklerHtml}
-</div>
+${starterLayout}
 `));
 }
-
-// Restliche Bilder wie bisher auf weitere Seiten
-for (const pageImages of imagePages) {
-pages.push(createEditorPage(`
-${await buildFlowImageGrid(pageImages)}
-`));
-}
+const starterLayout = await buildStarterLayout(objectImageUrls, textAndMaklerHtml);
 const exposeHtml = pages.join("");
 
 const save = await fetch("/projects", {

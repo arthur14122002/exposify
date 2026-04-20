@@ -1939,3 +1939,17 @@ margin-top: 20px;
 text-align: center;
 margin-top: 8px;
 }
+
+.imageRow {
+display: flex;
+gap: 16px;
+margin: 20px 0;
+}
+
+.flowImage {
+width: 100%;
+max-width: 200px;
+height: auto;
+border-radius: 10px;
+object-fit: cover;
+}
