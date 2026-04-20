@@ -1382,7 +1382,7 @@ display: flex;
 justify-content: center;
 align-items: flex-start;
 padding: 60px 20px;
-background: #f5f7fb;
+background: #ffffff;
 box-sizing: border-box;
 }
 
@@ -1391,6 +1391,7 @@ max-width: 700px;
 width: 100%;
 background: white;
 padding: 40px 36px;
+border: 1px solid #d9dee7;
 border-radius: 20px;
 box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
 text-align: left;
@@ -1850,4 +1851,8 @@ margin-top: 0;
 background: rgba(239, 68, 68, 0.12);
 border-color: rgba(239, 68, 68, 0.36);
 color: #b91c1c;
+}
+
+.profileCardShell {
+border: 1px solid #d9dee7
 }

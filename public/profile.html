@@ -13,7 +13,7 @@
 </head>
 <body class="authPage">
 
-<div class="authCard" style="max-width:700px; text-align:left;">
+<div class="authCard profileCardShell" style="max-width:700px; text-align:left;">
 
 <h1 style="text-align:center; margin-bottom:24px;">Mein Profil</h1>
 
@@ -401,6 +401,48 @@ modal.style.display = "flex";
 }
 
 loadProfile();
+</script>
+
+<footer class="footer">
+<a href="/support.html">Support</a>
+<a href="/impressum.html">Impressum</a>
+
+<div class="footerDropdown">
+<button type="button" class="footerDropdownToggle" onclick="toggleLegalMenu()">
+Rechtliches <span id="legalArrow">▾</span>
+</button>
+
+<div id="legalMenu" class="footerDropdownMenu hidden">
+<a href="/agb.html">AGB</a>
+<a href="/datenschutz.html">Datenschutz</a>
+<a href="/widerruf.html">Widerruf</a>
+</div>
+</div>
+</footer>
+
+<script>
+function toggleLegalMenu() {
+const menu = document.getElementById("legalMenu");
+const arrow = document.getElementById("legalArrow");
+
+if (!menu || !arrow) return;
+
+menu.classList.toggle("hidden");
+arrow.textContent = menu.classList.contains("hidden") ? "▾" : "▴";
+}
+
+document.addEventListener("click", function (e) {
+const dropdown = document.querySelector(".footerDropdown");
+const menu = document.getElementById("legalMenu");
+const arrow = document.getElementById("legalArrow");
+
+if (!dropdown || !menu || !arrow) return;
+
+if (!dropdown.contains(e.target)) {
+menu.classList.add("hidden");
+arrow.textContent = "▾";
+}
+});
 </script>
 
 </body>
