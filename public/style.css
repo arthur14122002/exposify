@@ -1977,3 +1977,24 @@ background: #f2f2f2;
 .hidden {
 display: none;
 }
+
+.editorPageInner h1 {
+font-size: 34px !important;
+font-weight: 700 !important;
+line-height: 1.2 !important;
+margin: 0 0 10px !important;
+}
+
+.editorPageInner h2 {
+font-size: 24px !important;
+font-weight: 700 !important;
+line-height: 1.25 !important;
+margin: 16px 0 8px !important;
+}
+
+.editorPageInner h3 {
+font-size: 18px !important;
+font-weight: 700 !important;
+line-height: 1.3 !important;
+margin: 14px 0 6px !important;
+}
