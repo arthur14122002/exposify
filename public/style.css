@@ -1917,3 +1917,14 @@ border: 1px solid #d9dee7;
 border-radius: 12px;
 padding: 18px;
 }
+
+.toolbar {
+display: flex;
+justify-content: center;
+margin-top: 20px;
+}
+
+.generateHint {
+text-align: center;
+margin-top: 8px;
+}
