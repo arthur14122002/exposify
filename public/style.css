@@ -58,9 +58,10 @@ margin-bottom: 18px;
 }
 
 .pageTitleRow h1 {
-margin: 0;
 font-size: 34px;
-font-weight: 800;
+font-weight: 600;
+letter-spacing: -0.4px;
+color: #111827;
 text-align: center;
 }
 
@@ -1046,10 +1047,6 @@ padding: 22px 16px 30px;
 .bottomArea,
 .flowImageGrid {
 grid-template-columns: 1fr;
-}
-
-.pageTitleRow h1 {
-font-size: 28px;
 }
 
 .editorStickyBar {
