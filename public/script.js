@@ -259,6 +259,61 @@ currentRowHeight = Math.max(currentRowHeight, size.height);
 return blocks.join("");
 }
 
+function splitStarterImages(images, maxStarterImages = 3) {
+return {
+starterImages: images.slice(0, maxStarterImages),
+remainingImages: images.slice(maxStarterImages)
+};
+}
+
+async function buildStarterImageRow(images) {
+if (!images.length) return "";
+
+const count = images.length;
+const gap = 20;
+const startX = 48;
+const top = 380;
+const maxTotalWidth = 698; // passend für editorPageInner mit padding
+const itemWidth = Math.floor((maxTotalWidth - gap * (count - 1)) / count);
+
+const blocks = [];
+
+for (let i = 0; i < images.length; i++) {
+const src = images[i];
+const left = startX + i * (itemWidth + gap);
+
+blocks.push(`
+<div
+class="editorImageWrapper"
+style="
+width:${itemWidth}px;
+height:170px;
+left:${left}px;
+top:${top}px;
+"
+>
+<img
+src="${src}"
+alt="Objektbild"
+draggable="false"
+contenteditable="false"
+style="
+width:100%;
+height:100%;
+max-width:none;
+max-height:none;
+object-fit:contain;
+background:transparent;
+border-radius:0;
+"
+>
+</div>
+`);
+}
+
+return blocks.join("");
+}
+
 async function handleImageUpload(e) {
 const files = Array.from(e.target.files || []);
 const remaining = 10 - imageFiles.length;
@@ -513,7 +568,8 @@ if (logoFile) {
 objectImageUrls.push(await uploadImageAndGetUrl(logoFile));
 }
 
-const imagePages = chunkArray(objectImageUrls, 6);
+const { starterImages, remainingImages } = splitStarterImages(objectImageUrls, 3);
+const imagePages = chunkArray(remainingImages, 6);
 
 const maklerTextHtml =
 data.firma || data.maklerName || data.telefon || data.email
@@ -551,33 +607,34 @@ window.__lastAiLocation = ai.location || "";
 window.__lastMaklerTextHtml = maklerTextHtml;
 
 const pages = [];
+const starterImageRowHtml = await buildStarterImageRow(starterImages);
 
-// Seite 1: Titelbild + Überschrift
+// Seite 1: Soft-Layout
 if (titleImageUrl) {
 pages.push(createEditorPage(`
 <h1>${ai.title || "Immobilien-Exposé"}</h1>
 <img class="heroImage" src="${titleImageUrl}" alt="Titelbild">
-`));
-
-// Seite 2: Text
-pages.push(createEditorPage(`
+${starterImageRowHtml}
+<div style="margin-top: 560px;">
 ${textAndMaklerHtml}
+</div>
 `));
 } else {
-// Ohne Titelbild: Überschrift + Text zusammen
 pages.push(createEditorPage(`
 <h1>${ai.title || "Immobilien-Exposé"}</h1>
+${starterImageRowHtml}
+<div style="margin-top: ${starterImages.length ? "240px" : "20px"};">
 ${textAndMaklerHtml}
+</div>
 `));
 }
 
-// Objektbilder dynamisch aufteilen: 5 pro Seite
+// Restliche Bilder wie bisher auf weitere Seiten
 for (const pageImages of imagePages) {
 pages.push(createEditorPage(`
 ${await buildFlowImageGrid(pageImages)}
 `));
 }
-
 const exposeHtml = pages.join("");
 
 const save = await fetch("/projects", {
