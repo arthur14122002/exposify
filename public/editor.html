@@ -1334,30 +1334,29 @@ document.execCommand(command, false, null);
 }
 
 function setHeading(tag) {
+const selection = window.getSelection();
+if (!selection || selection.rangeCount === 0) return;
+
+const range = selection.getRangeAt(0);
+
+// 🔥 Alle font-size spans entfernen
+const container = range.commonAncestorContainer;
+const parent = container.nodeType === 1 ? container : container.parentElement;
+
+parent.querySelectorAll("span").forEach(span => {
+if (span.style.fontSize) {
+span.style.fontSize = "";
+}
+});
+
+// Fokus zurück
 const activeEditable = getActiveEditable();
 if (activeEditable) {
 activeEditable.focus();
 }
+
 document.execCommand("formatBlock", false, `<${tag}>`);
 }
-
-document.querySelectorAll(".editorToolbar button").forEach((button) => {
-button.addEventListener("mousedown", (e) => {
-e.preventDefault();
-});
-
-if (button.dataset.command) {
-button.addEventListener("click", () => {
-format(button.dataset.command);
-});
-}
-
-if (button.dataset.heading) {
-button.addEventListener("click", () => {
-setHeading(button.dataset.heading);
-});
-}
-});
 
 const insertDividerBtn = document.getElementById("insertDividerBtn");
 const decreaseIndentBtn = document.getElementById("decreaseIndentBtn");
