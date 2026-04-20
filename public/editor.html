@@ -1358,6 +1358,24 @@ activeEditable.focus();
 document.execCommand("formatBlock", false, `<${tag}>`);
 }
 
+document.querySelectorAll(".editorToolbar button").forEach((button) => {
+button.addEventListener("mousedown", (e) => {
+e.preventDefault();
+});
+
+if (button.dataset.command) {
+button.addEventListener("click", () => {
+format(button.dataset.command);
+});
+}
+
+if (button.dataset.heading) {
+button.addEventListener("click", () => {
+setHeading(button.dataset.heading);
+});
+}
+});
+
 const insertDividerBtn = document.getElementById("insertDividerBtn");
 const decreaseIndentBtn = document.getElementById("decreaseIndentBtn");
 const increaseIndentBtn = document.getElementById("increaseIndentBtn");
