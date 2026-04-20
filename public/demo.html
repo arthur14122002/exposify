@@ -22,18 +22,19 @@
 </div>
 
 <div class="sidebarTop">
-<button type="button" onclick="goToPricing()">Jetzt upgraden</button>
-<button type="button" onclick="goToLanding()">Zur Landingpage</button>
+<button class="secondaryBtn" type="button" onclick="goToPricing()">Jetzt upgraden</button>
+<button class="secondaryBtn" type="button" onclick="goToLanding()">Zur Landingpage</button>
 </div>
 </div>
 
 <div class="sidebarBottom">
 
-<div class="sidebarLegalRow">
-<a href="/impressum.html">Impressum</a>
+<div class="sidebarFooter">
+<div class="sidebarFooterRow">
+<a href="/impressum.html" class="sidebarFooterLink">Impressum</a>
 
 <div class="sidebarDropdownInline">
-<button type="button" onclick="toggleSidebarLegal()">
+<button type="button" class="sidebarFooterLink" onclick="toggleSidebarLegal()">
 Rechtliches <span id="sidebarArrow">▾</span>
 </button>
 
@@ -41,6 +42,7 @@ Rechtliches <span id="sidebarArrow">▾</span>
 <a href="/agb.html">AGB</a>
 <a href="/datenschutz.html">Datenschutz</a>
 <a href="/widerruf.html">Widerruf</a>
+</div>
 </div>
 </div>
 </div>
@@ -350,10 +352,10 @@ alert(result.message || "Demo-Exposé konnte nicht erstellt werden.");
 return;
 }
 
-document.getElementById("demoTitle").textContent = result.title || "Demo-Exposé";
+document.getElementById("demoTitle").textContent = result. title || "Demo-Exposé";
 document.getElementById("demoDescription").textContent = result.description || "";
 document.getElementById("demoFeatures").textContent = result.features || "";
-document.getElementById("demoLocation").textContent = result.location || "";
+document.getElementById("demoLocation").textContent = result. location || "";
 
 const demoResult = document.getElementById("demoResult");
 demoResult.classList.remove("hidden");
