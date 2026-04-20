@@ -883,21 +883,29 @@ const fontDropdown = document.getElementById("fontSizeDropdown");
 
 if (fontBtn && fontDropdown) {
 
+fontBtn.addEventListener("mousedown", (e) => {
+e.preventDefault();
+});
+
 fontBtn.addEventListener("click", (e) => {
 e.stopPropagation();
 fontDropdown.classList.toggle("hidden");
 });
 
-// Auswahl klicken
 fontDropdown.querySelectorAll("div").forEach(item => {
-item.addEventListener("click", () => {
+
+item.addEventListener("mousedown", (e) => {
+e.preventDefault();
+});
+
+item.addEventListener("click", (e) => {
+e.stopPropagation();
 const size = item.dataset.size;
 applyFontSize(size);
 fontDropdown.classList.add("hidden");
 });
 });
 
-// Klick außerhalb schließt Dropdown
 document.addEventListener("click", () => {
 fontDropdown.classList.add("hidden");
 });
