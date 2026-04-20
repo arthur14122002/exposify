@@ -567,7 +567,7 @@ window.__lastAiLocation = ai.location || "";
 window.__lastMaklerTextHtml = maklerTextHtml;
 
 const pages = [];
-const starterImageRowHtml = await buildStarterImageRow(starterImages);
+const starterLayout = await buildStarterLayout(starterImages, textAndMaklerHtml);
 
 if (titleImageUrl) {
 pages.push(createEditorPage(`
@@ -584,7 +584,7 @@ pages.push(createEditorPage(`
 ${starterLayout}
 `));
 }
-const starterLayout = await buildStarterLayout(objectImageUrls, textAndMaklerHtml);
+
 const exposeHtml = pages.join("");
 
 const save = await fetch("/projects", {
