@@ -1899,3 +1899,23 @@ background: rgba(59, 130, 246, 0.12);
 border-color: rgba(59, 130, 246, 0.34);
 color: #2563eb;
 }
+
+.features .feature .primaryBtn {
+background: #2563eb;
+border: 1px solid #2563eb;
+color: white;
+}
+
+.features .feature .primaryBtn:hover {
+background: #1d4ed8;
+border-color: #1d4ed8;
+color: white;
+}
+
+.landing .features > div,
+.landing .steps > div,
+.landing .howItWorks > div {
+border: 1px solid #d9dee7;
+border-radius: 12px;
+padding: 18px;
+}
