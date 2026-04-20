@@ -241,10 +241,10 @@ cursor: pointer;
 }
 
 #generateBtn {
-border: 1px solid rgba(59, 130, 246, 0.24);
+border: 1px solid rgba(59, 130, 246, 0.28);
 border-radius: 14px;
 padding: 11px 18px;
-background: rgba(59, 130, 246, 0.08);
+background: transparent;
 color: #3b82f6;
 font-size: 15px;
 font-weight: 700;
@@ -451,10 +451,10 @@ transition: all 0.18s ease;
 }
 
 .viewerActions button {
-border: 1px solid rgba(59, 130, 246, 0.24);
+border: 1px solid rgba(59, 130, 246, 0.28);
 border-radius: 14px;
 padding: 11px 18px;
-background: rgba(59, 130, 246, 0.08);
+background: transparent;
 color: #3b82f6;
 margin-bottom: 0;
 font-size: 15px;
@@ -489,10 +489,10 @@ border-radius: 10px;
 
 .editorActionsMain > button,
 .editorActions > #helpBtn {
-border: 1px solid rgba(59, 130, 246, 0.24);
+border: 1px solid rgba(59, 130, 246, 0.28);
 border-radius: 14px;
 padding: 11px 18px;
-background: rgba(59, 130, 246, 0.08);
+background: transparent;
 color: #3b82f6;
 font-size: 15px;
 font-weight: 700;
@@ -1768,4 +1768,71 @@ white-space: nowrap;
 
 .sidebarLegalMenu a:hover {
 background: #f9fafb;
+}
+
+.profileActions .primaryBtn,
+.profileActions .secondaryBtn,
+#subscriptionModal .primaryBtn,
+#subscriptionModal .secondaryBtn,
+#deleteAccountModal .secondaryBtn {
+width: auto;
+border-radius: 14px;
+padding: 11px 18px;
+font-size: 15px;
+font-weight: 700;
+cursor: pointer;
+transition: all 0.18s ease;
+box-shadow: none;
+background: transparent;
+margin-top: 0;
+}
+
+.profileActions .primaryBtn,
+#subscriptionModal .primaryBtn {
+border: 1px solid rgba(59, 130, 246, 0.28);
+color: #3b82f6;
+}
+
+.profileActions .primaryBtn:hover,
+#subscriptionModal .primaryBtn:hover {
+background: rgba(59, 130, 246, 0.14);
+border-color: rgba(59, 130, 246, 0.34);
+color: #2563eb;
+}
+
+.profileActions .secondaryBtn,
+#subscriptionModal .secondaryBtn,
+#deleteAccountModal .secondaryBtn {
+border: 1px solid rgba(59, 130, 246, 0.24);
+color: #3b82f6;
+}
+
+.profileActions .secondaryBtn:hover,
+#subscriptionModal .secondaryBtn:hover,
+#deleteAccountModal .secondaryBtn:hover {
+background: rgba(59, 130, 246, 0.10);
+border-color: rgba(59, 130, 246, 0.30);
+color: #2563eb;
+}
+
+.profileActions .dangerBtn,
+#deleteAccountModal .dangerBtn {
+width: auto;
+background: transparent;
+border: 1px solid rgba(239, 68, 68, 0.28);
+color: #dc2626;
+padding: 11px 18px;
+border-radius: 14px;
+font-size: 15px;
+font-weight: 700;
+cursor: pointer;
+transition: all 0.18s ease;
+margin-top: 0;
+}
+
+.profileActions .dangerBtn:hover,
+#deleteAccountModal .dangerBtn:hover {
+background: rgba(239, 68, 68, 0.12);
+border-color: rgba(239, 68, 68, 0.36);
+color: #b91c1c;
 }
