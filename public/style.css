@@ -1107,7 +1107,7 @@ margin-bottom: 34px;
 .hero h1 {
 margin: 0 0 18px;
 font-size: 50px;
-font-weight: 800;
+font-weight: 600;
 line-height: 1.08;
 color: #111827;
 }
@@ -1119,13 +1119,6 @@ font-size: 19px;
 line-height: 1.65;
 color: #6b7280;
 }
-
-.hero button:hover,
-.cta button:hover {
-background: #1d4ed8;
-}
-
-
 
 .features {
 display: grid;
@@ -1160,7 +1153,7 @@ margin: 10px 0 58px;
 .howItWorks h2 {
 margin: 0 0 26px;
 font-size: 34px;
-font-weight: 800;
+font-weight: 600;
 }
 
 .steps {
@@ -1209,7 +1202,7 @@ margin-top: 20px;
 .cta h2 {
 margin: 0;
 font-size: 34px;
-font-weight: 800;
+font-weight: 600;
 color: #111827;
 }
 
@@ -1225,6 +1218,7 @@ font-size: 17px;
 .features,
 .steps {
 grid-template-columns: 1fr;
+border: 1px solid #d9dee7;
 }
 
 .howItWorks h2,
@@ -1314,6 +1308,7 @@ min-height: 580px; /* <- DAS macht den Kasten höher */
 margin: 0 auto;
 padding: 40px 40px 10px 40px; /* <- unten extra Luft */
 background: #ffffff;
+border: 1px solid #d9dee7;
 border-radius: 24px;
 box-shadow: 0 28px 70px rgba(15, 23, 42, 0.10);
 box-sizing: border-box;
@@ -1867,4 +1862,40 @@ border: 1px solid #d9dee7
 
 .singlePlan {
 border: 1px solid #d9dee7;
+}
+
+.landing .primaryBtn {
+background: #2563eb;
+border: 1px solid #2563eb;
+color: white;
+}
+
+.landing .primaryBtn:hover {
+background: #1d4ed8;
+border-color: #1d4ed8;
+color: white;
+}
+
+.landing .secondaryBtn {
+background: transparent;
+border: 1px solid rgba(59, 130, 246, 0.28);
+color: #3b82f6;
+}
+
+.landing .secondaryBtn:hover {
+background: rgba(59, 130, 246, 0.12);
+border-color: rgba(59, 130, 246, 0.34);
+color: #2563eb;
+}
+
+.pricingPage .primaryBtn,
+.pricingPage .secondaryBtn {
+background: transparent;
+}
+
+.pricingPage .primaryBtn:hover,
+.pricingPage .secondaryBtn:hover {
+background: rgba(59, 130, 246, 0.12);
+border-color: rgba(59, 130, 246, 0.34);
+color: #2563eb;
 }
