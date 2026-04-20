@@ -192,5 +192,30 @@ Rechtliches <span id="legalArrow">▾</span>
 </div>
 </footer>
 
+<script>
+function toggleLegalMenu() {
+const menu = document.getElementById("legalMenu");
+const arrow = document.getElementById("legalArrow");
+
+if (!menu || !arrow) return;
+
+menu.classList.toggle("hidden");
+arrow.textContent = menu.classList.contains("hidden") ? "▾" : "▴";
+}
+
+document.addEventListener("click", function (e) {
+const dropdown = document.querySelector(".footerDropdown");
+const menu = document.getElementById("legalMenu");
+const arrow = document.getElementById("legalArrow");
+
+if (!dropdown || !menu || !arrow) return;
+
+if (!dropdown.contains(e.target)) {
+menu.classList.add("hidden");
+arrow.textContent = "▾";
+}
+});
+</script>
+
 </body>
 </html>
