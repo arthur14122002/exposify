@@ -1218,7 +1218,6 @@ font-size: 17px;
 .features,
 .steps {
 grid-template-columns: 1fr;
-border: 1px solid #d9dee7;
 }
 
 .howItWorks h2,
