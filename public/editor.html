@@ -772,83 +772,6 @@ document.addEventListener("mouseup", onDragUp);
 });
 }
 
-function prepareFlowLayoutForEditor(container) {
-if (!container) return;
-
-const rows = [...container.querySelectorAll(".imageRow")];
-
-rows.forEach((row) => {
-const pageInner = row.closest(".editorPageInner");
-if (!pageInner) return;
-
-const pageRect = pageInner.getBoundingClientRect();
-const images = [...row.querySelectorAll("img")];
-
-const preparedWrappers = [];
-
-images.forEach((img, index) => {
-const imgRect = img.getBoundingClientRect();
-
-const left = imgRect.left - pageRect.left + pageInner.scrollLeft;
-const top = imgRect.top - pageRect.top + pageInner.scrollTop;
-const width = imgRect.width;
-const height = imgRect.height;
-
-const wrapper = document.createElement("div");
-wrapper.className = "editorImageWrapper";
-wrapper.dataset.slotType = "object_image";
-wrapper.dataset.slotIndex = String(index + 1);
-
-wrapper.style.left = `${left}px`;
-wrapper.style.top = `${top}px`;
-wrapper.style.width = `${width}px`;
-wrapper.style.height = `${height}px`;
-
-preparedWrappers.push({ wrapper, img });
-});
-
-preparedWrappers.forEach(({ wrapper, img }) => {
-pageInner.appendChild(wrapper);
-wrapper.appendChild(img);
-});
-
-row.remove();
-});
-}
-
-function applyFlowSpacing(container) {
-if (!container) return;
-
-const pages = container.querySelectorAll(".editorPageInner");
-
-pages.forEach(page => {
-
-const images = [...page.querySelectorAll('.editorImageWrapper[data-slot-type="object_image"]')];
-
-if (!images.length) return;
-
-// höchstes Bild finden
-let maxBottom = 0;
-
-images.forEach(img => {
-const bottom = img.offsetTop + img.offsetHeight;
-if (bottom > maxBottom) maxBottom = bottom;
-});
-
-// bestehenden Spacer löschen
-const oldSpacer = page.querySelector(".flowSpacer");
-if (oldSpacer) oldSpacer.remove();
-
-// neuen Spacer bauen
-const spacer = document.createElement("div");
-spacer.className = "flowSpacer";
-spacer.style.height = `${maxBottom + 20}px`;
-
-page.insertBefore(spacer, page.firstChild);
-
-});
-}
-
 function enableFreeImageEditor(container) {
 if (!container) return;
 
@@ -1174,8 +1097,6 @@ ${rawHtml}
 normalizeProjectContent(editor);
 normalizeEditableStructure(editor);
 enforceParagraphStructure(editor);
-prepareFlowLayoutForEditor(editor);
-applyFlowSpacing(editor);
 enableTextEditing(editor);
 enableFreeImageEditor(editor);
 updatePageButtons();
@@ -1763,7 +1684,6 @@ cleanupEmptyTrailingPages();
 const editor = document.getElementById("editorArea");
 enableTextEditing(editor);
 enableFreeImageEditor(editor);
-applyFlowSpacing(editor);
 }, 80);
 }
 

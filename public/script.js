@@ -198,58 +198,40 @@ img.src = src;
 });
 }
 
-async function buildStarterLayout(images, textHtml) {
-const firstImages = images.slice(0, 3);
-
-let imageHtml = "";
-
-if (firstImages.length) {
-imageHtml = `
-<div class="imageRow">
-${firstImages.map(src => `
-<img src="${src}" class="flowImage">
-`).join("")}
-</div>
-`;
-}
-
-return `
-${imageHtml}
-${textHtml}
-`;
-}
-
-function splitStarterImages(images, maxStarterImages = 3) {
-return {
-starterImages: images.slice(0, maxStarterImages),
-remainingImages: images.slice(maxStarterImages)
-};
-}
-
-async function buildStarterImageRow(images) {
+async function buildFlowImageGrid(images) {
 if (!images.length) return "";
-
-const count = images.length;
-const gap = 20;
-const startX = 48;
-const top = 380;
-const maxTotalWidth = 698; // passend für editorPageInner mit padding
-const itemWidth = Math.floor((maxTotalWidth - gap * (count - 1)) / count);
 
 const blocks = [];
 
+const startX = 40;
+const startY = 40;
+const gapX = 24;
+const gapY = 24;
+const maxRowWidth = 720; // ungefähr nutzbare Breite innerhalb der Seite
+
+let currentX = startX;
+let currentY = startY;
+let currentRowHeight = 0;
+
 for (let i = 0; i < images.length; i++) {
 const src = images[i];
-const left = startX + i * (itemWidth + gap);
+const size = await getImageSize(src, 220); // bewusst etwas kleiner für sauberen Start
+
+// Wenn das Bild nicht mehr in die aktuelle Reihe passt -> neue Reihe
+if (currentX + size.width > startX + maxRowWidth) {
+currentX = startX;
+currentY += currentRowHeight + gapY;
+currentRowHeight = 0;
+}
 
 blocks.push(`
 <div
 class="editorImageWrapper"
 style="
-width:${itemWidth}px;
-height:170px;
-left:${left}px;
-top:${top}px;
+width:${size.width}px;
+height:${size.height}px;
+left:${currentX}px;
+top:${currentY}px;
 "
 >
 <img
@@ -269,6 +251,9 @@ border-radius:0;
 >
 </div>
 `);
+
+currentX += size.width + gapX;
+currentRowHeight = Math.max(currentRowHeight, size.height);
 }
 
 return blocks.join("");
@@ -528,8 +513,7 @@ if (logoFile) {
 objectImageUrls.push(await uploadImageAndGetUrl(logoFile));
 }
 
-const { starterImages, remainingImages } = splitStarterImages(objectImageUrls, 3);
-const imagePages = chunkArray(remainingImages, 6);
+const imagePages = chunkArray(objectImageUrls, 6);
 
 const maklerTextHtml =
 data.firma || data.maklerName || data.telefon || data.email
@@ -567,21 +551,30 @@ window.__lastAiLocation = ai.location || "";
 window.__lastMaklerTextHtml = maklerTextHtml;
 
 const pages = [];
-const starterLayout = await buildStarterLayout(starterImages, textAndMaklerHtml);
 
+// Seite 1: Titelbild + Überschrift
 if (titleImageUrl) {
 pages.push(createEditorPage(`
 <h1>${ai.title || "Immobilien-Exposé"}</h1>
-<img class="heroImage" src="${titleImageUrl}">
+<img class="heroImage" src="${titleImageUrl}" alt="Titelbild">
 `));
 
+// Seite 2: Text
 pages.push(createEditorPage(`
-${starterLayout}
+${textAndMaklerHtml}
 `));
 } else {
+// Ohne Titelbild: Überschrift + Text zusammen
 pages.push(createEditorPage(`
 <h1>${ai.title || "Immobilien-Exposé"}</h1>
-${starterLayout}
+${textAndMaklerHtml}
+`));
+}
+
+// Objektbilder dynamisch aufteilen: 5 pro Seite
+for (const pageImages of imagePages) {
+pages.push(createEditorPage(`
+${await buildFlowImageGrid(pageImages)}
 `));
 }
 
